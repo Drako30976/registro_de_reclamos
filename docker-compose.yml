@@ -1,0 +1,48 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: reclamos_postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${DB_NAME:-reclamos_db}
+      POSTGRES_USER: ${DB_USER:-postgres}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-postgres_password_2026}
+    ports:
+      # Mapeo del puerto 5433 en tu PC al 5432 del contenedor
+      # para evitar conflictos con otras bases de datos locales
+      - "${DB_PORT:-5433}:5432"
+    volumes:
+      - reclamos_pgdata:/var/lib/postgresql/data
+      - ./database/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    networks:
+      - reclamos_net
+
+  app:
+    build: .
+    container_name: reclamos_app
+    restart: unless-stopped
+    ports:
+      - "${PORT:-3000}:3000"
+    environment:
+      PORT: 3000
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_NAME: ${DB_NAME:-reclamos_db}
+      DB_USER: ${DB_USER:-postgres}
+      DB_PASSWORD: ${DB_PASSWORD:-postgres_password_2026}
+      JWT_SECRET: ${JWT_SECRET:-reclamos_jwt_super_secret_key_2026}
+      NODE_ENV: production
+    volumes:
+      - ./uploads:/app/uploads
+    depends_on:
+      - postgres
+    networks:
+      - reclamos_net
+
+volumes:
+  reclamos_pgdata:
+    driver: local
+
+networks:
+  reclamos_net:
+    driver: bridge
