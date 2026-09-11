@@ -22,7 +22,6 @@ CREATE TABLE IF NOT EXISTS usuarios (
     usuario VARCHAR(30) UNIQUE NOT NULL,
     password_hash VARCHAR(255) NOT NULL,
     foto_perfil VARCHAR(255) DEFAULT NULL,
-    legajo VARCHAR(30) DEFAULT NULL,
     rol VARCHAR(20) NOT NULL CHECK (rol IN ('Admin', 'Supervisor', 'Asesor', 'Espectador')),
     activo BOOLEAN DEFAULT TRUE,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
@@ -104,13 +103,12 @@ CREATE INDEX IF NOT EXISTS idx_auditoria_fecha ON auditoria_logs (fecha DESC);
 -- ==========================================================
 
 -- Usuario Administrador por defecto (Contraseña: admin123)
-INSERT INTO usuarios (nombre_completo, documento, usuario, password_hash, legajo, rol)
+INSERT INTO usuarios (nombre_completo, documento, usuario, password_hash, rol)
 VALUES (
     'Administrador del Sistema',
     '00000000',
     'admin',
     '$2b$10$rcp8okC6CuOm7fCWiOsTdeEWn3Q4MMm59/McX/eKZhSScR/wS/NWq',
-    'ADM-001',
     'Admin'
 ) ON CONFLICT (usuario) DO NOTHING;
 

@@ -1,4 +1,3 @@
-// Módulo de Gestión de Reclamos (Carga principal con cascada dinámica)
 const ReclamosModule = {
   arbolEstructura: [],
   sucursales: [],
@@ -10,16 +9,15 @@ const ReclamosModule = {
   },
 
   setupFormDefaults() {
-    // Fecha automática
+
     const fechaInput = document.getElementById('reclamo-fecha');
     if (fechaInput) {
       const now = new Date();
-      // Formato YYYY-MM-DD para input date
+
       const fechaLocal = now.toLocaleDateString('en-CA');
       fechaInput.value = fechaLocal;
     }
 
-    // Asesor automático (nombre del usuario en sesión)
     const asesorInput = document.getElementById('reclamo-asesor');
     const user = API.getUser();
     if (asesorInput && user) {
@@ -67,7 +65,6 @@ const ReclamosModule = {
       select.appendChild(opt);
     });
 
-    // Resetear niveles inferiores
     this.resetSelect('reclamo-caracteristica', '-- Seleccione Característica --', true);
     this.resetSelect('reclamo-definicion', '-- Seleccione Definición (Opcional) --', true);
     this.resetSelect('reclamo-finalizacion', '-- Seleccione Finalización (Opcional) --', true);
@@ -86,7 +83,6 @@ const ReclamosModule = {
     const defSelect = document.getElementById('reclamo-definicion');
     const form = document.getElementById('form-gestion-reclamo');
 
-    // Cascada: Al cambiar Tipo -> Cargar Características
     if (tipoSelect) {
       tipoSelect.onchange = () => {
         const tipoId = parseInt(tipoSelect.value, 10);
@@ -109,7 +105,6 @@ const ReclamosModule = {
       };
     }
 
-    // Cascada: Al cambiar Característica -> Cargar Definiciones
     if (carSelect) {
       carSelect.onchange = () => {
         const tipoId = parseInt(tipoSelect.value, 10);
@@ -135,7 +130,6 @@ const ReclamosModule = {
       };
     }
 
-    // Cascada: Al cambiar Definición -> Cargar Finalizaciones
     if (defSelect) {
       defSelect.onchange = () => {
         const tipoId = parseInt(tipoSelect.value, 10);
@@ -163,7 +157,6 @@ const ReclamosModule = {
       };
     }
 
-    // Envío del formulario
     if (form) {
       form.onsubmit = async (e) => {
         e.preventDefault();
@@ -207,7 +200,6 @@ const ReclamosModule = {
           alertEl.textContent = `¡Reclamo del abonado ${numero_cliente} guardado con éxito!`;
           alertEl.className = 'form-alert success';
 
-          // Limpiar campos excepto fecha y asesor
           document.getElementById('reclamo-cliente').value = '';
           this.populateTipos();
           document.getElementById('reclamo-sucursal').value = '';

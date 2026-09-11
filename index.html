@@ -11,7 +11,6 @@
 </head>
 <body>
 
-  <!-- MODAL / PANTALLA DE LOGIN -->
   <div id="login-modal" class="auth-overlay">
     <div class="auth-card">
       <div class="auth-header">
@@ -42,10 +41,8 @@
     </div>
   </div>
 
-  <!-- APLICACIÓN PRINCIPAL (VISIBLE TRAS AUTENTICARSE) -->
   <div id="app-content" class="app-layout hidden">
-    
-    <!-- BARRA SUPERIOR (HEADER) -->
+
     <header class="app-header">
       <div class="header-brand">
         <span class="brand-icon">📋</span>
@@ -59,7 +56,6 @@
       </div>
     </header>
 
-    <!-- BARRA DE NAVEGACIÓN POR PESTAÑAS -->
     <nav class="app-navbar">
       <div class="nav-container">
         <button class="nav-tab-btn active" data-tab="gestion">
@@ -80,12 +76,8 @@
       </div>
     </nav>
 
-    <!-- CONTENEDOR DE VISTAS (PESTAÑAS) -->
     <main class="app-main">
 
-      <!-- ======================================================== -->
-      <!-- PESTAÑA 1: GESTIÓN DE RECLAMOS (CARGA PRINCIPAL) -->
-      <!-- ======================================================== -->
       <section id="view-gestion" class="tab-view">
         <div class="view-header">
           <h2>Nuevo Registro de Reclamo</h2>
@@ -169,9 +161,6 @@
         </div>
       </section>
 
-      <!-- ======================================================== -->
-      <!-- PESTAÑA 2: HISTORIAL DE RECLAMOS + FILTROS + PDF -->
-      <!-- ======================================================== -->
       <section id="view-historial" class="tab-view hidden">
         <div class="view-header flex-row justify-between align-center">
           <div>
@@ -185,7 +174,6 @@
           </div>
         </div>
 
-        <!-- PANEL DE FILTROS -->
         <div class="card filter-card mb-4">
           <div class="filter-header">
             <strong>Filtros de Búsqueda</strong>
@@ -233,7 +221,6 @@
           </div>
         </div>
 
-        <!-- TABLA DE RESULTADOS -->
         <div class="card table-container">
           <table class="data-table">
             <thead>
@@ -258,9 +245,6 @@
         </div>
       </section>
 
-      <!-- ======================================================== -->
-      <!-- PESTAÑA 3: REGISTROS DE AUDITORÍA (SOLO ADMIN) -->
-      <!-- ======================================================== -->
       <section id="view-registros" class="tab-view hidden">
         <div class="view-header">
           <h2>Registros de Auditoría y Cambios</h2>
@@ -294,22 +278,17 @@
         </div>
       </section>
 
-      <!-- ======================================================== -->
-      <!-- PESTAÑA 4: EDICIÓN DE ESTRUCTURA Y SUCURSALES -->
-      <!-- ======================================================== -->
       <section id="view-edicion" class="tab-view hidden">
         <div class="view-header">
           <h2>Configuración y Edición del Sistema</h2>
           <p class="text-muted">Administre las sucursales y el árbol jerárquico de consultas de clientes.</p>
         </div>
 
-        <!-- Subtabs de edición -->
         <div class="subtabs-bar mb-3">
           <button id="subtab-btn-sucursales" class="btn btn-tab active">Sucursales</button>
           <button id="subtab-btn-estructura" class="btn btn-tab">Estructura Jerárquica de Reclamos</button>
         </div>
 
-        <!-- SECCIÓN SUCURSALES -->
         <div id="edicion-sec-sucursales">
           <div class="card mb-4">
             <div class="card-header flex-row justify-between align-center">
@@ -322,7 +301,6 @@
           </div>
         </div>
 
-        <!-- SECCIÓN ÁRBOL DE ESTRUCTURA -->
         <div id="edicion-sec-estructura" class="hidden">
           <div class="card mb-4">
             <div class="card-header flex-row justify-between align-center">
@@ -339,9 +317,6 @@
         </div>
       </section>
 
-      <!-- ======================================================== -->
-      <!-- PESTAÑA 5: PERFIL DE USUARIO & GESTIÓN DE USUARIOS -->
-      <!-- ======================================================== -->
       <section id="view-perfil" class="tab-view hidden">
         <div class="view-header">
           <h2>Mi Perfil de Usuario</h2>
@@ -349,7 +324,7 @@
         </div>
 
         <div class="profile-grid">
-          <!-- Tarjeta de Información Personal -->
+          
           <div class="card p-4">
             <div class="profile-header-card">
               <div class="avatar-wrapper">
@@ -372,14 +347,9 @@
                 <span class="detail-label">Documento:</span>
                 <strong id="perfil-documento">-</strong>
               </div>
-              <div class="profile-detail-item">
-                <span class="detail-label">Legajo:</span>
-                <strong id="perfil-legajo">-</strong>
-              </div>
             </div>
           </div>
 
-          <!-- Tarjeta de Cambio de Contraseña -->
           <div class="card p-4">
             <h3>Cambiar Contraseña</h3>
             <p class="text-muted font-sm mb-3">Debe ingresar su contraseña actual para confirmar el cambio.</p>
@@ -407,7 +377,6 @@
           </div>
         </div>
 
-        <!-- SECCIÓN GESTIÓN DE USUARIOS (ADMIN & SUPERVISOR) -->
         <div id="sec-admin-usuarios" class="card mt-4 p-4 hidden">
           <div class="card-header flex-row justify-between align-center mb-3">
             <div>
@@ -425,7 +394,6 @@
                   <th>Rol</th>
                   <th>Nombre Completo</th>
                   <th>Documento</th>
-                  <th>Legajo</th>
                   <th>Estado</th>
                   <th>Fecha Alta</th>
                   <th>Acciones</th>
@@ -444,11 +412,6 @@
     </main>
   </div>
 
-  <!-- ======================================================== -->
-  <!-- MODALES DE APOYO -->
-  <!-- ======================================================== -->
-
-  <!-- Modal Editar Reclamo -->
   <div id="modal-editar-reclamo" class="modal-overlay hidden">
     <div class="modal-box">
       <div class="modal-header">
@@ -490,7 +453,6 @@
     </div>
   </div>
 
-  <!-- Modal Crear Sucursal -->
   <div id="modal-crear-sucursal" class="modal-overlay hidden">
     <div class="modal-box modal-sm">
       <div class="modal-header">
@@ -512,7 +474,6 @@
     </div>
   </div>
 
-  <!-- Modal Crear Elemento de Estructura -->
   <div id="modal-crear-nodo-estructura" class="modal-overlay hidden">
     <div class="modal-box">
       <div class="modal-header">
@@ -543,7 +504,6 @@
     </div>
   </div>
 
-  <!-- Modal Crear Usuario -->
   <div id="modal-crear-usuario" class="modal-overlay hidden">
     <div class="modal-box">
       <div class="modal-header">
@@ -574,14 +534,9 @@
               <input type="password" id="nuevo-user-pass" required minlength="4" maxlength="20" placeholder="••••••••">
             </div>
             <div class="form-group">
-              <label>Legajo (Opcional)</label>
-              <input type="text" id="nuevo-user-legajo" maxlength="30" placeholder="Ej: LEG-405">
+              <label>Rol Asignado <span class="req">*</span></label>
+              <select id="nuevo-user-rol" required></select>
             </div>
-          </div>
-
-          <div class="form-group">
-            <label>Rol Asignado <span class="req">*</span></label>
-            <select id="nuevo-user-rol" required></select>
           </div>
         </div>
         <div class="modal-footer">
@@ -592,7 +547,6 @@
     </div>
   </div>
 
-  <!-- Modal Editar Usuario -->
   <div id="modal-editar-usuario" class="modal-overlay hidden">
     <div class="modal-box">
       <div class="modal-header">
@@ -614,26 +568,23 @@
               <input type="text" id="edit-user-doc" required maxlength="20">
             </div>
             <div class="form-group">
-              <label>Legajo</label>
-              <input type="text" id="edit-user-legajo" maxlength="30">
+              <label>Rol</label>
+              <select id="edit-user-rol" required></select>
             </div>
           </div>
 
           <div class="form-grid-2">
             <div class="form-group">
-              <label>Rol</label>
-              <select id="edit-user-rol" required></select>
-            </div>
-            <div class="form-group">
               <label>Nueva Contraseña (Opcional)</label>
               <input type="password" id="edit-user-pass" placeholder="En blanco para mantener">
             </div>
-          </div>
-
-          <div class="form-group checkbox-group mt-2">
-            <label>
-              <input type="checkbox" id="edit-user-activo"> Usuario Activo / Habilitado
-            </label>
+            <div class="form-group">
+              <label>Estado de Acceso</label>
+              <select id="edit-user-activo">
+                <option value="true">Activo (Acceso permitido)</option>
+                <option value="false">Desactivado (Usuario suspendido)</option>
+              </select>
+            </div>
           </div>
         </div>
         <div class="modal-footer">
@@ -644,7 +595,6 @@
     </div>
   </div>
 
-  <!-- SCRIPTS MODULARES -->
   <script src="/js/api.js"></script>
   <script src="/js/auth.js"></script>
   <script src="/js/reclamos.js"></script>
@@ -655,3 +605,7 @@
   <script src="/js/app.js"></script>
 </body>
 </html>
+
+<!-- Código desarrollado y realizado por Mauro -->
+<!-- Github - https://github.com/Drako30976 -->
+<!--Mail: soto.mauro@gmail.com -->

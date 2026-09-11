@@ -2,11 +2,10 @@ const pool = require('../config/db');
 const bcrypt = require('bcryptjs');
 const { registrarAuditoria } = require('../middlewares/audit');
 
-// Listar todos los usuarios (Admin y Supervisor)
 const getUsuarios = async (req, res) => {
   try {
     const result = await pool.query(
-      `SELECT id, nombre_completo, documento, usuario, legajo, rol, foto_perfil, activo, created_at 
+      `SELECT id, nombre_completo, documento, usuario, rol, foto_perfil, activo, created_at 
        FROM usuarios 
        ORDER BY id ASC`
     );
@@ -17,16 +16,14 @@ const getUsuarios = async (req, res) => {
   }
 };
 
-// Crear nuevo usuario (Admin: cualquier rol / Supervisor: solo 'Asesor')
 const crearUsuario = async (req, res) => {
   try {
-    const { nombre_completo, documento, usuario, contrasena, legajo, rol } = req.body;
+    const { nombre_completo, documento, usuario, contrasena, rol } = req.body;
 
     if (!nombre_completo || !documento || !usuario || !contrasena || !rol) {
       return res.status(400).json({ error: 'Todos los campos obligatorios deben ser completados.' });
     }
 
-    // Regla de jerarquía para creación de roles
     if (req.user.rol === 'Supervisor' && rol !== 'Asesor') {
       return res.status(403).json({ error: 'Como Supervisor sólo tiene permitido crear usuarios con rol "Asesor".' });
     }
@@ -35,7 +32,6 @@ const crearUsuario = async (req, res) => {
       return res.status(403).json({ error: 'No tiene permisos para crear usuarios.' });
     }
 
-    // Validar duplicados
     const existe = await pool.query(
       'SELECT usuario, documento FROM usuarios WHERE usuario = $1 OR documento = $2',
       [usuario.trim(), documento.trim()]
@@ -53,15 +49,14 @@ const crearUsuario = async (req, res) => {
 
     const result = await pool.query(
       `INSERT INTO usuarios 
-        (nombre_completo, documento, usuario, password_hash, legajo, rol)
-       VALUES ($1, $2, $3, $4, $5, $6)
-       RETURNING id, nombre_completo, documento, usuario, legajo, rol, foto_perfil, activo, created_at`,
+        (nombre_completo, documento, usuario, password_hash, rol)
+       VALUES ($1, $2, $3, $4, $5)
+       RETURNING id, nombre_completo, documento, usuario, rol, foto_perfil, activo, created_at`,
       [
         nombre_completo.trim(),
         documento.trim(),
         usuario.trim(),
         password_hash,
-        legajo ? legajo.trim() : null,
         rol
       ]
     );
@@ -85,11 +80,10 @@ const crearUsuario = async (req, res) => {
   }
 };
 
-// Editar usuario (Admin o Supervisor)
 const actualizarUsuario = async (req, res) => {
   try {
     const { id } = req.params;
-    const { nombre_completo, documento, contrasena, legajo, rol, activo } = req.body;
+    const { nombre_completo, documento, contrasena, rol, activo } = req.body;
 
     const actual = await pool.query('SELECT * FROM usuarios WHERE id = $1', [id]);
     if (actual.rows.length === 0) {
@@ -97,7 +91,6 @@ const actualizarUsuario = async (req, res) => {
     }
     const usuarioObjetivo = actual.rows[0];
 
-    // Reglas de jerarquía
     if (req.user.rol === 'Supervisor') {
       if (usuarioObjetivo.rol === 'Admin' || (usuarioObjetivo.rol === 'Supervisor' && usuarioObjetivo.id !== req.user.id)) {
         return res.status(403).json({ error: 'No puede modificar a un usuario de su mismo rango o superior.' });
@@ -118,24 +111,29 @@ const actualizarUsuario = async (req, res) => {
        SET nombre_completo = COALESCE($1, nombre_completo),
            documento = COALESCE($2, documento),
            password_hash = $3,
-           legajo = COALESCE($4, legajo),
-           rol = COALESCE($5, rol),
-           activo = COALESCE($6, activo)
-       WHERE id = $7
-       RETURNING id, nombre_completo, documento, usuario, legajo, rol, foto_perfil, activo, created_at`,
+           rol = COALESCE($4, rol),
+           activo = COALESCE($5, activo)
+       WHERE id = $6
+       RETURNING id, nombre_completo, documento, usuario, rol, foto_perfil, activo, created_at`,
       [
         nombre_completo ? nombre_completo.trim() : null,
         documento ? documento.trim() : null,
         password_hash,
-        legajo !== undefined ? legajo : null,
         rol || null,
         activo !== undefined ? activo : null,
         id
       ]
     );
 
+    let accionDesc = `Se editó al usuario "${usuarioObjetivo.usuario}"`;
+    if (activo !== undefined && activo !== usuarioObjetivo.activo) {
+      accionDesc = activo 
+        ? `Se activó al usuario "${usuarioObjetivo.usuario}"` 
+        : `Se suspendió al usuario "${usuarioObjetivo.usuario}"`;
+    }
+
     await registrarAuditoria({
-      accion: `Se editó al usuario "${usuarioObjetivo.usuario}"`,
+      accion: accionDesc,
       usuario_id: req.user.id,
       usuario_nombre: req.user.usuario,
       entidad: 'usuarios',
@@ -161,7 +159,6 @@ const actualizarUsuario = async (req, res) => {
   }
 };
 
-// Eliminar usuario (Admin)
 const eliminarUsuario = async (req, res) => {
   try {
     const { id } = req.params;
@@ -180,17 +177,14 @@ const eliminarUsuario = async (req, res) => {
     }
     const usuarioObjetivo = actual.rows[0];
 
-    // Verificar si tiene reclamos asociados
     const tieneReclamos = await pool.query('SELECT 1 FROM reclamos WHERE usuario_id = $1 LIMIT 1', [id]);
     if (tieneReclamos.rows.length > 0) {
-      // Si tiene reclamos vinculados, para no romper claves foráneas desactivamos lógicamente
+
       await pool.query('UPDATE usuarios SET activo = false WHERE id = $1', [id]);
     } else {
       await pool.query('DELETE FROM usuarios WHERE id = $1', [id]);
     }
 
-    // Formato exacto solicitado en especificación:
-    // Fecha │ se eliminó al usuario “user1” │ realizado por Admin │ -
     await registrarAuditoria({
       accion: `se eliminó al usuario "${usuarioObjetivo.usuario}"`,
       usuario_id: req.user.id,
@@ -213,7 +207,6 @@ const eliminarUsuario = async (req, res) => {
   }
 };
 
-// Cambiar contraseña propia (valida la contraseña actual primero)
 const cambiarPasswordPropio = async (req, res) => {
   try {
     const { password_actual, password_nueva } = req.body;
@@ -252,7 +245,6 @@ const cambiarPasswordPropio = async (req, res) => {
   }
 };
 
-// Subir y actualizar foto de perfil
 const actualizarFotoPerfil = async (req, res) => {
   try {
     if (!req.file) {

@@ -11,7 +11,7 @@ const login = async (req, res) => {
     }
 
     const result = await pool.query(
-      'SELECT id, nombre_completo, documento, usuario, password_hash, legajo, rol, foto_perfil, activo FROM usuarios WHERE usuario = $1',
+      'SELECT id, nombre_completo, documento, usuario, password_hash, rol, foto_perfil, activo FROM usuarios WHERE usuario = $1',
       [usuario.trim()]
     );
 
@@ -22,7 +22,7 @@ const login = async (req, res) => {
     const user = result.rows[0];
 
     if (!user.activo) {
-      return res.status(403).json({ error: 'El usuario se encuentra desactivado. Contacte a un administrador.' });
+      return res.status(403).json({ error: 'Usuario suspendido' });
     }
 
     const match = await bcrypt.compare(contrasena, user.password_hash);
@@ -48,7 +48,6 @@ const login = async (req, res) => {
         nombre_completo: user.nombre_completo,
         documento: user.documento,
         usuario: user.usuario,
-        legajo: user.legajo,
         rol: user.rol,
         foto_perfil: user.foto_perfil
       }

@@ -1,4 +1,3 @@
-// Cliente API Centralizado
 const API = {
   getToken() {
     return localStorage.getItem('reclamos_token');
@@ -48,7 +47,7 @@ const API = {
       const res = await fetch(`/api${endpoint}`, config);
 
       if (res.status === 401) {
-        // Token expirado o inválido
+
         this.logout();
         throw new Error('Sesión expirada. Por favor vuelva a iniciar sesión.');
       }
@@ -58,7 +57,6 @@ const API = {
         throw new Error(errorData.error || `Error ${res.status}: ${res.statusText}`);
       }
 
-      // Si la respuesta es un blob (ej. PDF)
       if (headers['Accept'] === 'application/pdf' || options.isBlob) {
         return res.blob();
       }

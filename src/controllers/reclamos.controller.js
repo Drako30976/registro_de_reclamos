@@ -1,7 +1,6 @@
 const pool = require('../config/db');
 const { registrarAuditoria } = require('../middlewares/audit');
 
-// Crear nuevo reclamo (Gestión de Reclamos)
 const crearReclamo = async (req, res) => {
   try {
     const {
@@ -13,7 +12,6 @@ const crearReclamo = async (req, res) => {
       finalizacion_id
     } = req.body;
 
-    // Asesor = usuario autenticado
     const asesor_id = req.user.id;
 
     if (!sucursal_id || !numero_cliente || !tipo_consulta_id || !caracteristica_id) {
@@ -47,7 +45,6 @@ const crearReclamo = async (req, res) => {
 
     const result = await pool.query(query, values);
 
-    // Registro opcional en auditoría si se desea
     await registrarAuditoria({
       accion: `Se cargó reclamo para el abonado ${numero_cliente.trim()}`,
       usuario_id: req.user.id,
@@ -67,7 +64,6 @@ const crearReclamo = async (req, res) => {
   }
 };
 
-// Obtener listado con filtros para la pestaña "Historial"
 const getReclamos = async (req, res) => {
   try {
     const {
@@ -152,7 +148,6 @@ const getReclamos = async (req, res) => {
   }
 };
 
-// Obtener un reclamo individual
 const getReclamoPorId = async (req, res) => {
   try {
     const { id } = req.params;
@@ -185,7 +180,6 @@ const getReclamoPorId = async (req, res) => {
   }
 };
 
-// Modificar reclamo (Admin, Supervisor, Asesor)
 const actualizarReclamo = async (req, res) => {
   try {
     const { id } = req.params;
@@ -198,7 +192,6 @@ const actualizarReclamo = async (req, res) => {
       finalizacion_id
     } = req.body;
 
-    // Obtener estado original completo para la auditoría
     const originalQuery = `
       SELECT 
         r.*,
@@ -249,8 +242,6 @@ const actualizarReclamo = async (req, res) => {
 
     const result = await pool.query(updateQuery, updateValues);
 
-    // Formato exacto solicitado:
-    // Fecha │ se modificó registro del abonado 8148 │ realizado por user1 │ (aquí se mostrará lo que decía el registro original del reclamo que se borró o modifico)
     const resumenOriginal = `Fecha: ${new Date(registroOriginal.fecha).toLocaleString()} | Sucursal: ${registroOriginal.sucursal} | Asesor: ${registroOriginal.asesor} | Abonado: ${registroOriginal.numero_cliente} | Tipo: ${registroOriginal.tipo_consulta} | Característica: ${registroOriginal.caracteristica} | Definición: ${registroOriginal.definicion || 'N/A'} | Finalización: ${registroOriginal.finalizacion || 'N/A'}`;
 
     await registrarAuditoria({
@@ -276,12 +267,10 @@ const actualizarReclamo = async (req, res) => {
   }
 };
 
-// Eliminar reclamo (Solo Admin)
 const eliminarReclamo = async (req, res) => {
   try {
     const { id } = req.params;
 
-    // Obtener datos originales completos
     const originalQuery = `
       SELECT 
         r.*,

@@ -11,14 +11,17 @@ const verifyToken = async (req, res, next) => {
     const token = authHeader.startsWith('Bearer ') ? authHeader.slice(7) : authHeader;
     const decoded = jwt.verify(token, process.env.JWT_SECRET || 'reclamos_jwt_super_secret_key_2026');
 
-    // Consultar usuario en la base de datos para asegurar que sigue activo
     const result = await pool.query(
-      'SELECT id, nombre_completo, documento, usuario, legajo, rol, foto_perfil, activo FROM usuarios WHERE id = $1',
+      'SELECT id, nombre_completo, documento, usuario, rol, foto_perfil, activo FROM usuarios WHERE id = $1',
       [decoded.id]
     );
 
-    if (result.rows.length === 0 || !result.rows[0].activo) {
-      return res.status(401).json({ error: 'Usuario no válido o desactivado.' });
+    if (result.rows.length === 0) {
+      return res.status(401).json({ error: 'Usuario no encontrado.' });
+    }
+
+    if (!result.rows[0].activo) {
+      return res.status(403).json({ error: 'Usuario suspendido' });
     }
 
     req.user = result.rows[0];

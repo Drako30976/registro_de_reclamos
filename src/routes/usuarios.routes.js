@@ -5,7 +5,6 @@ const multer = require('multer');
 const usuariosController = require('../controllers/usuarios.controller');
 const { verifyToken, checkRole } = require('../middlewares/auth');
 
-// Configuración de almacenamiento para fotos de perfil con multer
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
     cb(null, path.join(__dirname, '../../uploads/profiles'));
@@ -30,16 +29,14 @@ const fileFilter = (req, file, cb) => {
 const upload = multer({
   storage,
   fileFilter,
-  limits: { fileSize: 5 * 1024 * 1024 } // 5MB máx
+  limits: { fileSize: 5 * 1024 * 1024 }
 });
 
 router.use(verifyToken);
 
-// Acciones sobre el propio perfil
 router.post('/perfil/cambiar-password', usuariosController.cambiarPasswordPropio);
 router.post('/perfil/foto', upload.single('foto'), usuariosController.actualizarFotoPerfil);
 
-// Gestión de usuarios por Admin y Supervisor
 router.get('/', checkRole('Admin', 'Supervisor'), usuariosController.getUsuarios);
 router.post('/', checkRole('Admin', 'Supervisor'), usuariosController.crearUsuario);
 router.put('/:id', checkRole('Admin', 'Supervisor'), usuariosController.actualizarUsuario);

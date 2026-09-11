@@ -1,4 +1,3 @@
-// Módulo de Historial de Reclamos, Filtros, Edición/Baja y Reporte PDF
 const HistorialModule = {
   reclamos: [],
   catalogos: {
@@ -19,8 +18,7 @@ const HistorialModule = {
       const [sucursales, tipos, usuarios] = await Promise.all([
         API.get('/catalogos/sucursales'),
         API.get('/catalogos/estructura'),
-        // Solo Admin o Supervisor pueden listar todos los usuarios directamente,
-        // pero para el filtro podemos consultar o usar el endpoint si se tiene acceso
+
         API.get('/usuarios').catch(() => [])
       ]);
 
@@ -117,11 +115,6 @@ const HistorialModule = {
         year: 'numeric'
       });
 
-      // Permisos de botones según jerarquía:
-      // Admin: Editar y Eliminar
-      // Supervisor: Editar
-      // Asesor: Editar
-      // Espectador: Solo ver
       let botonesAccion = '';
 
       if (rol !== 'Espectador') {
@@ -157,7 +150,7 @@ const HistorialModule = {
   },
 
   bindEvents() {
-    // Filtros
+
     const btnFiltrar = document.getElementById('btn-aplicar-filtros');
     const btnLimpiar = document.getElementById('btn-limpiar-filtros');
     const btnReporte = document.getElementById('btn-emitir-reporte');
@@ -177,7 +170,6 @@ const HistorialModule = {
       };
     }
 
-    // Botón de emisión de reporte PDF
     if (btnReporte) {
       btnReporte.onclick = async () => {
         try {
@@ -187,7 +179,6 @@ const HistorialModule = {
           const qs = this.getFilterQueryParams();
           const token = API.getToken();
 
-          // Descarga directa con el token incluido
           const res = await fetch(`/api/reportes/pdf?${qs}`, {
             headers: {
               'Authorization': `Bearer ${token}`
@@ -214,7 +205,6 @@ const HistorialModule = {
       };
     }
 
-    // Guardar edición desde el modal
     const formEdit = document.getElementById('form-editar-reclamo');
     if (formEdit) {
       formEdit.onsubmit = async (e) => {
@@ -232,14 +222,12 @@ const HistorialModule = {
       const modal = document.getElementById('modal-editar-reclamo');
       document.getElementById('edit-cliente').value = r.numero_cliente;
 
-      // Poblar sucursales en modal
       const selSuc = document.getElementById('edit-sucursal');
       selSuc.innerHTML = '';
       this.catalogos.sucursales.forEach(s => {
         selSuc.innerHTML += `<option value="${s.id}" ${s.id === r.sucursal_id ? 'selected' : ''}>${s.nombre}</option>`;
       });
 
-      // Configurar selects en cascada para la edición
       const selTipo = document.getElementById('edit-tipo');
       const selCar = document.getElementById('edit-caracteristica');
       const selDef = document.getElementById('edit-definicion');

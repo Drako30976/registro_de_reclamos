@@ -1,10 +1,9 @@
 const pool = require('../config/db');
 
-// Obtener logs de auditoría con paginación de a 20 registros
 const getAuditoriaLogs = async (req, res) => {
   try {
     const page = Math.max(1, parseInt(req.query.page || '1', 10));
-    const limit = 20; // Requisito estricto: 20 registros por página
+    const limit = 20;
     const offset = (page - 1) * limit;
 
     const totalResult = await pool.query('SELECT COUNT(*) FROM auditoria_logs');

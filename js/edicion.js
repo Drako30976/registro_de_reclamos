@@ -1,4 +1,3 @@
-// Módulo de Edición (Mantenimiento de Sucursales y Estructura Jerárquica)
 const EdicionModule = {
   sucursales: [],
   arbol: [],
@@ -16,7 +15,7 @@ const EdicionModule = {
   },
 
   bindEvents() {
-    // Sub-pestañas internas de edición (Sucursales vs Estructura)
+
     const btnTabSuc = document.getElementById('subtab-btn-sucursales');
     const btnTabEst = document.getElementById('subtab-btn-estructura');
     const secSuc = document.getElementById('edicion-sec-sucursales');
@@ -37,7 +36,6 @@ const EdicionModule = {
       };
     }
 
-    // Modal Crear Sucursal
     const formCrearSuc = document.getElementById('form-crear-sucursal');
     if (formCrearSuc) {
       formCrearSuc.onsubmit = async (e) => {
@@ -58,7 +56,6 @@ const EdicionModule = {
       };
     }
 
-    // Modal Crear Elemento de Estructura
     const formCrearEst = document.getElementById('form-crear-nodo-estructura');
     if (formCrearEst) {
       formCrearEst.onsubmit = async (e) => {
@@ -88,9 +85,6 @@ const EdicionModule = {
     }
   },
 
-  // ==========================================
-  // SUCURSALES
-  // ==========================================
   async cargarSucursales() {
     const listEl = document.getElementById('lista-sucursales-edicion');
     if (!listEl) return;
@@ -162,9 +156,6 @@ const EdicionModule = {
     }
   },
 
-  // ==========================================
-  // ESTRUCTURA DE RECLAMOS (ÁRBOL)
-  // ==========================================
   async cargarEstructura() {
     const treeEl = document.getElementById('arbol-estructura-edicion');
     if (!treeEl) return;

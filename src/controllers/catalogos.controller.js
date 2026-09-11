@@ -1,9 +1,6 @@
 const pool = require('../config/db');
 const { registrarAuditoria } = require('../middlewares/audit');
 
-// ==========================================
-// SUCURSALES
-// ==========================================
 const getSucursales = async (req, res) => {
   try {
     const { todas } = req.query;
@@ -89,10 +86,9 @@ const eliminarSucursal = async (req, res) => {
       return res.status(404).json({ error: 'Sucursal no encontrada.' });
     }
 
-    // Verificar si está en uso en reclamos
     const enUso = await pool.query('SELECT 1 FROM reclamos WHERE sucursal_id = $1 LIMIT 1', [id]);
     if (enUso.rows.length > 0) {
-      // Si está en uso, se desactiva lógicamente para no romper integridad histórica
+
       await pool.query('UPDATE sucursales SET activo = false WHERE id = $1', [id]);
     } else {
       await pool.query('DELETE FROM sucursales WHERE id = $1', [id]);
@@ -114,18 +110,14 @@ const eliminarSucursal = async (req, res) => {
   }
 };
 
-// ==========================================
-// ESTRUCTURA JERÁRQUICA (ÁRBOL COMPLETO)
-// ==========================================
 const getArbolEstructura = async (req, res) => {
   try {
-    // Obtenemos todos los elementos activos
+
     const tipos = await pool.query('SELECT * FROM tipos_consulta WHERE activo = true ORDER BY id ASC');
     const caracteristicas = await pool.query('SELECT * FROM caracteristicas_consulta WHERE activo = true ORDER BY id ASC');
     const definiciones = await pool.query('SELECT * FROM definiciones_consulta WHERE activo = true ORDER BY id ASC');
     const finalizaciones = await pool.query('SELECT * FROM finalizaciones WHERE activo = true ORDER BY id ASC');
 
-    // Indexamos finalizaciones por definicion_id
     const finPorDef = {};
     finalizaciones.rows.forEach(f => {
       const defId = f.definicion_id || 0;
@@ -133,7 +125,6 @@ const getArbolEstructura = async (req, res) => {
       finPorDef[defId].push(f);
     });
 
-    // Indexamos definiciones por caracteristica_id y les añadimos sus finalizaciones
     const defPorCaract = {};
     definiciones.rows.forEach(d => {
       d.finalizaciones = finPorDef[d.id] || [];
@@ -141,7 +132,6 @@ const getArbolEstructura = async (req, res) => {
       defPorCaract[d.caracteristica_id].push(d);
     });
 
-    // Indexamos características por tipo_consulta_id y les añadimos sus definiciones
     const carPorTipo = {};
     caracteristicas.rows.forEach(c => {
       c.definiciones = defPorCaract[c.id] || [];
@@ -149,7 +139,6 @@ const getArbolEstructura = async (req, res) => {
       carPorTipo[c.tipo_consulta_id].push(c);
     });
 
-    // Armamos el árbol final con tipos
     const arbol = tipos.rows.map(t => ({
       ...t,
       caracteristicas: carPorTipo[t.id] || []
@@ -162,9 +151,6 @@ const getArbolEstructura = async (req, res) => {
   }
 };
 
-// ==========================================
-// CRUD MANUAL DE NODOS DE ESTRUCTURA
-// ==========================================
 const guardarElementoEstructura = async (req, res) => {
   try {
     const { nivel, parent_id, contenido, descripcion } = req.body;
@@ -284,7 +270,6 @@ const eliminarElementoEstructura = async (req, res) => {
     const prev = await pool.query(`SELECT * FROM ${tabla} WHERE id = $1`, [id]);
     if (prev.rows.length === 0) return res.status(404).json({ error: 'Registro no encontrado.' });
 
-    // Desactivación lógica o borrado en cascada
     await pool.query(`DELETE FROM ${tabla} WHERE id = $1`, [id]);
 
     await registrarAuditoria({

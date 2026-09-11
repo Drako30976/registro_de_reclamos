@@ -14,18 +14,14 @@ const reportesRoutes = require('./routes/reportes.routes');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// Middlewares globales
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Servir archivos estáticos subidos (fotos de perfil)
 app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
 
-// Servir archivos del frontend estático (HTML, CSS, JS)
 app.use(express.static(path.join(__dirname, '../')));
 
-// Montar rutas de la API
 app.use('/api/auth', authRoutes);
 app.use('/api/reclamos', reclamosRoutes);
 app.use('/api/catalogos', catalogosRoutes);
@@ -33,7 +29,6 @@ app.use('/api/usuarios', usuariosRoutes);
 app.use('/api/auditoria', auditoriaRoutes);
 app.use('/api/reportes', reportesRoutes);
 
-// Endpoint de verificación de salud (Healthcheck)
 app.get('/api/health', async (req, res) => {
   try {
     const dbCheck = await pool.query('SELECT NOW()');
@@ -47,7 +42,6 @@ app.get('/api/health', async (req, res) => {
   }
 });
 
-// Manejador centralizado de errores
 app.use((err, req, res, next) => {
   console.error('Error no capturado:', err);
   res.status(500).json({
@@ -56,7 +50,6 @@ app.use((err, req, res, next) => {
   });
 });
 
-// Iniciar servidor
 app.listen(PORT, async () => {
   console.log(`====================================================`);
   console.log(` Servidor de Reclamos ejecutándose en http://localhost:${PORT}`);

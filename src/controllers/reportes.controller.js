@@ -71,7 +71,6 @@ const emitirReportePDF = async (req, res) => {
     const result = await pool.query(query, values);
     const reclamos = result.rows;
 
-    // Generar documento PDF
     const doc = new PDFDocument({
       size: 'A4',
       layout: 'landscape',
@@ -85,12 +84,10 @@ const emitirReportePDF = async (req, res) => {
 
     doc.pipe(res);
 
-    // Cabecera / Banner
     doc.rect(30, 25, 782, 50).fill('#1E293B');
     doc.fillColor('#FFFFFF').fontSize(16).font('Helvetica-Bold').text('REPORTE DE GESTIÓN Y REGISTRO DE RECLAMOS', 45, 38);
     doc.fontSize(9).font('Helvetica').text(`Generado por: ${req.user.nombre_completo} (${req.user.rol}) | Fecha: ${new Date().toLocaleString()}`, 45, 56);
 
-    // Resumen de filtros
     let filtrosTexto = [];
     if (fecha) filtrosTexto.push(`Fecha: ${fecha}`);
     if (fecha_desde) filtrosTexto.push(`Desde: ${fecha_desde}`);
@@ -101,7 +98,6 @@ const emitirReportePDF = async (req, res) => {
     doc.fillColor('#334155').fontSize(9).font('Helvetica-Bold').text(`Filtros aplicados: `, 30, 85, { continued: true });
     doc.font('Helvetica').text(`${filtrosResumen}  —  Total de reclamos: ${reclamos.length}`);
 
-    // Encabezado de la tabla
     const tableTop = 105;
     const rowHeight = 22;
     const colX = [30, 95, 175, 255, 325, 435, 555, 680];
@@ -130,11 +126,11 @@ const emitirReportePDF = async (req, res) => {
       });
     } else {
       reclamos.forEach((r, idx) => {
-        // Paginación si sobrepasa el alto de página
+
         if (currentY + rowHeight > 540) {
           doc.addPage({ size: 'A4', layout: 'landscape', margin: 30 });
           currentY = 40;
-          // Re-dibujar encabezado en nueva página
+
           doc.rect(30, currentY, 782, rowHeight).fill('#3B82F6');
           doc.fillColor('#FFFFFF').fontSize(8.5).font('Helvetica-Bold');
           doc.text('FECHA', colX[0] + 4, currentY + 6, { width: colW[0] });
@@ -148,7 +144,6 @@ const emitirReportePDF = async (req, res) => {
           currentY += rowHeight;
         }
 
-        // Fila zebra
         const bg = zebra ? '#F1F5F9' : '#FFFFFF';
         doc.rect(30, currentY, 782, rowHeight).fill(bg);
         doc.rect(30, currentY, 782, rowHeight).stroke('#CBD5E1');

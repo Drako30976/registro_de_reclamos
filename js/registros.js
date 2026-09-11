@@ -1,4 +1,3 @@
-// Módulo de Registros de Auditoría (Admin - Paginación estricta de 20 registros)
 const RegistrosModule = {
   currentPage: 1,
   totalPages: 1,
@@ -58,8 +57,6 @@ const RegistrosModule = {
       return;
     }
 
-    // Estructura requerida:
-    // Fecha │ Acción realizada │ Realizado por │ Cambio / Registro Original
     tbody.innerHTML = registros.map(r => {
       const fechaObj = new Date(r.fecha);
       const fechaStr = fechaObj.toLocaleString('es-AR', {

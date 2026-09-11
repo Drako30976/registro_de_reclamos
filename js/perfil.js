@@ -1,4 +1,3 @@
-// Módulo de Perfil de Usuario y Gestión de Usuarios (Admin / Supervisor)
 const PerfilModule = {
   usuarios: [],
 
@@ -29,7 +28,6 @@ const PerfilModule = {
     document.getElementById('perfil-nombre').textContent = user.nombre_completo;
     document.getElementById('perfil-usuario').textContent = user.usuario;
     document.getElementById('perfil-documento').textContent = user.documento;
-    document.getElementById('perfil-legajo').textContent = user.legajo || 'No asignado';
     document.getElementById('perfil-rol').textContent = user.rol;
 
     const avatar = document.getElementById('perfil-avatar-img');
@@ -39,7 +37,7 @@ const PerfilModule = {
   },
 
   bindEvents() {
-    // Formulario cambio de contraseña propia
+
     const formPass = document.getElementById('form-cambiar-password');
     if (formPass) {
       formPass.onsubmit = async (e) => {
@@ -73,7 +71,6 @@ const PerfilModule = {
       };
     }
 
-    // Subida de foto de perfil
     const inputFoto = document.getElementById('input-foto-perfil');
     if (inputFoto) {
       inputFoto.onchange = async () => {
@@ -85,8 +82,7 @@ const PerfilModule = {
 
         try {
           const res = await API.post('/usuarios/perfil/foto', formData);
-          
-          // Actualizar estado local
+
           const user = API.getUser();
           if (user) {
             user.foto_perfil = res.foto_perfil;
@@ -102,7 +98,6 @@ const PerfilModule = {
       };
     }
 
-    // Formulario para Crear Usuario (Admin / Supervisor)
     const formCrearUser = document.getElementById('form-crear-usuario');
     if (formCrearUser) {
       formCrearUser.onsubmit = async (e) => {
@@ -111,7 +106,6 @@ const PerfilModule = {
         const documento = document.getElementById('nuevo-user-doc').value.trim();
         const usuario = document.getElementById('nuevo-user-login').value.trim();
         const contrasena = document.getElementById('nuevo-user-pass').value;
-        const legajo = document.getElementById('nuevo-user-legajo').value.trim();
         const rol = document.getElementById('nuevo-user-rol').value;
 
         try {
@@ -120,7 +114,6 @@ const PerfilModule = {
             documento,
             usuario,
             contrasena,
-            legajo,
             rol
           });
 
@@ -134,7 +127,6 @@ const PerfilModule = {
       };
     }
 
-    // Formulario para Editar Usuario
     const formEditarUser = document.getElementById('form-editar-usuario');
     if (formEditarUser) {
       formEditarUser.onsubmit = async (e) => {
@@ -142,16 +134,14 @@ const PerfilModule = {
         const id = document.getElementById('edit-user-id').value;
         const nombre_completo = document.getElementById('edit-user-nombre').value.trim();
         const documento = document.getElementById('edit-user-doc').value.trim();
-        const legajo = document.getElementById('edit-user-legajo').value.trim();
         const rol = document.getElementById('edit-user-rol').value;
         const contrasena = document.getElementById('edit-user-pass').value.trim();
-        const activo = document.getElementById('edit-user-activo').checked;
+        const activo = document.getElementById('edit-user-activo').value === 'true';
 
         try {
           await API.put(`/usuarios/${id}`, {
             nombre_completo,
             documento,
-            legajo,
             rol,
             contrasena: contrasena || undefined,
             activo
@@ -183,33 +173,58 @@ const PerfilModule = {
           year: 'numeric'
         });
 
-        // Supervisor no puede editar administradores ni otros supervisores
         const puedeEditar = (rolActual === 'Admin') || (rolActual === 'Supervisor' && u.rol === 'Asesor');
+        const puedeToggleEstado = (rolActual === 'Admin') || (rolActual === 'Supervisor' && u.rol === 'Asesor');
         const puedeEliminar = (rolActual === 'Admin' && u.id !== currentUser.id);
 
         let acciones = '';
         if (puedeEditar) {
-          acciones += `<button class="btn btn-xs btn-outline-primary mr-1" onclick="PerfilModule.abrirModalEditarUsuario(${u.id})">Editar</button>`;
+          acciones += `<button class="btn btn-sm btn-outline-primary mr-1" onclick="PerfilModule.abrirModalEditarUsuario(${u.id})">Editar</button>`;
         }
+
+        if (puedeToggleEstado && u.id !== currentUser.id) {
+          if (u.activo) {
+            acciones += `<button class="btn btn-sm btn-outline-warning mr-1" onclick="PerfilModule.toggleEstadoUsuario(${u.id}, false, '${u.usuario}')">Desactivar</button>`;
+          } else {
+            acciones += `<button class="btn btn-sm btn-outline-success mr-1" onclick="PerfilModule.toggleEstadoUsuario(${u.id}, true, '${u.usuario}')">Activar</button>`;
+          }
+        }
+
         if (puedeEliminar) {
-          acciones += `<button class="btn btn-xs btn-outline-danger" onclick="PerfilModule.eliminarUsuario(${u.id}, '${u.usuario}')">Eliminar</button>`;
+          acciones += `<button class="btn btn-sm btn-outline-danger" onclick="PerfilModule.eliminarUsuario(${u.id}, '${u.usuario}')">Eliminar</button>`;
         }
+
+        const estadoBadge = u.activo 
+          ? '<span class="badge badge-success">Activo</span>' 
+          : '<span class="badge badge-danger">Suspendido</span>';
 
         return `
           <tr>
             <td><strong>${u.usuario}</strong></td>
+            <td><span class="role-badge role-${u.rol.toLowerCase()}">${u.rol}</span></td>
             <td>${u.nombre_completo}</td>
             <td>${u.documento}</td>
-            <td>${u.legajo || '-'}</td>
-            <td><span class="role-badge role-${u.rol.toLowerCase()}">${u.rol}</span></td>
-            <td><span class="badge ${u.activo ? 'badge-success' : 'badge-danger'}">${u.activo ? 'Activo' : 'Inactivo'}</span></td>
+            <td>${estadoBadge}</td>
             <td>${fechaCreacion}</td>
-            <td>${acciones || '-'}</td>
+            <td class="table-actions">${acciones || '-'}</td>
           </tr>
         `;
       }).join('');
     } catch (err) {
-      tbody.innerHTML = `<tr><td colspan="8" class="text-center text-danger">Error: ${err.message}</td></tr>`;
+      tbody.innerHTML = `<tr><td colspan="7" class="text-center text-danger">Error: ${err.message}</td></tr>`;
+    }
+  },
+
+  async toggleEstadoUsuario(id, nuevoEstado, usuario) {
+    const accionTexto = nuevoEstado ? 'activar y permitir el acceso' : 'desactivar y suspender el acceso';
+    if (confirm(`¿Está seguro de ${accionTexto} al usuario "${usuario}"?`)) {
+      try {
+        await API.put(`/usuarios/${id}`, { activo: nuevoEstado });
+        await this.cargarListaUsuarios();
+        alert(`Usuario "${usuario}" ${nuevoEstado ? 'activado' : 'suspendido'} exitosamente.`);
+      } catch (err) {
+        alert('Error al cambiar estado del usuario: ' + err.message);
+      }
     }
   },
 
@@ -218,7 +233,6 @@ const PerfilModule = {
     const selectRol = document.getElementById('nuevo-user-rol');
     const currentUser = API.getUser();
 
-    // Supervisor solo puede crear 'Asesor'
     if (selectRol) {
       selectRol.innerHTML = '';
       if (currentUser && currentUser.rol === 'Supervisor') {
@@ -244,9 +258,8 @@ const PerfilModule = {
     document.getElementById('edit-user-id').value = u.id;
     document.getElementById('edit-user-nombre').value = u.nombre_completo;
     document.getElementById('edit-user-doc').value = u.documento;
-    document.getElementById('edit-user-legajo').value = u.legajo || '';
     document.getElementById('edit-user-pass').value = '';
-    document.getElementById('edit-user-activo').checked = u.activo;
+    document.getElementById('edit-user-activo').value = u.activo ? 'true' : 'false';
 
     const selectRol = document.getElementById('edit-user-rol');
     const currentUser = API.getUser();
