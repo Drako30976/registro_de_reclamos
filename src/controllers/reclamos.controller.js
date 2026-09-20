@@ -31,18 +31,21 @@ const crearReclamo = async (req, res) => {
         r.id,
         TO_CHAR(r.fecha AT TIME ZONE 'America/Argentina/Buenos_Aires', 'DD/MM/YYYY') as fecha_fmt,
         TO_CHAR(r.fecha AT TIME ZONE 'America/Argentina/Buenos_Aires', 'HH24:MI') as hora_fmt,
-        u.nombre_completo as asesor
+        u.nombre_completo as asesor,
+        s.nombre as sucursal
       FROM reclamos r
       JOIN usuarios u ON r.usuario_id = u.id
+      JOIN sucursales s ON r.sucursal_id = s.id
       WHERE LOWER(TRIM(r.numero_cliente)) = LOWER(TRIM($1))
+        AND r.sucursal_id = $2
         AND (r.fecha AT TIME ZONE 'America/Argentina/Buenos_Aires')::date = (CURRENT_TIMESTAMP AT TIME ZONE 'America/Argentina/Buenos_Aires')::date
       LIMIT 1
-    `, [numero_cliente]);
+    `, [numero_cliente, sucursal_id]);
 
     if (checkExistente.rows.length > 0) {
       const reg = checkExistente.rows[0];
       return res.status(400).json({
-        error: `Ya existe un reclamo registrado para el abonado "${numero_cliente.trim()}" en el día de hoy (${reg.fecha_fmt} a las ${reg.hora_fmt} hs por ${reg.asesor}). Solo se permite un reclamo por abonado al día.`
+        error: `Ya existe un reclamo registrado para el abonado "${numero_cliente.trim()}" en la sucursal ${reg.sucursal} en el día de hoy (${reg.fecha_fmt} a las ${reg.hora_fmt} hs por ${reg.asesor}). Solo se permite un reclamo por abonado al día por sucursal.`
       });
     }
 
@@ -268,24 +271,28 @@ const actualizarReclamo = async (req, res) => {
       return res.status(404).json({ error: 'Reclamo no encontrado.' });
     }
     const clienteAValidar = numero_cliente ? numero_cliente.trim() : registroOriginal.numero_cliente;
+    const sucursalAValidar = sucursal_id ? parseInt(sucursal_id, 10) : registroOriginal.sucursal_id;
     const checkExistente = await pool.query(`
       SELECT 
         r.id,
         TO_CHAR(r.fecha AT TIME ZONE 'America/Argentina/Buenos_Aires', 'DD/MM/YYYY') as fecha_fmt,
         TO_CHAR(r.fecha AT TIME ZONE 'America/Argentina/Buenos_Aires', 'HH24:MI') as hora_fmt,
-        u.nombre_completo as asesor
+        u.nombre_completo as asesor,
+        s.nombre as sucursal
       FROM reclamos r
       JOIN usuarios u ON r.usuario_id = u.id
+      JOIN sucursales s ON r.sucursal_id = s.id
       WHERE LOWER(TRIM(r.numero_cliente)) = LOWER(TRIM($1))
+        AND r.sucursal_id = $2
         AND (r.fecha AT TIME ZONE 'America/Argentina/Buenos_Aires')::date = (registroOriginal.fecha AT TIME ZONE 'America/Argentina/Buenos_Aires')::date
-        AND r.id != $2
+        AND r.id != $3
       LIMIT 1
-    `, [clienteAValidar, id]);
+    `, [clienteAValidar, sucursalAValidar, id]);
 
     if (checkExistente.rows.length > 0) {
       const reg = checkExistente.rows[0];
       return res.status(400).json({
-        error: `Ya existe otro reclamo registrado para el abonado "${clienteAValidar}" en dicha fecha (${reg.fecha_fmt} a las ${reg.hora_fmt} hs por ${reg.asesor}).`
+        error: `Ya existe otro reclamo registrado para el abonado "${clienteAValidar}" en la sucursal ${reg.sucursal} en dicha fecha (${reg.fecha_fmt} a las ${reg.hora_fmt} hs por ${reg.asesor}).`
       });
     }
 
