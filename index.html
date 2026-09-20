@@ -90,20 +90,6 @@
           <form id="form-gestion-reclamo">
             <div class="form-grid-2">
               <div class="form-group">
-                <label for="reclamo-fecha">Fecha del Reclamo <span class="req">*</span></label>
-                <input type="date" id="reclamo-fecha" readonly class="input-readonly">
-                <small class="text-muted">Cargada automáticamente</small>
-              </div>
-
-              <div class="form-group">
-                <label for="reclamo-asesor">Asesor Registrante <span class="req">*</span></label>
-                <input type="text" id="reclamo-asesor" readonly class="input-readonly">
-                <small class="text-muted">Usuario en sesión actual</small>
-              </div>
-            </div>
-
-            <div class="form-grid-2">
-              <div class="form-group">
                 <label for="reclamo-sucursal">Sucursal <span class="req">*</span></label>
                 <select id="reclamo-sucursal" required>
                   <option value="">-- Seleccione Sucursal --</option>
@@ -112,7 +98,7 @@
 
               <div class="form-group">
                 <label for="reclamo-cliente">Número de Cliente / Abonado <span class="req">*</span></label>
-                <input type="text" id="reclamo-cliente" maxlength="15" placeholder="Ej: 8148" required>
+                <input type="text" id="reclamo-cliente" maxlength="15" required>
                 <small class="text-muted">Hasta 15 caracteres</small>
               </div>
             </div>
@@ -152,12 +138,40 @@
               </div>
             </div>
 
-            <div class="form-actions mt-4">
+            <div class="form-actions mt-3">
               <button type="submit" class="btn btn-primary btn-lg">
                 <span class="btn-icon">💾</span> Guardar Reclamo
               </button>
             </div>
           </form>
+        </div>
+
+        <div class="card reclamos-preview-card mt-4">
+          <div class="card-header flex-row justify-between align-center">
+            <h3>Vista Previa de Reclamos Recientes</h3>
+            <span id="preview-contador" class="badge badge-primary">0 reclamos</span>
+          </div>
+          <div class="table-container">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Fecha y Hora</th>
+                  <th>Sucursal</th>
+                  <th>Asesor</th>
+                  <th>Abonado</th>
+                  <th>Tipo de Consulta</th>
+                  <th>Características</th>
+                  <th>Definición</th>
+                  <th>Finalización</th>
+                </tr>
+              </thead>
+              <tbody id="tabla-preview-body">
+                <tr>
+                  <td colspan="8" class="text-center py-4 text-muted">Aún no se han cargado reclamos en esta sesión.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
         </div>
       </section>
 

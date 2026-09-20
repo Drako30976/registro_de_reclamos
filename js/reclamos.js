@@ -1,28 +1,12 @@
 const ReclamosModule = {
   arbolEstructura: [],
   sucursales: [],
+  reclamosRecientes: [],
 
   async init() {
-    this.setupFormDefaults();
+    this.renderPreviewReclamos();
     await this.loadCatalogos();
     this.bindEvents();
-  },
-
-  setupFormDefaults() {
-
-    const fechaInput = document.getElementById('reclamo-fecha');
-    if (fechaInput) {
-      const now = new Date();
-
-      const fechaLocal = now.toLocaleDateString('en-CA');
-      fechaInput.value = fechaLocal;
-    }
-
-    const asesorInput = document.getElementById('reclamo-asesor');
-    const user = API.getUser();
-    if (asesorInput && user) {
-      asesorInput.value = user.nombre_completo;
-    }
   },
 
   async loadCatalogos() {
@@ -188,7 +172,7 @@ const ReclamosModule = {
           btnSubmit.disabled = true;
           btnSubmit.textContent = 'Guardando...';
 
-          await API.post('/reclamos', {
+          const res = await API.post('/reclamos', {
             sucursal_id: parseInt(sucursal_id, 10),
             numero_cliente,
             tipo_consulta_id: parseInt(tipo_consulta_id, 10),
@@ -199,6 +183,14 @@ const ReclamosModule = {
 
           alertEl.textContent = `¡Reclamo del abonado ${numero_cliente} guardado con éxito!`;
           alertEl.className = 'form-alert success';
+
+          if (res && res.reclamo) {
+            this.reclamosRecientes.unshift(res.reclamo);
+            if (this.reclamosRecientes.length > 20) {
+              this.reclamosRecientes.pop();
+            }
+            this.renderPreviewReclamos();
+          }
 
           document.getElementById('reclamo-cliente').value = '';
           this.populateTipos();
@@ -217,5 +209,46 @@ const ReclamosModule = {
         }
       };
     }
+  },
+
+  renderPreviewReclamos() {
+    const tbody = document.getElementById('tabla-preview-body');
+    const contador = document.getElementById('preview-contador');
+    if (!tbody) return;
+
+    if (contador) {
+      contador.textContent = `${this.reclamosRecientes.length} de 20`;
+    }
+
+    if (this.reclamosRecientes.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="8" class="text-center py-4 text-muted">Aún no se han cargado reclamos en esta sesión.</td></tr>';
+      return;
+    }
+
+    tbody.innerHTML = this.reclamosRecientes.map(r => {
+      const fechaObj = new Date(r.fecha);
+      const fechaFormateada = fechaObj.toLocaleDateString('es-AR', {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric'
+      });
+      const horaFormateada = fechaObj.toLocaleTimeString('es-AR', {
+        hour: '2-digit',
+        minute: '2-digit'
+      });
+
+      return `
+        <tr>
+          <td><strong>${fechaFormateada}</strong> <span class="text-muted">${horaFormateada}</span></td>
+          <td>${r.sucursal || '-'}</td>
+          <td>${r.asesor || '-'}</td>
+          <td><span class="client-badge">${r.numero_cliente}</span></td>
+          <td><span class="badge badge-info">${r.tipo_consulta || '-'}</span></td>
+          <td>${r.caracteristica || '-'}</td>
+          <td>${r.definicion || '-'}</td>
+          <td>${r.finalizacion ? `<span class="badge badge-secondary">${r.finalizacion}</span>` : '-'}</td>
+        </tr>
+      `;
+    }).join('');
   }
 };

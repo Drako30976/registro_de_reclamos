@@ -26,11 +26,31 @@ const crearReclamo = async (req, res) => {
       });
     }
 
+    const checkExistente = await pool.query(`
+      SELECT 
+        r.id,
+        TO_CHAR(r.fecha AT TIME ZONE 'America/Argentina/Buenos_Aires', 'DD/MM/YYYY') as fecha_fmt,
+        TO_CHAR(r.fecha AT TIME ZONE 'America/Argentina/Buenos_Aires', 'HH24:MI') as hora_fmt,
+        u.nombre_completo as asesor
+      FROM reclamos r
+      JOIN usuarios u ON r.usuario_id = u.id
+      WHERE LOWER(TRIM(r.numero_cliente)) = LOWER(TRIM($1))
+        AND (r.fecha AT TIME ZONE 'America/Argentina/Buenos_Aires')::date = (CURRENT_TIMESTAMP AT TIME ZONE 'America/Argentina/Buenos_Aires')::date
+      LIMIT 1
+    `, [numero_cliente]);
+
+    if (checkExistente.rows.length > 0) {
+      const reg = checkExistente.rows[0];
+      return res.status(400).json({
+        error: `Ya existe un reclamo registrado para el abonado "${numero_cliente.trim()}" en el día de hoy (${reg.fecha_fmt} a las ${reg.hora_fmt} hs por ${reg.asesor}). Solo se permite un reclamo por abonado al día.`
+      });
+    }
+
     const query = `
       INSERT INTO reclamos 
         (sucursal_id, usuario_id, numero_cliente, tipo_consulta_id, caracteristica_id, definicion_id, finalizacion_id)
       VALUES ($1, $2, $3, $4, $5, $6, $7)
-      RETURNING *
+      RETURNING id
     `;
 
     const values = [
@@ -44,19 +64,52 @@ const crearReclamo = async (req, res) => {
     ];
 
     const result = await pool.query(query, values);
+    const nuevoId = result.rows[0].id;
+
+    const fullQuery = `
+      SELECT 
+        r.id,
+        r.fecha,
+        r.numero_cliente,
+        r.created_at,
+        r.updated_at,
+        s.id AS sucursal_id,
+        s.nombre AS sucursal,
+        u.id AS asesor_id,
+        u.nombre_completo AS asesor,
+        u.usuario AS asesor_usuario,
+        tc.id AS tipo_consulta_id,
+        tc.contenido AS tipo_consulta,
+        cc.id AS caracteristica_id,
+        cc.contenido AS caracteristica,
+        dc.id AS definicion_id,
+        dc.contenido AS definicion,
+        f.id AS finalizacion_id,
+        f.contenido AS finalizacion
+      FROM reclamos r
+      JOIN sucursales s ON r.sucursal_id = s.id
+      JOIN usuarios u ON r.usuario_id = u.id
+      JOIN tipos_consulta tc ON r.tipo_consulta_id = tc.id
+      JOIN caracteristicas_consulta cc ON r.caracteristica_id = cc.id
+      LEFT JOIN definiciones_consulta dc ON r.definicion_id = dc.id
+      LEFT JOIN finalizaciones f ON r.finalizacion_id = f.id
+      WHERE r.id = $1
+    `;
+    const fullResult = await pool.query(fullQuery, [nuevoId]);
+    const reclamoCompleto = fullResult.rows[0];
 
     await registrarAuditoria({
       accion: `Se cargó reclamo para el abonado ${numero_cliente.trim()}`,
       usuario_id: req.user.id,
       usuario_nombre: req.user.usuario,
       entidad: 'reclamos',
-      registro_id: result.rows[0].id,
-      datos_nuevos: result.rows[0]
+      registro_id: nuevoId,
+      datos_nuevos: reclamoCompleto
     });
 
     res.status(201).json({
       message: 'Reclamo guardado exitosamente.',
-      reclamo: result.rows[0]
+      reclamo: reclamoCompleto
     });
   } catch (error) {
     console.error('Error al crear reclamo:', error);
@@ -214,7 +267,27 @@ const actualizarReclamo = async (req, res) => {
     if (originalRes.rows.length === 0) {
       return res.status(404).json({ error: 'Reclamo no encontrado.' });
     }
-    const registroOriginal = originalRes.rows[0];
+    const clienteAValidar = numero_cliente ? numero_cliente.trim() : registroOriginal.numero_cliente;
+    const checkExistente = await pool.query(`
+      SELECT 
+        r.id,
+        TO_CHAR(r.fecha AT TIME ZONE 'America/Argentina/Buenos_Aires', 'DD/MM/YYYY') as fecha_fmt,
+        TO_CHAR(r.fecha AT TIME ZONE 'America/Argentina/Buenos_Aires', 'HH24:MI') as hora_fmt,
+        u.nombre_completo as asesor
+      FROM reclamos r
+      JOIN usuarios u ON r.usuario_id = u.id
+      WHERE LOWER(TRIM(r.numero_cliente)) = LOWER(TRIM($1))
+        AND (r.fecha AT TIME ZONE 'America/Argentina/Buenos_Aires')::date = (registroOriginal.fecha AT TIME ZONE 'America/Argentina/Buenos_Aires')::date
+        AND r.id != $2
+      LIMIT 1
+    `, [clienteAValidar, id]);
+
+    if (checkExistente.rows.length > 0) {
+      const reg = checkExistente.rows[0];
+      return res.status(400).json({
+        error: `Ya existe otro reclamo registrado para el abonado "${clienteAValidar}" en dicha fecha (${reg.fecha_fmt} a las ${reg.hora_fmt} hs por ${reg.asesor}).`
+      });
+    }
 
     const updateQuery = `
       UPDATE reclamos
