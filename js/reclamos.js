@@ -1,9 +1,30 @@
 const ReclamosModule = {
   arbolEstructura: [],
   sucursales: [],
-  reclamosRecientes: [],
+  getStorageKey() {
+    const user = API.getUser();
+    return user ? `reclamos_recientes_${user.id}` : 'reclamos_recientes';
+  },
+
+  cargarReclamosAlmacenados() {
+    try {
+      const data = localStorage.getItem(this.getStorageKey());
+      this.reclamosRecientes = data ? JSON.parse(data) : [];
+    } catch {
+      this.reclamosRecientes = [];
+    }
+  },
+
+  guardarReclamosAlmacenados() {
+    try {
+      localStorage.setItem(this.getStorageKey(), JSON.stringify(this.reclamosRecientes));
+    } catch (e) {
+      console.error('Error al guardar en cache local:', e);
+    }
+  },
 
   async init() {
+    this.cargarReclamosAlmacenados();
     this.renderPreviewReclamos();
     await this.loadCatalogos();
     this.bindEvents();
@@ -189,6 +210,7 @@ const ReclamosModule = {
             if (this.reclamosRecientes.length > 20) {
               this.reclamosRecientes.pop();
             }
+            this.guardarReclamosAlmacenados();
             this.renderPreviewReclamos();
           }
 
