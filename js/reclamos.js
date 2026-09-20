@@ -263,7 +263,11 @@ const ReclamosModule = {
         <tr>
           <td><strong>${fechaFormateada}</strong> <span class="text-muted">${horaFormateada}</span></td>
           <td>${r.sucursal || '-'}</td>
-          <td>${r.asesor || '-'}</td>
+          <td>
+            <a href="javascript:void(0)" class="user-link-badge" onclick="HistorialModule.abrirModalVerPerfil(${r.asesor_id || `'${r.asesor}'`})" title="Ver información del usuario">
+              <span>👤</span> ${r.asesor || '-'}
+            </a>
+          </td>
           <td><span class="client-badge">${r.numero_cliente}</span></td>
           <td><span class="badge badge-info">${r.tipo_consulta || '-'}</span></td>
           <td>${r.caracteristica || '-'}</td>

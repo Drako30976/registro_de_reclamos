@@ -914,3 +914,65 @@ body {
 .reclamos-preview-card .data-table tbody tr:first-child {
   background-color: #EFF6FF;
 }
+
+.profile-desc-box {
+  background: #F8FAFC;
+  border: 1px solid #E2E8F0;
+  border-radius: var(--radius-sm);
+  padding: 0.85rem;
+}
+
+.profile-desc-box textarea {
+  width: 100%;
+  resize: vertical;
+  min-height: 70px;
+  padding: 0.5rem 0.65rem;
+  border: 1px solid #CBD5E1;
+  border-radius: var(--radius-xs);
+  font-size: 0.85rem;
+  font-family: inherit;
+  box-sizing: border-box;
+}
+
+.user-link-badge {
+  color: var(--primary);
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.15rem 0.4rem;
+  border-radius: var(--radius-xs);
+  transition: background 0.15s, color 0.15s;
+}
+
+.user-link-badge:hover {
+  background: #EFF6FF;
+  color: #1D4ED8;
+  text-decoration: underline;
+}
+
+.user-card-preview {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.user-quote-box {
+  background: #F8FAFC;
+  border: 1px solid #E2E8F0;
+  border-left: 3px solid var(--primary);
+  border-radius: var(--radius-sm);
+  width: 100%;
+  box-sizing: border-box;
+  text-align: left;
+  margin-top: 0.5rem;
+}
+
+.user-quote-text {
+  font-size: 0.875rem;
+  line-height: 1.4;
+  margin: 0;
+  color: #334155;
+}

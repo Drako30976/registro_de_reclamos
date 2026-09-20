@@ -5,7 +5,7 @@ const { registrarAuditoria } = require('../middlewares/audit');
 const getUsuarios = async (req, res) => {
   try {
     const result = await pool.query(
-      `SELECT id, nombre_completo, documento, usuario, rol, foto_perfil, activo, created_at 
+      `SELECT id, nombre_completo, documento, usuario, rol, foto_perfil, descripcion, activo, created_at 
        FROM usuarios 
        ORDER BY id ASC`
     );
@@ -273,11 +273,64 @@ const actualizarFotoPerfil = async (req, res) => {
   }
 };
 
+const actualizarDescripcionPropia = async (req, res) => {
+  try {
+    const { descripcion } = req.body;
+    const desc = descripcion ? descripcion.trim().slice(0, 255) : '';
+
+    await pool.query('UPDATE usuarios SET descripcion = $1 WHERE id = $2', [desc, req.user.id]);
+
+    await registrarAuditoria({
+      accion: `El usuario "${req.user.usuario}" actualizó su descripción de perfil`,
+      usuario_id: req.user.id,
+      usuario_nombre: req.user.usuario,
+      entidad: 'usuarios',
+      registro_id: req.user.id
+    });
+
+    res.json({
+      message: 'Descripción actualizada correctamente.',
+      descripcion: desc
+    });
+  } catch (error) {
+    console.error('Error al actualizar descripción:', error);
+    res.status(500).json({ error: 'Error al guardar la descripción.' });
+  }
+};
+
+const getPerfilPublico = async (req, res) => {
+  try {
+    const { identificador } = req.params;
+    let query;
+    let params;
+
+    if (!isNaN(identificador)) {
+      query = 'SELECT id, nombre_completo, usuario, rol, foto_perfil, descripcion, created_at FROM usuarios WHERE id = $1';
+      params = [parseInt(identificador, 10)];
+    } else {
+      query = 'SELECT id, nombre_completo, usuario, rol, foto_perfil, descripcion, created_at FROM usuarios WHERE LOWER(nombre_completo) = LOWER($1) OR LOWER(usuario) = LOWER($1) LIMIT 1';
+      params = [identificador.trim()];
+    }
+
+    const result = await pool.query(query, params);
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: 'Usuario no encontrado.' });
+    }
+
+    res.json(result.rows[0]);
+  } catch (error) {
+    console.error('Error al obtener perfil público:', error);
+    res.status(500).json({ error: 'Error al consultar datos del usuario.' });
+  }
+};
+
 module.exports = {
   getUsuarios,
   crearUsuario,
   actualizarUsuario,
   eliminarUsuario,
   cambiarPasswordPropio,
-  actualizarFotoPerfil
+  actualizarFotoPerfil,
+  actualizarDescripcionPropia,
+  getPerfilPublico
 };

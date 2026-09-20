@@ -11,7 +11,7 @@ const login = async (req, res) => {
     }
 
     const result = await pool.query(
-      'SELECT id, nombre_completo, documento, usuario, password_hash, rol, foto_perfil, activo FROM usuarios WHERE usuario = $1',
+      'SELECT id, nombre_completo, documento, usuario, password_hash, rol, foto_perfil, descripcion, activo FROM usuarios WHERE usuario = $1',
       [usuario.trim()]
     );
 
@@ -49,7 +49,8 @@ const login = async (req, res) => {
         documento: user.documento,
         usuario: user.usuario,
         rol: user.rol,
-        foto_perfil: user.foto_perfil
+        foto_perfil: user.foto_perfil,
+        descripcion: user.descripcion || ''
       }
     });
   } catch (error) {

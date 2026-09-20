@@ -22,6 +22,7 @@ CREATE TABLE IF NOT EXISTS usuarios (
     usuario VARCHAR(30) UNIQUE NOT NULL,
     password_hash VARCHAR(255) NOT NULL,
     foto_perfil VARCHAR(255) DEFAULT NULL,
+    descripcion VARCHAR(255) DEFAULT '',
     rol VARCHAR(20) NOT NULL CHECK (rol IN ('Admin', 'Supervisor', 'Asesor', 'Espectador')),
     activo BOOLEAN DEFAULT TRUE,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP

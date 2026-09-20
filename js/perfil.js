@@ -25,10 +25,22 @@ const PerfilModule = {
     const user = API.getUser();
     if (!user) return;
 
-    document.getElementById('perfil-nombre').textContent = user.nombre_completo;
-    document.getElementById('perfil-usuario').textContent = user.usuario;
-    document.getElementById('perfil-documento').textContent = user.documento;
-    document.getElementById('perfil-rol').textContent = user.rol;
+    const nombreEl = document.getElementById('perfil-nombre');
+    const usuarioEl = document.getElementById('perfil-usuario');
+    const rolEl = document.getElementById('perfil-rol');
+    const descEl = document.getElementById('perfil-descripcion');
+    const charCounter = document.getElementById('desc-char-counter');
+
+    if (nombreEl) nombreEl.textContent = user.nombre_completo;
+    if (usuarioEl) usuarioEl.textContent = user.usuario;
+    if (rolEl) rolEl.textContent = user.rol;
+
+    if (descEl) {
+      descEl.value = user.descripcion || '';
+      if (charCounter) {
+        charCounter.textContent = `${descEl.value.length} / 255`;
+      }
+    }
 
     const avatar = document.getElementById('perfil-avatar-img');
     if (avatar) {
@@ -94,6 +106,49 @@ const PerfilModule = {
           alert('Foto de perfil actualizada correctamente.');
         } catch (err) {
           alert('Error al subir foto: ' + err.message);
+        }
+      };
+    }
+
+    const descInput = document.getElementById('perfil-descripcion');
+    const charCounter = document.getElementById('desc-char-counter');
+    const btnGuardarDesc = document.getElementById('btn-guardar-descripcion');
+    const msgDesc = document.getElementById('desc-mensaje');
+
+    if (descInput && charCounter) {
+      descInput.oninput = () => {
+        charCounter.textContent = `${descInput.value.length} / 255`;
+      };
+    }
+
+    if (btnGuardarDesc && descInput) {
+      btnGuardarDesc.onclick = async () => {
+        const descripcion = descInput.value.trim();
+        msgDesc.className = 'form-alert hidden';
+
+        try {
+          btnGuardarDesc.disabled = true;
+          btnGuardarDesc.textContent = 'Guardando...';
+
+          const res = await API.put('/usuarios/perfil/descripcion', { descripcion });
+          const user = API.getUser();
+          if (user) {
+            user.descripcion = res.descripcion;
+            API.setUser(user);
+          }
+
+          msgDesc.textContent = '¡Descripción guardada correctamente!';
+          msgDesc.className = 'form-alert success';
+
+          setTimeout(() => {
+            msgDesc.className = 'form-alert hidden';
+          }, 3500);
+        } catch (err) {
+          msgDesc.textContent = err.message || 'Error al guardar la descripción.';
+          msgDesc.className = 'form-alert error';
+        } finally {
+          btnGuardarDesc.disabled = false;
+          btnGuardarDesc.textContent = 'Guardar Frase';
         }
       };
     }

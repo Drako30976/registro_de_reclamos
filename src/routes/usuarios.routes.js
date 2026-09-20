@@ -36,6 +36,8 @@ router.use(verifyToken);
 
 router.post('/perfil/cambiar-password', usuariosController.cambiarPasswordPropio);
 router.post('/perfil/foto', upload.single('foto'), usuariosController.actualizarFotoPerfil);
+router.put('/perfil/descripcion', usuariosController.actualizarDescripcionPropia);
+router.get('/publico/:identificador', usuariosController.getPerfilPublico);
 
 router.get('/', checkRole('Admin', 'Supervisor'), usuariosController.getUsuarios);
 router.post('/', checkRole('Admin', 'Supervisor'), usuariosController.crearUsuario);

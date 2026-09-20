@@ -130,7 +130,11 @@ const HistorialModule = {
         <tr>
           <td><strong>${fechaFormateada}</strong></td>
           <td>${r.sucursal}</td>
-          <td>${r.asesor}</td>
+          <td>
+            <a href="javascript:void(0)" class="user-link-badge" onclick="HistorialModule.abrirModalVerPerfil(${r.asesor_id || `'${r.asesor}'`})" title="Ver información del usuario">
+              <span>👤</span> ${r.asesor}
+            </a>
+          </td>
           <td><span class="client-badge">${r.numero_cliente}</span></td>
           <td><span class="badge badge-info">${r.tipo_consulta}</span></td>
           <td>${r.caracteristica}</td>
@@ -334,5 +338,48 @@ const HistorialModule = {
         alert('Error al eliminar reclamo: ' + err.message);
       }
     }
+  },
+
+  async abrirModalVerPerfil(identificador) {
+    const modal = document.getElementById('modal-ver-perfil-usuario');
+    if (!modal) return;
+
+    const avatarEl = document.getElementById('ver-perfil-avatar');
+    const nombreEl = document.getElementById('ver-perfil-nombre');
+    const userLoginEl = document.getElementById('ver-perfil-usuario');
+    const rolEl = document.getElementById('ver-perfil-rol');
+    const fraseEl = document.getElementById('ver-perfil-frase');
+
+    nombreEl.textContent = 'Cargando...';
+    userLoginEl.textContent = '';
+    rolEl.textContent = '';
+    fraseEl.textContent = 'Cargando información del usuario...';
+
+    modal.classList.remove('hidden');
+
+    try {
+      const u = await API.get(`/usuarios/publico/${encodeURIComponent(identificador)}`);
+      
+      nombreEl.textContent = u.nombre_completo;
+      userLoginEl.textContent = `@${u.usuario}`;
+      rolEl.textContent = u.rol;
+      rolEl.className = `role-badge role-${u.rol.toLowerCase()}`;
+      
+      fraseEl.textContent = u.descripcion && u.descripcion.trim() 
+        ? `"${u.descripcion.trim()}"` 
+        : 'Este usuario aún no ha agregado una descripción o frase personal.';
+
+      if (avatarEl) {
+        avatarEl.src = u.foto_perfil || `https://ui-avatars.com/api/?name=${encodeURIComponent(u.nombre_completo)}&background=3B82F6&color=fff&size=150`;
+      }
+    } catch (err) {
+      nombreEl.textContent = 'Usuario';
+      fraseEl.textContent = 'No se pudo cargar la información del usuario.';
+    }
+  },
+
+  cerrarModalVerPerfil() {
+    const modal = document.getElementById('modal-ver-perfil-usuario');
+    if (modal) modal.classList.add('hidden');
   }
 };

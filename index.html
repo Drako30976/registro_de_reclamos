@@ -353,10 +353,16 @@
                 <span class="detail-label">Usuario de acceso:</span>
                 <strong id="perfil-usuario">-</strong>
               </div>
-              <div class="profile-detail-item">
-                <span class="detail-label">Documento:</span>
-                <strong id="perfil-documento">-</strong>
+            </div>
+
+            <div class="profile-desc-box mt-3">
+              <label for="perfil-descripcion" class="detail-label font-bold">Descripción o Frase Personal:</label>
+              <textarea id="perfil-descripcion" maxlength="255" rows="3" class="form-control" placeholder="Escriba una breve descripción o frase (hasta 255 caracteres)..."></textarea>
+              <div class="flex-row justify-between align-center mt-2">
+                <small id="desc-char-counter" class="text-muted">0 / 255</small>
+                <button id="btn-guardar-descripcion" class="btn btn-sm btn-primary">Guardar Frase</button>
               </div>
+              <div id="desc-mensaje" class="form-alert hidden mt-2"></div>
             </div>
           </div>
 
@@ -602,6 +608,32 @@
           <button type="submit" class="btn btn-primary">Guardar Cambios</button>
         </div>
       </form>
+    </div>
+  </div>
+
+  <div id="modal-ver-perfil-usuario" class="modal-overlay hidden">
+    <div class="modal-box modal-sm">
+      <div class="modal-header">
+        <h3>Información del Usuario</h3>
+        <button class="modal-close" onclick="HistorialModule.cerrarModalVerPerfil()">&times;</button>
+      </div>
+      <div class="modal-body text-center p-4">
+        <div class="user-card-preview">
+          <img id="ver-perfil-avatar" src="https://ui-avatars.com/api/?name=User&background=3B82F6&color=fff&size=150" alt="Avatar" class="profile-large-avatar mb-3">
+          <h3 id="ver-perfil-nombre" class="font-bold text-main mb-1">-</h3>
+          <p id="ver-perfil-usuario" class="text-muted font-sm mb-2">-</p>
+          <div class="mb-3">
+            <span id="ver-perfil-rol" class="role-badge">Rol</span>
+          </div>
+          <div class="user-quote-box p-3">
+            <span class="quote-icon">💬</span>
+            <p id="ver-perfil-frase" class="user-quote-text italic text-muted">-</p>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer justify-center">
+        <button type="button" class="btn btn-outline-secondary" onclick="HistorialModule.cerrarModalVerPerfil()">Cerrar</button>
+      </div>
     </div>
   </div>
 
