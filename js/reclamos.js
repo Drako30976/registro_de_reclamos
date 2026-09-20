@@ -1,6 +1,7 @@
 const ReclamosModule = {
   arbolEstructura: [],
   sucursales: [],
+  misTareas: [],
   getStorageKey() {
     const user = API.getUser();
     return user ? `reclamos_recientes_${user.id}` : 'reclamos_recientes';
@@ -26,7 +27,10 @@ const ReclamosModule = {
   async init() {
     this.cargarReclamosAlmacenados();
     this.renderPreviewReclamos();
-    await this.loadCatalogos();
+    await Promise.all([
+      this.loadCatalogos(),
+      this.cargarMisTareas()
+    ]);
     this.bindEvents();
   },
 
@@ -276,5 +280,99 @@ const ReclamosModule = {
         </tr>
       `;
     }).join('');
+  },
+
+  async cargarMisTareas() {
+    try {
+      const tareas = await API.get('/tareas/mis-tareas');
+      this.misTareas = Array.isArray(tareas) ? tareas : [];
+      this.renderMisTareas();
+    } catch (error) {
+      console.error('Error al cargar mis tareas:', error);
+      const container = document.getElementById('mis-tareas-body');
+      if (container) {
+        container.innerHTML = '<div class="text-center py-4 text-danger">No se pudieron cargar las tareas asignadas.</div>';
+      }
+    }
+  },
+
+  renderMisTareas() {
+    const container = document.getElementById('mis-tareas-body');
+    const badge = document.getElementById('mis-tareas-badge');
+    if (!container) return;
+
+    if (badge) {
+      const marcadasCount = this.misTareas.filter(t => t.completada).length;
+      badge.textContent = `${this.misTareas.length} activa${this.misTareas.length === 1 ? '' : 's'}${marcadasCount > 0 ? ` (${marcadasCount} marcada${marcadasCount === 1 ? '' : 's'})` : ''}`;
+    }
+
+    if (this.misTareas.length === 0) {
+      container.innerHTML = '<div class="text-center py-4 text-muted">No tienes tareas asignadas actualmente.</div>';
+      return;
+    }
+
+    container.innerHTML = this.misTareas.map(t => {
+      const fecha = new Date(t.created_at).toLocaleDateString('es-AR', {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric'
+      });
+
+      return `
+        <div class="mis-tareas-item" id="mis-tarea-card-${t.id}">
+          <div class="mis-tareas-subgrupo">
+            <div class="mis-tareas-subgrupo-titulo">
+              <span>🏢</span> <span>Sucursales Asignadas</span>
+              <small>(Vigentes durante el día)</small>
+            </div>
+            <div class="mis-tareas-sucursales-tags">
+              <span class="badge badge-primary">📍 Principal: ${t.sucursal_1_nombre}</span>
+              ${t.sucursal_2_nombre ? `<span class="badge badge-secondary">📍 Secundaria: ${t.sucursal_2_nombre}</span>` : ''}
+            </div>
+          </div>
+
+          <div class="mis-tareas-subgrupo">
+            <div class="mis-tareas-subgrupo-titulo">
+              <span>⚡</span> <span>Tareas Diarias</span>
+              <small>(Tildar al realizarla)</small>
+            </div>
+            <div class="tarea-diaria-row ${t.completada ? 'completada' : ''}">
+              <label class="tarea-checkbox-wrap">
+                <input type="checkbox" ${t.completada ? 'checked' : ''} onchange="ReclamosModule.toggleMarcarTarea(${t.id}, this.checked)">
+                <span class="tarea-texto ${t.completada ? 'tarea-tachada' : ''}">${t.tarea}</span>
+              </label>
+              <div class="tarea-estado-indicator">
+                <span class="badge ${t.completada ? 'badge-success' : 'badge-warning'}">
+                  ${t.completada ? '✓ Marcada' : '⏳ Pendiente'}
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <div class="mis-tareas-item-meta">
+            <span>Asignó: <strong>${t.creado_por_nombre || 'Supervisor'}</strong></span>
+            <span>${fecha}</span>
+          </div>
+        </div>
+      `;
+    }).join('');
+  },
+
+  async toggleMarcarTarea(id, completada) {
+    try {
+      const res = await API.patch(`/tareas/${id}/marcar`, { completada });
+      const index = this.misTareas.findIndex(t => t.id === id);
+      if (index !== -1) {
+        this.misTareas[index].completada = completada;
+        if (res && res.tarea) {
+          this.misTareas[index] = { ...this.misTareas[index], ...res.tarea };
+        }
+      }
+      this.renderMisTareas();
+    } catch (err) {
+      console.error('Error al actualizar estado de la tarea:', err);
+      alert('Error al actualizar la tarea: ' + (err.message || err));
+      this.renderMisTareas();
+    }
   }
 };

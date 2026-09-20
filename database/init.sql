@@ -92,6 +92,21 @@ CREATE TABLE IF NOT EXISTS auditoria_logs (
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
 
+-- 9. TABLA: Tareas Asignadas
+CREATE TABLE IF NOT EXISTS tareas_asignadas (
+    id SERIAL PRIMARY KEY,
+    usuario_id INT NOT NULL REFERENCES usuarios(id) ON DELETE CASCADE,
+    creado_por_id INT NOT NULL REFERENCES usuarios(id) ON DELETE RESTRICT,
+    sucursal_1_id INT NOT NULL REFERENCES sucursales(id) ON DELETE RESTRICT,
+    sucursal_2_id INT REFERENCES sucursales(id) ON DELETE SET NULL,
+    tarea VARCHAR(50) NOT NULL,
+    completada BOOLEAN DEFAULT FALSE,
+    completada_at TIMESTAMP WITH TIME ZONE,
+    activo BOOLEAN DEFAULT TRUE,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
 -- Índices para optimización de consultas y filtros
 CREATE INDEX IF NOT EXISTS idx_reclamos_fecha ON reclamos (fecha);
 CREATE INDEX IF NOT EXISTS idx_reclamos_sucursal ON reclamos (sucursal_id);

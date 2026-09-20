@@ -70,6 +70,9 @@
         <button class="nav-tab-btn" data-tab="edicion">
           <span class="tab-icon">⚙️</span> Edición
         </button>
+        <button class="nav-tab-btn" data-tab="tareas">
+          <span class="tab-icon">📋</span> Asignar Tareas
+        </button>
         <button class="nav-tab-btn" data-tab="perfil">
           <span class="tab-icon">👤</span> Perfil
         </button>
@@ -84,66 +87,82 @@
           <p class="text-muted">Complete los datos de la interacción con el cliente.</p>
         </div>
 
-        <div class="card card-form">
-          <div id="reclamo-form-alert" class="form-alert hidden"></div>
+        <div class="gestion-top-layout">
+          <div class="gestion-col-form">
+            <div class="card card-form">
+              <div id="reclamo-form-alert" class="form-alert hidden"></div>
 
-          <form id="form-gestion-reclamo">
-            <div class="form-grid-2">
-              <div class="form-group">
-                <label for="reclamo-sucursal">Sucursal <span class="req">*</span></label>
-                <select id="reclamo-sucursal" required>
-                  <option value="">-- Seleccione Sucursal --</option>
-                </select>
+              <form id="form-gestion-reclamo">
+                <div class="form-grid-2">
+                  <div class="form-group">
+                    <label for="reclamo-sucursal">Sucursal <span class="req">*</span></label>
+                    <select id="reclamo-sucursal" required>
+                      <option value="">-- Seleccione Sucursal --</option>
+                    </select>
+                  </div>
+
+                  <div class="form-group">
+                    <label for="reclamo-cliente">Número de Cliente / Abonado <span class="req">*</span></label>
+                    <input type="text" id="reclamo-cliente" maxlength="15" required>
+                    <small class="text-muted">Hasta 15 caracteres</small>
+                  </div>
+                </div>
+
+                <hr class="form-divider">
+                <h4 class="form-section-title">Clasificación de la Consulta</h4>
+
+                <div class="form-grid-2">
+                  <div class="form-group">
+                    <label for="reclamo-tipo">Tipo de Consulta <span class="req">*</span></label>
+                    <select id="reclamo-tipo" required>
+                      <option value="">-- Seleccione Tipo de Consulta --</option>
+                    </select>
+                  </div>
+
+                  <div class="form-group">
+                    <label for="reclamo-caracteristica">Características de la Consulta <span class="req">*</span></label>
+                    <select id="reclamo-caracteristica" required disabled>
+                      <option value="">-- Seleccione Característica --</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div class="form-grid-2">
+                  <div class="form-group">
+                    <label for="reclamo-definicion">Definición <span class="text-muted">(Opcional)</span></label>
+                    <select id="reclamo-definicion" disabled>
+                      <option value="">-- Seleccione Definición --</option>
+                    </select>
+                  </div>
+
+                  <div class="form-group">
+                    <label for="reclamo-finalizacion">Finalización <span class="text-muted">(Opcional)</span></label>
+                    <select id="reclamo-finalizacion" disabled>
+                      <option value="">-- Seleccione Finalización --</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div class="form-actions mt-3">
+                  <button type="submit" class="btn btn-primary btn-lg">
+                    <span class="btn-icon">💾</span> Guardar Reclamo
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+
+          <div class="gestion-col-tareas">
+            <div class="card card-mis-tareas">
+              <div class="card-header flex-row justify-between align-center">
+                <h3>📋 Mis Tareas Asignadas</h3>
+                <span id="mis-tareas-badge" class="badge badge-info">0</span>
               </div>
-
-              <div class="form-group">
-                <label for="reclamo-cliente">Número de Cliente / Abonado <span class="req">*</span></label>
-                <input type="text" id="reclamo-cliente" maxlength="15" required>
-                <small class="text-muted">Hasta 15 caracteres</small>
+              <div class="card-body" id="mis-tareas-body">
+                <div class="text-center py-4 text-muted">Cargando tareas asignadas...</div>
               </div>
             </div>
-
-            <hr class="form-divider">
-            <h4 class="form-section-title">Clasificación de la Consulta</h4>
-
-            <div class="form-grid-2">
-              <div class="form-group">
-                <label for="reclamo-tipo">Tipo de Consulta <span class="req">*</span></label>
-                <select id="reclamo-tipo" required>
-                  <option value="">-- Seleccione Tipo de Consulta --</option>
-                </select>
-              </div>
-
-              <div class="form-group">
-                <label for="reclamo-caracteristica">Características de la Consulta <span class="req">*</span></label>
-                <select id="reclamo-caracteristica" required disabled>
-                  <option value="">-- Seleccione Característica --</option>
-                </select>
-              </div>
-            </div>
-
-            <div class="form-grid-2">
-              <div class="form-group">
-                <label for="reclamo-definicion">Definición <span class="text-muted">(Opcional)</span></label>
-                <select id="reclamo-definicion" disabled>
-                  <option value="">-- Seleccione Definición --</option>
-                </select>
-              </div>
-
-              <div class="form-group">
-                <label for="reclamo-finalizacion">Finalización <span class="text-muted">(Opcional)</span></label>
-                <select id="reclamo-finalizacion" disabled>
-                  <option value="">-- Seleccione Finalización --</option>
-                </select>
-              </div>
-            </div>
-
-            <div class="form-actions mt-3">
-              <button type="submit" class="btn btn-primary btn-lg">
-                <span class="btn-icon">💾</span> Guardar Reclamo
-              </button>
-            </div>
-          </form>
+          </div>
         </div>
 
         <div class="card reclamos-preview-card mt-4">
@@ -425,6 +444,96 @@
         </div>
       </section>
 
+      <section id="view-tareas" class="tab-view hidden">
+        <div class="view-header">
+          <h2>Asignación de Tareas</h2>
+          <p class="text-muted">Asigne tareas operativas y sucursales a los miembros del equipo.</p>
+        </div>
+
+        <div class="tareas-layout">
+          <div class="tareas-col-form">
+            <div class="card p-4">
+              <div class="card-header mb-3">
+                <h3>Nueva Asignación de Tarea</h3>
+              </div>
+              <div id="tarea-form-alert" class="form-alert hidden"></div>
+
+              <form id="form-asignar-tarea">
+                <div class="form-grid-2">
+                  <div class="form-group">
+                    <label for="tarea-usuario">Usuario Asignado <span class="req">*</span></label>
+                    <select id="tarea-usuario" required>
+                      <option value="">-- Seleccione Usuario --</option>
+                    </select>
+                    <small class="text-muted">Miembro del equipo que ejecutará la tarea</small>
+                  </div>
+
+                  <div class="form-group">
+                    <label for="tarea-sucursal-1">Sucursal Principal <span class="req">*</span></label>
+                    <select id="tarea-sucursal-1" required>
+                      <option value="">-- Seleccione Sucursal Principal --</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div class="form-grid-2">
+                  <div class="form-group">
+                    <label for="tarea-sucursal-2">Segunda Sucursal <span class="text-muted">(Opcional)</span></label>
+                    <select id="tarea-sucursal-2">
+                      <option value="">-- Ninguna / Opcional --</option>
+                    </select>
+                    <small class="text-muted">Opcionalmente asigne una segunda sucursal</small>
+                  </div>
+
+                  <div class="form-group">
+                    <label for="tarea-descripcion">Tarea Asignada <span class="req">*</span></label>
+                    <input type="text" id="tarea-descripcion" maxlength="50" placeholder="Ej: Cargar pagos o Verificar registros" required>
+                    <small id="tarea-char-counter" class="text-muted">Hasta 50 caracteres (0 / 50)</small>
+                  </div>
+                </div>
+
+                <div class="form-actions mt-3">
+                  <button type="submit" class="btn btn-primary btn-lg">
+                    <span class="btn-icon">📌</span> Asignar Tarea
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+
+          <div class="tareas-col-list">
+            <div class="card p-4">
+              <div class="card-header flex-row justify-between align-center mb-3">
+                <div>
+                  <h3>Tareas Activas</h3>
+                  <p class="text-muted font-sm">Tareas vigentes en el sistema.</p>
+                </div>
+                <span id="tareas-contador" class="badge badge-primary">0 activas</span>
+              </div>
+
+              <div class="table-container">
+                <table class="data-table">
+                  <thead>
+                    <tr>
+                      <th>Usuario</th>
+                      <th>Sucursal(es)</th>
+                      <th>Tarea Diaria</th>
+                      <th>Estado</th>
+                      <th>Acciones</th>
+                    </tr>
+                  </thead>
+                  <tbody id="tabla-tareas-body">
+                    <tr>
+                      <td colspan="5" class="text-center py-4 text-muted">Cargando tareas asignadas...</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
     </main>
   </div>
 
@@ -637,12 +746,70 @@
     </div>
   </div>
 
+  <div id="modal-editar-tarea" class="modal-overlay hidden">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3>Editar Tarea Asignada</h3>
+        <button class="modal-close" onclick="TareasModule.cerrarModalEditar()">&times;</button>
+      </div>
+      <form id="form-editar-tarea">
+        <div class="modal-body">
+          <div id="edit-tarea-alert" class="form-alert hidden"></div>
+
+          <div class="form-group">
+            <label>Usuario Asignado</label>
+            <select id="edit-tarea-usuario" required></select>
+          </div>
+
+          <div class="form-grid-2">
+            <div class="form-group">
+              <label>Sucursal Principal <span class="req">*</span></label>
+              <select id="edit-tarea-sucursal-1" required></select>
+            </div>
+
+            <div class="form-group">
+              <label>Segunda Sucursal <span class="text-muted">(Opcional)</span></label>
+              <select id="edit-tarea-sucursal-2"></select>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>Tarea Asignada <span class="req">*</span></label>
+            <input type="text" id="edit-tarea-descripcion" maxlength="50" required>
+            <small id="edit-tarea-char-counter" class="text-muted">Hasta 50 caracteres</small>
+          </div>
+
+          <div class="form-group">
+            <label>Estado de la Tarea</label>
+            <select id="edit-tarea-activo">
+              <option value="true">Activa (Vigente)</option>
+              <option value="false">Finalizada / Inactiva</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label>Realización de la Tarea</label>
+            <select id="edit-tarea-completada">
+              <option value="false">⏳ Pendiente</option>
+              <option value="true">✓ Marcada / Realizada</option>
+            </select>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline-secondary" onclick="TareasModule.cerrarModalEditar()">Cancelar</button>
+          <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
   <script src="/js/api.js"></script>
   <script src="/js/auth.js"></script>
   <script src="/js/reclamos.js"></script>
   <script src="/js/historial.js"></script>
   <script src="/js/registros.js"></script>
   <script src="/js/edicion.js"></script>
+  <script src="/js/tareas.js"></script>
   <script src="/js/perfil.js"></script>
   <script src="/js/app.js"></script>
 </body>

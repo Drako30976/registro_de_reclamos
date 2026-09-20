@@ -60,6 +60,9 @@ const App = {
       case 'edicion':
         EdicionModule.init();
         break;
+      case 'tareas':
+        TareasModule.init();
+        break;
       case 'perfil':
         PerfilModule.init();
         break;
