@@ -15,4 +15,6 @@ router.post('/estructura', checkRole('Admin', 'Supervisor'), catalogosController
 router.put('/estructura/:nivel/:id', checkRole('Admin', 'Supervisor'), catalogosController.actualizarElementoEstructura);
 router.delete('/estructura/:nivel/:id', checkRole('Admin'), catalogosController.eliminarElementoEstructura);
 
+router.get('/asesores', catalogosController.getAsesores);
+
 module.exports = router;

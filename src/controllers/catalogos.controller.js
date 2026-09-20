@@ -288,6 +288,21 @@ const eliminarElementoEstructura = async (req, res) => {
   }
 };
 
+const getAsesores = async (req, res) => {
+  try {
+    const result = await pool.query(
+      `SELECT id, nombre_completo, usuario, rol 
+       FROM usuarios 
+       WHERE activo = true 
+       ORDER BY nombre_completo ASC`
+    );
+    res.json(result.rows);
+  } catch (error) {
+    console.error('Error al obtener asesores para filtros:', error);
+    res.status(500).json({ error: 'Error al consultar asesores.' });
+  }
+};
+
 module.exports = {
   getSucursales,
   crearSucursal,
@@ -296,5 +311,6 @@ module.exports = {
   getArbolEstructura,
   guardarElementoEstructura,
   actualizarElementoEstructura,
-  eliminarElementoEstructura
+  eliminarElementoEstructura,
+  getAsesores
 };

@@ -18,8 +18,7 @@ const HistorialModule = {
       const [sucursales, tipos, usuarios] = await Promise.all([
         API.get('/catalogos/sucursales'),
         API.get('/catalogos/estructura'),
-
-        API.get('/usuarios').catch(() => [])
+        API.get('/catalogos/asesores').catch(() => [])
       ]);
 
       this.catalogos.sucursales = sucursales;
@@ -61,7 +60,6 @@ const HistorialModule = {
 
   getFilterQueryParams() {
     const params = new URLSearchParams();
-    const fecha = document.getElementById('filtro-fecha')?.value;
     const fechaDesde = document.getElementById('filtro-fecha-desde')?.value;
     const fechaHasta = document.getElementById('filtro-fecha-hasta')?.value;
     const sucursalId = document.getElementById('filtro-sucursal')?.value;
@@ -69,7 +67,6 @@ const HistorialModule = {
     const asesorId = document.getElementById('filtro-asesor')?.value;
     const cliente = document.getElementById('filtro-cliente')?.value;
 
-    if (fecha) params.append('fecha', fecha);
     if (fechaDesde) params.append('fecha_desde', fechaDesde);
     if (fechaHasta) params.append('fecha_hasta', fechaHasta);
     if (sucursalId) params.append('sucursal_id', sucursalId);
@@ -161,7 +158,7 @@ const HistorialModule = {
 
     if (btnLimpiar) {
       btnLimpiar.onclick = () => {
-        const inputs = ['filtro-fecha', 'filtro-fecha-desde', 'filtro-fecha-hasta', 'filtro-sucursal', 'filtro-tipo', 'filtro-asesor', 'filtro-cliente'];
+        const inputs = ['filtro-fecha-desde', 'filtro-fecha-hasta', 'filtro-sucursal', 'filtro-tipo', 'filtro-asesor', 'filtro-cliente'];
         inputs.forEach(id => {
           const el = document.getElementById(id);
           if (el) el.value = '';
