@@ -6,6 +6,7 @@ const { verifyToken, checkRole } = require('../middlewares/auth');
 router.use(verifyToken);
 router.get('/mis-tareas', tareasController.getMisTareas);
 router.patch('/:id/marcar', tareasController.marcarTarea);
+router.put('/:id/marcar', tareasController.marcarTarea);
 
 router.use(checkRole('Admin', 'Supervisor'));
 

@@ -316,11 +316,33 @@ const marcarTarea = async (req, res) => {
         completada_at = CASE WHEN $1 = true THEN CURRENT_TIMESTAMP ELSE NULL END,
         updated_at = CURRENT_TIMESTAMP
       WHERE id = $2
-      RETURNING *
     `;
 
-    const result = await pool.query(updateQuery, [estaCompletada, id]);
-    const tareaActualizada = result.rows[0];
+    await pool.query(updateQuery, [estaCompletada, id]);
+
+    const fullResult = await pool.query(`
+      SELECT 
+        t.id,
+        t.usuario_id,
+        t.sucursal_1_id,
+        s1.nombre AS sucursal_1_nombre,
+        t.sucursal_2_id,
+        s2.nombre AS sucursal_2_nombre,
+        t.tarea,
+        t.completada,
+        t.completada_at,
+        t.activo,
+        t.created_at,
+        t.updated_at,
+        cp.nombre_completo AS creado_por_nombre
+      FROM tareas_asignadas t
+      JOIN sucursales s1 ON t.sucursal_1_id = s1.id
+      LEFT JOIN sucursales s2 ON t.sucursal_2_id = s2.id
+      JOIN usuarios cp ON t.creado_por_id = cp.id
+      WHERE t.id = $1
+    `, [id]);
+
+    const tareaActualizada = fullResult.rows[0];
 
     await registrarAuditoria({
       accion: `El usuario ${req.user.usuario} marcó como ${estaCompletada ? 'completada' : 'pendiente'} la tarea "${tareaOriginal.tarea}" (ID ${id})`,

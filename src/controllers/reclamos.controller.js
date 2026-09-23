@@ -270,6 +270,7 @@ const actualizarReclamo = async (req, res) => {
     if (originalRes.rows.length === 0) {
       return res.status(404).json({ error: 'Reclamo no encontrado.' });
     }
+    const registroOriginal = originalRes.rows[0];
     const clienteAValidar = numero_cliente ? numero_cliente.trim() : registroOriginal.numero_cliente;
     const sucursalAValidar = sucursal_id ? parseInt(sucursal_id, 10) : registroOriginal.sucursal_id;
     const checkExistente = await pool.query(`
@@ -284,10 +285,10 @@ const actualizarReclamo = async (req, res) => {
       JOIN sucursales s ON r.sucursal_id = s.id
       WHERE LOWER(TRIM(r.numero_cliente)) = LOWER(TRIM($1))
         AND r.sucursal_id = $2
-        AND (r.fecha AT TIME ZONE 'America/Argentina/Buenos_Aires')::date = (registroOriginal.fecha AT TIME ZONE 'America/Argentina/Buenos_Aires')::date
-        AND r.id != $3
+        AND (r.fecha AT TIME ZONE 'America/Argentina/Buenos_Aires')::date = ($3::timestamptz AT TIME ZONE 'America/Argentina/Buenos_Aires')::date
+        AND r.id != $4
       LIMIT 1
-    `, [clienteAValidar, sucursalAValidar, id]);
+    `, [clienteAValidar, sucursalAValidar, registroOriginal.fecha, id]);
 
     if (checkExistente.rows.length > 0) {
       const reg = checkExistente.rows[0];

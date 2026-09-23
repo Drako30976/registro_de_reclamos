@@ -104,7 +104,14 @@ const TareasModule = {
           </td>
           <td><strong>${sucursalesTexto}</strong></td>
           <td><span class="badge badge-info">${t.tarea}</span></td>
-          <td>${estadoBadge}</td>
+          <td>
+            <label class="tarea-checkbox-wrap" style="cursor: pointer; display: inline-flex; align-items: center; gap: 0.4rem;">
+              <input type="checkbox" ${t.completada ? 'checked' : ''} onchange="TareasModule.toggleMarcarTarea(${t.id}, this.checked)">
+              <span class="badge ${t.completada ? 'badge-success' : 'badge-warning'}">
+                ${t.completada ? '✓ Marcada' : '⏳ Pendiente'}
+              </span>
+            </label>
+          </td>
           <td class="table-actions">
             <button class="btn btn-sm btn-outline-primary mr-1" onclick="TareasModule.abrirModalEditar(${t.id})">Editar</button>
             <button class="btn btn-sm btn-outline-danger" onclick="TareasModule.confirmarEliminar(${t.id}, '${t.tarea.replace(/'/g, "\\'")}')">Eliminar</button>
@@ -309,6 +316,17 @@ const TareasModule = {
     const modal = document.getElementById('modal-editar-tarea');
     if (modal) modal.classList.add('hidden');
     this.currentEditingId = null;
+  },
+
+  async toggleMarcarTarea(id, completada) {
+    try {
+      await API.patch(`/tareas/${id}/marcar`, { completada });
+      await this.cargarTareas();
+    } catch (err) {
+      console.error('Error al actualizar estado:', err);
+      alert('Error al actualizar estado: ' + (err.message || err));
+      await this.cargarTareas();
+    }
   },
 
   async confirmarEliminar(id, descripcion) {
