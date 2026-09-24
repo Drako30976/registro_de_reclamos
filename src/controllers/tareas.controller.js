@@ -3,6 +3,8 @@ const { registrarAuditoria } = require('../middlewares/audit');
 
 const getTareas = async (req, res) => {
   try {
+    await pool.query("UPDATE tareas_asignadas SET activo = false WHERE activo = true AND created_at < NOW() - INTERVAL '14 hours'");
+
     const query = `
       SELECT 
         t.id,
@@ -27,7 +29,7 @@ const getTareas = async (req, res) => {
       JOIN usuarios cp ON t.creado_por_id = cp.id
       JOIN sucursales s1 ON t.sucursal_1_id = s1.id
       LEFT JOIN sucursales s2 ON t.sucursal_2_id = s2.id
-      WHERE t.activo = true
+      WHERE t.activo = true AND t.created_at >= NOW() - INTERVAL '14 hours'
       ORDER BY t.created_at DESC, t.id DESC
     `;
 
@@ -43,13 +45,15 @@ const crearTarea = async (req, res) => {
   try {
     const { usuario_id, sucursal_1_id, sucursal_2_id, tarea } = req.body;
 
-    if (!usuario_id || !sucursal_1_id || !tarea || !tarea.trim()) {
+    if (!usuario_id || !sucursal_1_id) {
       return res.status(400).json({
-        error: 'El usuario, la primera sucursal y la descripción de la tarea son obligatorios.'
+        error: 'El usuario y la sucursal principal son obligatorios.'
       });
     }
 
-    if (tarea.trim().length > 50) {
+    const tareaTexto = tarea && typeof tarea === 'string' && tarea.trim().length > 0 ? tarea.trim() : null;
+
+    if (tareaTexto && tareaTexto.length > 50) {
       return res.status(400).json({
         error: 'La tarea no puede superar los 50 caracteres.'
       });
@@ -61,6 +65,24 @@ const crearTarea = async (req, res) => {
     }
     if (checkUser.rows[0].usuario.toLowerCase() === 'admin') {
       return res.status(400).json({ error: 'No se pueden asignar tareas al usuario admin.' });
+    }
+
+    const checkActiva = await pool.query(`
+      SELECT t.id, t.tarea, s1.nombre AS sucursal_1_nombre,
+             TO_CHAR(t.created_at AT TIME ZONE 'America/Argentina/Buenos_Aires', 'DD/MM/YYYY HH24:MI') as fecha_fmt
+      FROM tareas_asignadas t
+      JOIN sucursales s1 ON t.sucursal_1_id = s1.id
+      WHERE t.usuario_id = $1 
+        AND t.activo = true 
+        AND t.created_at >= NOW() - INTERVAL '14 hours'
+      LIMIT 1
+    `, [usuario_id]);
+
+    if (checkActiva.rows.length > 0) {
+      const tEx = checkActiva.rows[0];
+      return res.status(400).json({
+        error: `El asesor ya posee una tarea activa asignada (${tEx.fecha_fmt} - Sucursal: ${tEx.sucursal_1_nombre}). No se podrá asignar otra hasta que finalice o sea eliminada la que está activa.`
+      });
     }
 
     const query = `
@@ -75,7 +97,7 @@ const crearTarea = async (req, res) => {
       req.user.id,
       sucursal_1_id,
       sucursal_2_id || null,
-      tarea.trim()
+      tareaTexto
     ];
 
     const result = await pool.query(query, values);
@@ -110,8 +132,12 @@ const crearTarea = async (req, res) => {
 
     const tareaCompleta = fullResult.rows[0];
 
+    const detalleAccion = tareaTexto 
+      ? `Se asignó la tarea "${tareaTexto}" al usuario ${tareaCompleta.usuario_nombre}`
+      : `Se asignó la sucursal ${tareaCompleta.sucursal_1_nombre} al usuario ${tareaCompleta.usuario_nombre}`;
+
     await registrarAuditoria({
-      accion: `Se asignó la tarea "${tarea.trim()}" al usuario ${tareaCompleta.usuario_nombre}`,
+      accion: detalleAccion,
       usuario_id: req.user.id,
       usuario_nombre: req.user.usuario,
       entidad: 'tareas_asignadas',
@@ -140,6 +166,8 @@ const actualizarTarea = async (req, res) => {
     }
     const tareaOriginal = originalRes.rows[0];
 
+    const targetUserId = usuario_id ? parseInt(usuario_id, 10) : tareaOriginal.usuario_id;
+
     if (usuario_id) {
       const checkUser = await pool.query('SELECT id, usuario FROM usuarios WHERE id = $1', [usuario_id]);
       if (checkUser.rows.length > 0 && checkUser.rows[0].usuario.toLowerCase() === 'admin') {
@@ -147,7 +175,33 @@ const actualizarTarea = async (req, res) => {
       }
     }
 
-    if (tarea && tarea.trim().length > 50) {
+    const estaActiva = activo !== undefined ? (activo === true || activo === 'true') : tareaOriginal.activo;
+
+    if (estaActiva) {
+      const checkOtro = await pool.query(`
+        SELECT t.id, s1.nombre AS sucursal_1_nombre,
+               TO_CHAR(t.created_at AT TIME ZONE 'America/Argentina/Buenos_Aires', 'DD/MM/YYYY HH24:MI') as fecha_fmt
+        FROM tareas_asignadas t
+        JOIN sucursales s1 ON t.sucursal_1_id = s1.id
+        WHERE t.usuario_id = $1 
+          AND t.id != $2
+          AND t.activo = true 
+          AND t.created_at >= NOW() - INTERVAL '14 hours'
+        LIMIT 1
+      `, [targetUserId, id]);
+
+      if (checkOtro.rows.length > 0) {
+        return res.status(400).json({
+          error: 'El asesor ya posee otra tarea activa asignada. No se le puede asignar esta tarea hasta que finalice la anterior.'
+        });
+      }
+    }
+
+    const tareaTexto = tarea !== undefined 
+      ? (typeof tarea === 'string' && tarea.trim().length > 0 ? tarea.trim() : null)
+      : tareaOriginal.tarea;
+
+    if (tareaTexto && tareaTexto.length > 50) {
       return res.status(400).json({ error: 'La tarea no puede superar los 50 caracteres.' });
     }
 
@@ -157,7 +211,7 @@ const actualizarTarea = async (req, res) => {
         usuario_id = COALESCE($1, usuario_id),
         sucursal_1_id = COALESCE($2, sucursal_1_id),
         sucursal_2_id = $3,
-        tarea = COALESCE($4, tarea),
+        tarea = $4,
         activo = COALESCE($5, activo),
         completada = COALESCE($6, completada),
         completada_at = CASE 
@@ -174,7 +228,7 @@ const actualizarTarea = async (req, res) => {
       usuario_id || null,
       sucursal_1_id || null,
       sucursal_2_id !== undefined ? sucursal_2_id : tareaOriginal.sucursal_2_id,
-      tarea ? tarea.trim() : null,
+      tareaTexto,
       activo !== undefined ? activo : null,
       completada !== undefined ? completada : null,
       id
@@ -212,7 +266,7 @@ const actualizarTarea = async (req, res) => {
     const tareaActualizada = fullResult.rows[0];
 
     await registrarAuditoria({
-      accion: `Se modificó la tarea asignada ID ${id} (${tareaActualizada.tarea})`,
+      accion: `Se modificó la tarea asignada ID ${id} (${tareaActualizada.tarea || 'Sin descripción'})`,
       usuario_id: req.user.id,
       usuario_nombre: req.user.usuario,
       entidad: 'tareas_asignadas',
@@ -244,7 +298,7 @@ const eliminarTarea = async (req, res) => {
     await pool.query('DELETE FROM tareas_asignadas WHERE id = $1', [id]);
 
     await registrarAuditoria({
-      accion: `Se eliminó la tarea asignada ID ${id} ("${tareaOriginal.tarea}")`,
+      accion: `Se eliminó la tarea asignada ID ${id} ("${tareaOriginal.tarea || 'Sin descripción'}")`,
       usuario_id: req.user.id,
       usuario_nombre: req.user.usuario,
       entidad: 'tareas_asignadas',
@@ -261,6 +315,8 @@ const eliminarTarea = async (req, res) => {
 
 const getMisTareas = async (req, res) => {
   try {
+    await pool.query("UPDATE tareas_asignadas SET activo = false WHERE activo = true AND created_at < NOW() - INTERVAL '14 hours'");
+
     const query = `
       SELECT 
         t.id,
@@ -280,7 +336,7 @@ const getMisTareas = async (req, res) => {
       JOIN sucursales s1 ON t.sucursal_1_id = s1.id
       LEFT JOIN sucursales s2 ON t.sucursal_2_id = s2.id
       JOIN usuarios cp ON t.creado_por_id = cp.id
-      WHERE t.usuario_id = $1 AND t.activo = true
+      WHERE t.usuario_id = $1 AND t.activo = true AND t.created_at >= NOW() - INTERVAL '14 hours'
       ORDER BY t.created_at DESC, t.id DESC
     `;
 

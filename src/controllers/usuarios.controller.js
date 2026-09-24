@@ -24,8 +24,8 @@ const crearUsuario = async (req, res) => {
       return res.status(400).json({ error: 'Todos los campos obligatorios deben ser completados.' });
     }
 
-    if (req.user.rol === 'Supervisor' && rol !== 'Asesor') {
-      return res.status(403).json({ error: 'Como Supervisor sólo tiene permitido crear usuarios con rol "Asesor".' });
+    if (req.user.rol === 'Supervisor' && rol !== 'Asesor' && rol !== 'Espectador') {
+      return res.status(403).json({ error: 'Como Supervisor sólo tiene permitido crear usuarios con rol "Asesor" o "Espectador".' });
     }
 
     if (req.user.rol !== 'Admin' && req.user.rol !== 'Supervisor') {
@@ -95,8 +95,8 @@ const actualizarUsuario = async (req, res) => {
       if (usuarioObjetivo.rol === 'Admin' || (usuarioObjetivo.rol === 'Supervisor' && usuarioObjetivo.id !== req.user.id)) {
         return res.status(403).json({ error: 'No puede modificar a un usuario de su mismo rango o superior.' });
       }
-      if (rol && rol !== 'Asesor' && rol !== usuarioObjetivo.rol) {
-        return res.status(403).json({ error: 'Como Supervisor sólo puede asignar rol "Asesor".' });
+      if (rol && rol !== 'Asesor' && rol !== 'Espectador' && rol !== usuarioObjetivo.rol) {
+        return res.status(403).json({ error: 'Como Supervisor sólo puede asignar rol "Asesor" o "Espectador".' });
       }
     }
 

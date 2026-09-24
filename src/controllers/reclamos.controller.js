@@ -9,7 +9,8 @@ const crearReclamo = async (req, res) => {
       tipo_consulta_id,
       caracteristica_id,
       definicion_id,
-      finalizacion_id
+      finalizacion_id,
+      comentario
     } = req.body;
 
     const asesor_id = req.user.id;
@@ -23,6 +24,16 @@ const crearReclamo = async (req, res) => {
     if (numero_cliente.trim().length > 15) {
       return res.status(400).json({
         error: 'El número de cliente no puede superar los 15 caracteres.'
+      });
+    }
+
+    const comentarioTexto = comentario && typeof comentario === 'string' && comentario.trim().length > 0
+      ? comentario.trim()
+      : null;
+
+    if (comentarioTexto && comentarioTexto.length > 500) {
+      return res.status(400).json({
+        error: 'El comentario no puede superar los 500 caracteres.'
       });
     }
 
@@ -51,8 +62,8 @@ const crearReclamo = async (req, res) => {
 
     const query = `
       INSERT INTO reclamos 
-        (sucursal_id, usuario_id, numero_cliente, tipo_consulta_id, caracteristica_id, definicion_id, finalizacion_id)
-      VALUES ($1, $2, $3, $4, $5, $6, $7)
+        (sucursal_id, usuario_id, numero_cliente, tipo_consulta_id, caracteristica_id, definicion_id, finalizacion_id, comentario)
+      VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
       RETURNING id
     `;
 
@@ -63,7 +74,8 @@ const crearReclamo = async (req, res) => {
       tipo_consulta_id,
       caracteristica_id,
       definicion_id || null,
-      finalizacion_id || null
+      finalizacion_id || null,
+      comentarioTexto
     ];
 
     const result = await pool.query(query, values);
@@ -74,6 +86,7 @@ const crearReclamo = async (req, res) => {
         r.id,
         r.fecha,
         r.numero_cliente,
+        r.comentario,
         r.created_at,
         r.updated_at,
         s.id AS sucursal_id,
@@ -137,6 +150,7 @@ const getReclamos = async (req, res) => {
         r.id,
         r.fecha,
         r.numero_cliente,
+        r.comentario,
         r.created_at,
         r.updated_at,
         s.id AS sucursal_id,
@@ -245,7 +259,8 @@ const actualizarReclamo = async (req, res) => {
       tipo_consulta_id,
       caracteristica_id,
       definicion_id,
-      finalizacion_id
+      finalizacion_id,
+      comentario
     } = req.body;
 
     const originalQuery = `
@@ -297,6 +312,14 @@ const actualizarReclamo = async (req, res) => {
       });
     }
 
+    const comentarioTexto = comentario !== undefined
+      ? (typeof comentario === 'string' && comentario.trim().length > 0 ? comentario.trim() : null)
+      : registroOriginal.comentario;
+
+    if (comentarioTexto && comentarioTexto.length > 500) {
+      return res.status(400).json({ error: 'El comentario no puede superar los 500 caracteres.' });
+    }
+
     const updateQuery = `
       UPDATE reclamos
       SET 
@@ -306,8 +329,9 @@ const actualizarReclamo = async (req, res) => {
         caracteristica_id = COALESCE($4, caracteristica_id),
         definicion_id = $5,
         finalizacion_id = $6,
+        comentario = $7,
         updated_at = CURRENT_TIMESTAMP
-      WHERE id = $7
+      WHERE id = $8
       RETURNING *
     `;
 
@@ -318,12 +342,13 @@ const actualizarReclamo = async (req, res) => {
       caracteristica_id || null,
       definicion_id !== undefined ? definicion_id : registroOriginal.definicion_id,
       finalizacion_id !== undefined ? finalizacion_id : registroOriginal.finalizacion_id,
+      comentarioTexto,
       id
     ];
 
     const result = await pool.query(updateQuery, updateValues);
 
-    const resumenOriginal = `Fecha: ${new Date(registroOriginal.fecha).toLocaleString()} | Sucursal: ${registroOriginal.sucursal} | Asesor: ${registroOriginal.asesor} | Abonado: ${registroOriginal.numero_cliente} | Tipo: ${registroOriginal.tipo_consulta} | Característica: ${registroOriginal.caracteristica} | Definición: ${registroOriginal.definicion || 'N/A'} | Finalización: ${registroOriginal.finalizacion || 'N/A'}`;
+    const resumenOriginal = `Fecha: ${new Date(registroOriginal.fecha).toLocaleString()} | Sucursal: ${registroOriginal.sucursal} | Asesor: ${registroOriginal.asesor} | Abonado: ${registroOriginal.numero_cliente} | Tipo: ${registroOriginal.tipo_consulta} | Característica: ${registroOriginal.caracteristica} | Definición: ${registroOriginal.definicion || 'N/A'} | Finalización: ${registroOriginal.finalizacion || 'N/A'} | Comentario: ${registroOriginal.comentario || 'N/A'}`;
 
     await registrarAuditoria({
       accion: `Se modificó registro del abonado ${registroOriginal.numero_cliente}`,
@@ -378,7 +403,7 @@ const eliminarReclamo = async (req, res) => {
 
     await pool.query('DELETE FROM reclamos WHERE id = $1', [id]);
 
-    const resumenOriginal = `Fecha: ${new Date(registroOriginal.fecha).toLocaleString()} | Sucursal: ${registroOriginal.sucursal} | Asesor: ${registroOriginal.asesor} | Abonado: ${registroOriginal.numero_cliente} | Tipo: ${registroOriginal.tipo_consulta} | Característica: ${registroOriginal.caracteristica} | Definición: ${registroOriginal.definicion || 'N/A'} | Finalización: ${registroOriginal.finalizacion || 'N/A'}`;
+    const resumenOriginal = `Fecha: ${new Date(registroOriginal.fecha).toLocaleString()} | Sucursal: ${registroOriginal.sucursal} | Asesor: ${registroOriginal.asesor} | Abonado: ${registroOriginal.numero_cliente} | Tipo: ${registroOriginal.tipo_consulta} | Característica: ${registroOriginal.caracteristica} | Definición: ${registroOriginal.definicion || 'N/A'} | Finalización: ${registroOriginal.finalizacion || 'N/A'} | Comentario: ${registroOriginal.comentario || 'N/A'}`;
 
     await registrarAuditoria({
       accion: `Se borró registro del abonado ${registroOriginal.numero_cliente}`,

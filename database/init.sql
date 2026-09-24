@@ -74,6 +74,7 @@ CREATE TABLE IF NOT EXISTS reclamos (
     caracteristica_id INT NOT NULL REFERENCES caracteristicas_consulta(id) ON DELETE RESTRICT,
     definicion_id INT REFERENCES definiciones_consulta(id) ON DELETE SET NULL,
     finalizacion_id INT REFERENCES finalizaciones(id) ON DELETE SET NULL,
+    comentario VARCHAR(500),
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
@@ -99,7 +100,7 @@ CREATE TABLE IF NOT EXISTS tareas_asignadas (
     creado_por_id INT NOT NULL REFERENCES usuarios(id) ON DELETE RESTRICT,
     sucursal_1_id INT NOT NULL REFERENCES sucursales(id) ON DELETE RESTRICT,
     sucursal_2_id INT REFERENCES sucursales(id) ON DELETE SET NULL,
-    tarea VARCHAR(50) NOT NULL,
+    tarea VARCHAR(50),
     completada BOOLEAN DEFAULT FALSE,
     completada_at TIMESTAMP WITH TIME ZONE,
     activo BOOLEAN DEFAULT TRUE,

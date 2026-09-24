@@ -959,6 +959,38 @@ body {
   align-items: center;
 }
 
+.user-modal-avatar {
+  width: 140px;
+  height: 140px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid var(--primary);
+  box-shadow: 0 4px 14px rgba(37, 99, 235, 0.2);
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.user-modal-avatar:hover {
+  transform: scale(1.06);
+  box-shadow: 0 6px 20px rgba(37, 99, 235, 0.35);
+}
+
+.modal-zoom-box {
+  max-width: 440px;
+  width: 90vw;
+}
+
+.zoom-foto-display {
+  max-width: 100%;
+  max-height: 75vh;
+  width: 360px;
+  height: 360px;
+  object-fit: cover;
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-md);
+  display: inline-block;
+}
+
 .user-quote-box {
   background: #F8FAFC;
   border: 1px solid #E2E8F0;
@@ -966,7 +998,7 @@ body {
   border-radius: var(--radius-sm);
   width: 100%;
   box-sizing: border-box;
-  text-align: left;
+  text-align: center;
   margin-top: 0.5rem;
 }
 

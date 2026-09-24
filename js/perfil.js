@@ -291,7 +291,10 @@ const PerfilModule = {
     if (selectRol) {
       selectRol.innerHTML = '';
       if (currentUser && currentUser.rol === 'Supervisor') {
-        selectRol.innerHTML = '<option value="Asesor">Asesor</option>';
+        selectRol.innerHTML = `
+          <option value="Asesor" selected>Asesor</option>
+          <option value="Espectador">Espectador</option>
+        `;
       } else {
         selectRol.innerHTML = `
           <option value="Admin">Admin</option>
@@ -322,7 +325,10 @@ const PerfilModule = {
     if (selectRol) {
       selectRol.innerHTML = '';
       if (currentUser && currentUser.rol === 'Supervisor') {
-        selectRol.innerHTML = '<option value="Asesor">Asesor</option>';
+        selectRol.innerHTML = `
+          <option value="Asesor" ${u.rol === 'Asesor' ? 'selected' : ''}>Asesor</option>
+          <option value="Espectador" ${u.rol === 'Espectador' ? 'selected' : ''}>Espectador</option>
+        `;
       } else {
         selectRol.innerHTML = `
           <option value="Admin" ${u.rol === 'Admin' ? 'selected' : ''}>Admin</option>

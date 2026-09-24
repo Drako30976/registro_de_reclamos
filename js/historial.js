@@ -81,7 +81,7 @@ const HistorialModule = {
     const tbody = document.getElementById('tabla-historial-body');
     if (!tbody) return;
 
-    tbody.innerHTML = '<tr><td colspan="9" class="text-center py-4">Cargando registros...</td></tr>';
+    tbody.innerHTML = '<tr><td colspan="10" class="text-center py-4">Cargando registros...</td></tr>';
 
     try {
       const qs = this.getFilterQueryParams();
@@ -89,7 +89,7 @@ const HistorialModule = {
       this.reclamos = data;
       this.renderTabla();
     } catch (err) {
-      tbody.innerHTML = `<tr><td colspan="9" class="text-center text-danger py-4">Error al cargar registros: ${err.message}</td></tr>`;
+      tbody.innerHTML = `<tr><td colspan="10" class="text-center text-danger py-4">Error al cargar registros: ${err.message}</td></tr>`;
     }
   },
 
@@ -101,7 +101,7 @@ const HistorialModule = {
     const rol = user ? user.rol : '';
 
     if (this.reclamos.length === 0) {
-      tbody.innerHTML = '<tr><td colspan="9" class="text-center py-6 text-muted">No se encontraron reclamos con los filtros aplicados.</td></tr>';
+      tbody.innerHTML = '<tr><td colspan="10" class="text-center py-6 text-muted">No se encontraron reclamos con los filtros aplicados.</td></tr>';
       return;
     }
 
@@ -126,6 +126,10 @@ const HistorialModule = {
         botonesAccion = `<span class="badge badge-secondary">Solo lectura</span>`;
       }
 
+      const comentarioHtml = r.comentario 
+        ? `<span title="${r.comentario.replace(/"/g, '&quot;')}">${r.comentario.length > 30 ? r.comentario.substring(0, 30) + '...' : r.comentario}</span>`
+        : '<span class="text-muted">-</span>';
+
       return `
         <tr>
           <td><strong>${fechaFormateada}</strong></td>
@@ -140,6 +144,7 @@ const HistorialModule = {
           <td>${r.caracteristica}</td>
           <td>${r.definicion || '-'}</td>
           <td>${r.finalizacion ? `<span class="status-pill status-${this.slugify(r.finalizacion)}">${r.finalizacion}</span>` : '-'}</td>
+          <td>${comentarioHtml}</td>
           <td class="table-actions">${botonesAccion}</td>
         </tr>
       `;
@@ -288,6 +293,11 @@ const HistorialModule = {
         actualizarCascadaEdit(tipoId, carId, defId);
       };
 
+      const inputEditComentario = document.getElementById('edit-comentario');
+      if (inputEditComentario) {
+        inputEditComentario.value = r.comentario || '';
+      }
+
       modal.classList.remove('hidden');
     } catch (err) {
       alert('Error al cargar datos del reclamo: ' + err.message);
@@ -303,6 +313,12 @@ const HistorialModule = {
     const caracteristica_id = parseInt(document.getElementById('edit-caracteristica').value, 10);
     const definicion_id = parseInt(document.getElementById('edit-definicion').value, 10) || null;
     const finalizacion_id = parseInt(document.getElementById('edit-finalizacion').value, 10) || null;
+    const comentario = document.getElementById('edit-comentario')?.value?.trim() || null;
+
+    if (comentario && comentario.length > 500) {
+      alert('El comentario no puede superar los 500 caracteres.');
+      return;
+    }
 
     try {
       await API.put(`/reclamos/${this.currentEditingId}`, {
@@ -311,7 +327,8 @@ const HistorialModule = {
         tipo_consulta_id,
         caracteristica_id,
         definicion_id,
-        finalizacion_id
+        finalizacion_id,
+        comentario
       });
 
       this.cerrarModalEditar();
@@ -366,7 +383,7 @@ const HistorialModule = {
       rolEl.className = `role-badge role-${u.rol.toLowerCase()}`;
       
       fraseEl.textContent = u.descripcion && u.descripcion.trim() 
-        ? `"${u.descripcion.trim()}"` 
+        ? u.descripcion.trim() 
         : 'Este usuario aún no ha agregado una descripción o frase personal.';
 
       if (avatarEl) {
@@ -381,5 +398,26 @@ const HistorialModule = {
   cerrarModalVerPerfil() {
     const modal = document.getElementById('modal-ver-perfil-usuario');
     if (modal) modal.classList.add('hidden');
+  },
+
+  abrirModalZoomFoto() {
+    const avatarEl = document.getElementById('ver-perfil-avatar');
+    const zoomModal = document.getElementById('modal-zoom-foto');
+    const zoomImg = document.getElementById('zoom-foto-img');
+    const zoomNombre = document.getElementById('modal-zoom-nombre');
+    const nombreEl = document.getElementById('ver-perfil-nombre');
+
+    if (avatarEl && zoomModal && zoomImg) {
+      zoomImg.src = avatarEl.src;
+      if (zoomNombre && nombreEl) {
+        zoomNombre.textContent = nombreEl.textContent;
+      }
+      zoomModal.classList.remove('hidden');
+    }
+  },
+
+  cerrarModalZoomFoto() {
+    const zoomModal = document.getElementById('modal-zoom-foto');
+    if (zoomModal) zoomModal.classList.add('hidden');
   }
 };

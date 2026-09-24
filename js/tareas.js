@@ -36,7 +36,9 @@ const TareasModule = {
     if (selUser) {
       selUser.innerHTML = '<option value="">-- Seleccione Usuario --</option>';
       this.usuarios.forEach(u => {
-        selUser.innerHTML += `<option value="${u.id}">${u.nombre_completo} (${u.rol})</option>`;
+        const tieneActiva = this.tareas.some(t => t.usuario_id === u.id);
+        const activaTag = tieneActiva ? ' ⚠️ [Tiene tarea activa]' : '';
+        selUser.innerHTML += `<option value="${u.id}">${u.nombre_completo} (${u.rol})${activaTag}</option>`;
       });
     }
 
@@ -71,6 +73,7 @@ const TareasModule = {
       }
 
       this.renderTabla();
+      this.poblarDropdowns();
     } catch (err) {
       tbody.innerHTML = `<tr><td colspan="8" class="text-center text-danger py-4">Error al cargar tareas: ${err.message}</td></tr>`;
     }
@@ -90,9 +93,20 @@ const TareasModule = {
         ? `${t.sucursal_1_nombre} / ${t.sucursal_2_nombre}`
         : t.sucursal_1_nombre;
 
-      const estadoBadge = t.completada
-        ? `<span class="badge badge-success" title="Completada por el usuario">✓ Marcada</span>`
-        : `<span class="badge badge-warning" title="Aún no realizada">⏳ Pendiente</span>`;
+      const tareaTexto = t.tarea
+        ? `<span class="badge badge-info">${t.tarea}</span>`
+        : `<span class="badge badge-secondary" style="opacity: 0.7;">Sin tarea diaria</span>`;
+
+      const estadoHtml = t.tarea
+        ? `<label class="tarea-checkbox-wrap" style="cursor: pointer; display: inline-flex; align-items: center; gap: 0.4rem;">
+            <input type="checkbox" ${t.completada ? 'checked' : ''} onchange="TareasModule.toggleMarcarTarea(${t.id}, this.checked)">
+            <span class="badge ${t.completada ? 'badge-success' : 'badge-warning'}">
+              ${t.completada ? '✓ Marcada' : '⏳ Pendiente'}
+            </span>
+          </label>`
+        : `<span class="badge badge-secondary" style="opacity: 0.7;">-</span>`;
+
+      const descParaEliminar = (t.tarea || sucursalesTexto).replace(/'/g, "\\'");
 
       return `
         <tr>
@@ -103,18 +117,11 @@ const TareasModule = {
             <div><small class="role-badge role-${t.usuario_rol.toLowerCase()}">${t.usuario_rol}</small></div>
           </td>
           <td><strong>${sucursalesTexto}</strong></td>
-          <td><span class="badge badge-info">${t.tarea}</span></td>
-          <td>
-            <label class="tarea-checkbox-wrap" style="cursor: pointer; display: inline-flex; align-items: center; gap: 0.4rem;">
-              <input type="checkbox" ${t.completada ? 'checked' : ''} onchange="TareasModule.toggleMarcarTarea(${t.id}, this.checked)">
-              <span class="badge ${t.completada ? 'badge-success' : 'badge-warning'}">
-                ${t.completada ? '✓ Marcada' : '⏳ Pendiente'}
-              </span>
-            </label>
-          </td>
+          <td>${tareaTexto}</td>
+          <td>${estadoHtml}</td>
           <td class="table-actions">
             <button class="btn btn-sm btn-outline-primary mr-1" onclick="TareasModule.abrirModalEditar(${t.id})">Editar</button>
-            <button class="btn btn-sm btn-outline-danger" onclick="TareasModule.confirmarEliminar(${t.id}, '${t.tarea.replace(/'/g, "\\'")}')">Eliminar</button>
+            <button class="btn btn-sm btn-outline-danger" onclick="TareasModule.confirmarEliminar(${t.id}, '${descParaEliminar}')">Eliminar</button>
           </td>
         </tr>
       `;
@@ -144,13 +151,13 @@ const TareasModule = {
         const sucursal_2_id = sucursal_2_val ? parseInt(sucursal_2_val, 10) : null;
         const tarea = inputDesc.value.trim();
 
-        if (!usuario_id || !sucursal_1_id || !tarea) {
+        if (!usuario_id || !sucursal_1_id) {
           alertEl.textContent = 'Por favor complete todos los campos obligatorios (*)';
           alertEl.className = 'form-alert error';
           return;
         }
 
-        if (tarea.length > 50) {
+        if (tarea && tarea.length > 50) {
           alertEl.textContent = 'La descripción de la tarea no puede exceder los 50 caracteres.';
           alertEl.className = 'form-alert error';
           return;
@@ -165,7 +172,7 @@ const TareasModule = {
             usuario_id,
             sucursal_1_id,
             sucursal_2_id,
-            tarea
+            tarea: tarea || null
           });
 
           alertEl.textContent = '¡Tarea asignada con éxito!';
@@ -213,13 +220,13 @@ const TareasModule = {
         const activo = document.getElementById('edit-tarea-activo').value === 'true';
         const completada = document.getElementById('edit-tarea-completada').value === 'true';
 
-        if (!usuario_id || !sucursal_1_id || !tarea) {
+        if (!usuario_id || !sucursal_1_id) {
           alertEl.textContent = 'Por favor complete todos los campos obligatorios (*)';
           alertEl.className = 'form-alert error';
           return;
         }
 
-        if (tarea.length > 50) {
+        if (tarea && tarea.length > 50) {
           alertEl.textContent = 'La descripción de la tarea no puede superar 50 caracteres.';
           alertEl.className = 'form-alert error';
           return;
@@ -234,7 +241,7 @@ const TareasModule = {
             usuario_id,
             sucursal_1_id,
             sucursal_2_id,
-            tarea,
+            tarea: tarea || null,
             activo,
             completada
           });
@@ -297,8 +304,8 @@ const TareasModule = {
     }
 
     if (inputDesc) {
-      inputDesc.value = tarea.tarea;
-      if (counter) counter.textContent = `Hasta 50 caracteres (${tarea.tarea.length} / 50)`;
+      inputDesc.value = tarea.tarea || '';
+      if (counter) counter.textContent = `Hasta 50 caracteres (${(tarea.tarea || '').length} / 50)`;
     }
 
     if (selActivo) {

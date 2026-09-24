@@ -23,7 +23,8 @@ const emitirReportePDF = async (req, res) => {
         tc.contenido AS tipo_consulta,
         cc.contenido AS caracteristica,
         COALESCE(dc.contenido, '-') AS definicion,
-        COALESCE(f.contenido, '-') AS finalizacion
+        COALESCE(f.contenido, '-') AS finalizacion,
+        COALESCE(r.comentario, '-') AS comentario
       FROM reclamos r
       JOIN sucursales s ON r.sucursal_id = s.id
       JOIN usuarios u ON r.usuario_id = u.id

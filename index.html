@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Sistema de Gestión y Registro de Reclamos</title>
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
   <link rel="stylesheet" href="/css/style.css">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -143,6 +144,12 @@
                   </div>
                 </div>
 
+                <div class="form-group mt-2">
+                  <label for="reclamo-comentario">Comentario <span class="text-muted">(Opcional)</span></label>
+                  <textarea id="reclamo-comentario" rows="3" maxlength="500" placeholder="Ingrese un comentario adicional sobre el reclamo (Opcional)"></textarea>
+                  <small id="reclamo-comentario-counter" class="text-muted">Opcional - Hasta 500 caracteres (0 / 500)</small>
+                </div>
+
                 <div class="form-actions mt-3">
                   <button type="submit" class="btn btn-primary btn-lg">
                     <span class="btn-icon">💾</span> Guardar Reclamo
@@ -182,11 +189,12 @@
                   <th>Características</th>
                   <th>Definición</th>
                   <th>Finalización</th>
+                  <th>Comentario</th>
                 </tr>
               </thead>
               <tbody id="tabla-preview-body">
                 <tr>
-                  <td colspan="8" class="text-center py-4 text-muted">Aún no se han cargado reclamos en esta sesión.</td>
+                  <td colspan="9" class="text-center py-4 text-muted">Aún no se han cargado reclamos en esta sesión.</td>
                 </tr>
               </tbody>
             </table>
@@ -262,12 +270,13 @@
                 <th>Características</th>
                 <th>Definición</th>
                 <th>Finalización</th>
+                <th>Comentario</th>
                 <th>Acciones</th>
               </tr>
             </thead>
             <tbody id="tabla-historial-body">
               <tr>
-                <td colspan="9" class="text-center py-4">Cargando reclamos...</td>
+                <td colspan="10" class="text-center py-4">Cargando reclamos...</td>
               </tr>
             </tbody>
           </table>
@@ -486,9 +495,9 @@
                   </div>
 
                   <div class="form-group">
-                    <label for="tarea-descripcion">Tarea Asignada <span class="req">*</span></label>
-                    <input type="text" id="tarea-descripcion" maxlength="50" placeholder="Ej: Cargar pagos o Verificar registros" required>
-                    <small id="tarea-char-counter" class="text-muted">Hasta 50 caracteres (0 / 50)</small>
+                    <label for="tarea-descripcion">Tarea Diaria <span class="text-muted">(Opcional)</span></label>
+                    <input type="text" id="tarea-descripcion" maxlength="50" placeholder="Ej: Cargar pagos o Verificar registros (Opcional)">
+                    <small id="tarea-char-counter" class="text-muted">Opcional - Hasta 50 caracteres (0 / 50)</small>
                   </div>
                 </div>
 
@@ -568,6 +577,10 @@
           <div class="form-group">
             <label>Finalización</label>
             <select id="edit-finalizacion"></select>
+          </div>
+          <div class="form-group">
+            <label for="edit-comentario">Comentario <span class="text-muted">(Opcional)</span></label>
+            <textarea id="edit-comentario" rows="3" maxlength="500" placeholder="Comentario opcional"></textarea>
           </div>
         </div>
         <div class="modal-footer">
@@ -728,20 +741,34 @@
       </div>
       <div class="modal-body text-center p-4">
         <div class="user-card-preview">
-          <img id="ver-perfil-avatar" src="https://ui-avatars.com/api/?name=User&background=3B82F6&color=fff&size=150" alt="Avatar" class="profile-large-avatar mb-3">
+          <img id="ver-perfil-avatar" src="https://ui-avatars.com/api/?name=User&background=3B82F6&color=fff&size=150" alt="Avatar" class="user-modal-avatar mb-3" onclick="HistorialModule.abrirModalZoomFoto()" title="Hacer clic para ampliar la foto">
           <h3 id="ver-perfil-nombre" class="font-bold text-main mb-1">-</h3>
           <p id="ver-perfil-usuario" class="text-muted font-sm mb-2">-</p>
           <div class="mb-3">
             <span id="ver-perfil-rol" class="role-badge">Rol</span>
           </div>
           <div class="user-quote-box p-3">
-            <span class="quote-icon">💬</span>
             <p id="ver-perfil-frase" class="user-quote-text italic text-muted">-</p>
           </div>
         </div>
       </div>
       <div class="modal-footer justify-center">
         <button type="button" class="btn btn-outline-secondary" onclick="HistorialModule.cerrarModalVerPerfil()">Cerrar</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="modal-zoom-foto" class="modal-overlay hidden" style="z-index: 1200;" onclick="HistorialModule.cerrarModalZoomFoto()">
+    <div class="modal-box modal-zoom-box" onclick="event.stopPropagation()">
+      <div class="modal-header">
+        <h3 id="modal-zoom-nombre">Foto de Perfil</h3>
+        <button class="modal-close" onclick="HistorialModule.cerrarModalZoomFoto()">&times;</button>
+      </div>
+      <div class="modal-body text-center p-4">
+        <img id="zoom-foto-img" src="" alt="Foto ampliada" class="zoom-foto-display">
+      </div>
+      <div class="modal-footer justify-center">
+        <button type="button" class="btn btn-outline-secondary" onclick="HistorialModule.cerrarModalZoomFoto()">Cerrar</button>
       </div>
     </div>
   </div>
@@ -774,9 +801,9 @@
           </div>
 
           <div class="form-group">
-            <label>Tarea Asignada <span class="req">*</span></label>
-            <input type="text" id="edit-tarea-descripcion" maxlength="50" required>
-            <small id="edit-tarea-char-counter" class="text-muted">Hasta 50 caracteres</small>
+            <label>Tarea Asignada <span class="text-muted">(Opcional)</span></label>
+            <input type="text" id="edit-tarea-descripcion" maxlength="50" placeholder="Opcional">
+            <small id="edit-tarea-char-counter" class="text-muted">Opcional - Hasta 50 caracteres</small>
           </div>
 
           <div class="form-group">

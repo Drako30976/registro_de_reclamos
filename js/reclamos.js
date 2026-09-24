@@ -166,6 +166,14 @@ const ReclamosModule = {
       };
     }
 
+    const inputComentario = document.getElementById('reclamo-comentario');
+    const comentarioCounter = document.getElementById('reclamo-comentario-counter');
+    if (inputComentario && comentarioCounter) {
+      inputComentario.oninput = () => {
+        comentarioCounter.textContent = `Opcional - Hasta 500 caracteres (${inputComentario.value.length} / 500)`;
+      };
+    }
+
     if (form) {
       form.onsubmit = async (e) => {
         e.preventDefault();
@@ -179,6 +187,7 @@ const ReclamosModule = {
         const caracteristica_id = document.getElementById('reclamo-caracteristica').value;
         const definicion_id = document.getElementById('reclamo-definicion').value || null;
         const finalizacion_id = document.getElementById('reclamo-finalizacion').value || null;
+        const comentario = inputComentario ? inputComentario.value.trim() : '';
 
         if (!sucursal_id || !numero_cliente || !tipo_consulta_id || !caracteristica_id) {
           alertEl.textContent = 'Por favor complete todos los campos obligatorios (*)';
@@ -188,6 +197,12 @@ const ReclamosModule = {
 
         if (numero_cliente.length > 15) {
           alertEl.textContent = 'El número de cliente no puede superar 15 caracteres.';
+          alertEl.className = 'form-alert error';
+          return;
+        }
+
+        if (comentario.length > 500) {
+          alertEl.textContent = 'El comentario no puede superar los 500 caracteres.';
           alertEl.className = 'form-alert error';
           return;
         }
@@ -203,7 +218,8 @@ const ReclamosModule = {
             tipo_consulta_id: parseInt(tipo_consulta_id, 10),
             caracteristica_id: parseInt(caracteristica_id, 10),
             definicion_id: definicion_id ? parseInt(definicion_id, 10) : null,
-            finalizacion_id: finalizacion_id ? parseInt(finalizacion_id, 10) : null
+            finalizacion_id: finalizacion_id ? parseInt(finalizacion_id, 10) : null,
+            comentario: comentario || null
           });
 
           alertEl.textContent = `¡Reclamo del abonado ${numero_cliente} guardado con éxito!`;
@@ -221,6 +237,8 @@ const ReclamosModule = {
           document.getElementById('reclamo-cliente').value = '';
           this.populateTipos();
           document.getElementById('reclamo-sucursal').value = '';
+          if (inputComentario) inputComentario.value = '';
+          if (comentarioCounter) comentarioCounter.textContent = 'Opcional - Hasta 500 caracteres (0 / 500)';
 
           setTimeout(() => {
             alertEl.className = 'form-alert hidden';
@@ -247,7 +265,7 @@ const ReclamosModule = {
     }
 
     if (this.reclamosRecientes.length === 0) {
-      tbody.innerHTML = '<tr><td colspan="8" class="text-center py-4 text-muted">Aún no se han cargado reclamos en esta sesión.</td></tr>';
+      tbody.innerHTML = '<tr><td colspan="9" class="text-center py-4 text-muted">Aún no se han cargado reclamos en esta sesión.</td></tr>';
       return;
     }
 
@@ -263,6 +281,10 @@ const ReclamosModule = {
         minute: '2-digit'
       });
 
+      const comentarioHtml = r.comentario 
+        ? `<span title="${r.comentario.replace(/"/g, '&quot;')}">${r.comentario.length > 30 ? r.comentario.substring(0, 30) + '...' : r.comentario}</span>`
+        : '<span class="text-muted">-</span>';
+
       return `
         <tr>
           <td><strong>${fechaFormateada}</strong> <span class="text-muted">${horaFormateada}</span></td>
@@ -277,6 +299,7 @@ const ReclamosModule = {
           <td>${r.caracteristica || '-'}</td>
           <td>${r.definicion || '-'}</td>
           <td>${r.finalizacion ? `<span class="badge badge-secondary">${r.finalizacion}</span>` : '-'}</td>
+          <td>${comentarioHtml}</td>
         </tr>
       `;
     }).join('');
@@ -302,7 +325,7 @@ const ReclamosModule = {
     if (!container) return;
 
     if (badge) {
-      const marcadasCount = this.misTareas.filter(t => t.completada).length;
+      const marcadasCount = this.misTareas.filter(t => t.tarea && t.completada).length;
       badge.textContent = `${this.misTareas.length} activa${this.misTareas.length === 1 ? '' : 's'}${marcadasCount > 0 ? ` (${marcadasCount} marcada${marcadasCount === 1 ? '' : 's'})` : ''}`;
     }
 
@@ -317,6 +340,24 @@ const ReclamosModule = {
         month: '2-digit',
         year: 'numeric'
       });
+
+      const tareaDiariaHtml = t.tarea ? `
+        <div class="tarea-diaria-row ${t.completada ? 'completada' : ''}">
+          <label class="tarea-checkbox-wrap">
+            <input type="checkbox" ${t.completada ? 'checked' : ''} onchange="ReclamosModule.toggleMarcarTarea(${t.id}, this.checked)">
+            <span class="tarea-texto ${t.completada ? 'tarea-tachada' : ''}">${t.tarea}</span>
+          </label>
+          <div class="tarea-estado-indicator">
+            <span class="badge ${t.completada ? 'badge-success' : 'badge-warning'}">
+              ${t.completada ? '✓ Marcada' : '⏳ Pendiente'}
+            </span>
+          </div>
+        </div>
+      ` : `
+        <div class="text-muted" style="font-size: 0.85rem; font-style: italic; padding: 0.25rem 0;">
+          Sin tarea diaria específica asignada para hoy
+        </div>
+      `;
 
       return `
         <div class="mis-tareas-item" id="mis-tarea-card-${t.id}">
@@ -336,17 +377,7 @@ const ReclamosModule = {
               <span>⚡</span> <span>Tareas Diarias</span>
               <small>(Tildar al realizarla)</small>
             </div>
-            <div class="tarea-diaria-row ${t.completada ? 'completada' : ''}">
-              <label class="tarea-checkbox-wrap">
-                <input type="checkbox" ${t.completada ? 'checked' : ''} onchange="ReclamosModule.toggleMarcarTarea(${t.id}, this.checked)">
-                <span class="tarea-texto ${t.completada ? 'tarea-tachada' : ''}">${t.tarea}</span>
-              </label>
-              <div class="tarea-estado-indicator">
-                <span class="badge ${t.completada ? 'badge-success' : 'badge-warning'}">
-                  ${t.completada ? '✓ Marcada' : '⏳ Pendiente'}
-                </span>
-              </div>
-            </div>
+            ${tareaDiariaHtml}
           </div>
 
           <div class="mis-tareas-item-meta">
