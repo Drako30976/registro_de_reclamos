@@ -459,86 +459,155 @@
           <p class="text-muted">Asigne tareas operativas y sucursales a los miembros del equipo.</p>
         </div>
 
-        <div class="tareas-layout">
-          <div class="tareas-col-form">
-            <div class="card p-4">
-              <div class="card-header mb-3">
-                <h3>Nueva Asignación de Tarea</h3>
+        <div class="subtabs-bar mb-3">
+          <button id="subtab-btn-asignar-tareas" class="btn btn-tab active">Asignación y Tareas Activas</button>
+          <button id="subtab-btn-historial-tareas" class="btn btn-tab">Historial de Tareas</button>
+        </div>
+
+        <div id="tareas-sec-activas">
+          <div class="tareas-layout">
+            <div class="tareas-col-form">
+              <div class="card p-4">
+                <div class="card-header mb-3">
+                  <h3>Nueva Asignación de Tarea</h3>
+                </div>
+                <div id="tarea-form-alert" class="form-alert hidden"></div>
+
+                <form id="form-asignar-tarea">
+                  <div class="form-grid-2">
+                    <div class="form-group">
+                      <label for="tarea-usuario">Usuario Asignado <span class="req">*</span></label>
+                      <select id="tarea-usuario" required>
+                        <option value="">-- Seleccione Usuario --</option>
+                      </select>
+                      <small class="text-muted">Miembro del equipo que ejecutará la tarea</small>
+                    </div>
+
+                    <div class="form-group">
+                      <label for="tarea-sucursal-1">Sucursal Principal <span class="req">*</span></label>
+                      <select id="tarea-sucursal-1" required>
+                        <option value="">-- Seleccione Sucursal Principal --</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <div class="form-grid-2">
+                    <div class="form-group">
+                      <label for="tarea-sucursal-2">Segunda Sucursal <span class="text-muted">(Opcional)</span></label>
+                      <select id="tarea-sucursal-2">
+                        <option value="">-- Ninguna / Opcional --</option>
+                      </select>
+                      <small class="text-muted">Opcionalmente asigne una segunda sucursal</small>
+                    </div>
+
+                    <div class="form-group">
+                      <label for="tarea-descripcion">Tarea Diaria <span class="text-muted">(Opcional)</span></label>
+                      <input type="text" id="tarea-descripcion" maxlength="50" placeholder="Ej: Cargar pagos o Verificar registros (Opcional)">
+                      <small id="tarea-char-counter" class="text-muted">Opcional - Hasta 50 caracteres (0 / 50)</small>
+                    </div>
+                  </div>
+
+                  <div class="form-actions mt-3">
+                    <button type="submit" class="btn btn-primary btn-lg">
+                      <span class="btn-icon">📌</span> Asignar Tarea
+                    </button>
+                  </div>
+                </form>
               </div>
-              <div id="tarea-form-alert" class="form-alert hidden"></div>
+            </div>
 
-              <form id="form-asignar-tarea">
-                <div class="form-grid-2">
-                  <div class="form-group">
-                    <label for="tarea-usuario">Usuario Asignado <span class="req">*</span></label>
-                    <select id="tarea-usuario" required>
-                      <option value="">-- Seleccione Usuario --</option>
-                    </select>
-                    <small class="text-muted">Miembro del equipo que ejecutará la tarea</small>
+            <div class="tareas-col-list">
+              <div class="card p-4">
+                <div class="card-header flex-row justify-between align-center mb-3">
+                  <div>
+                    <h3>Tareas Activas</h3>
+                    <p class="text-muted font-sm">Tareas vigentes en el sistema.</p>
                   </div>
-
-                  <div class="form-group">
-                    <label for="tarea-sucursal-1">Sucursal Principal <span class="req">*</span></label>
-                    <select id="tarea-sucursal-1" required>
-                      <option value="">-- Seleccione Sucursal Principal --</option>
-                    </select>
-                  </div>
+                  <span id="tareas-contador" class="badge badge-primary">0 activas</span>
                 </div>
 
-                <div class="form-grid-2">
-                  <div class="form-group">
-                    <label for="tarea-sucursal-2">Segunda Sucursal <span class="text-muted">(Opcional)</span></label>
-                    <select id="tarea-sucursal-2">
-                      <option value="">-- Ninguna / Opcional --</option>
-                    </select>
-                    <small class="text-muted">Opcionalmente asigne una segunda sucursal</small>
-                  </div>
-
-                  <div class="form-group">
-                    <label for="tarea-descripcion">Tarea Diaria <span class="text-muted">(Opcional)</span></label>
-                    <input type="text" id="tarea-descripcion" maxlength="50" placeholder="Ej: Cargar pagos o Verificar registros (Opcional)">
-                    <small id="tarea-char-counter" class="text-muted">Opcional - Hasta 50 caracteres (0 / 50)</small>
-                  </div>
+                <div class="table-container">
+                  <table class="data-table">
+                    <thead>
+                      <tr>
+                        <th>Usuario</th>
+                        <th>Sucursal(es)</th>
+                        <th>Tarea Diaria</th>
+                        <th>Estado</th>
+                        <th>Acciones</th>
+                      </tr>
+                    </thead>
+                    <tbody id="tabla-tareas-body">
+                      <tr>
+                        <td colspan="5" class="text-center py-4 text-muted">Cargando tareas asignadas...</td>
+                      </tr>
+                    </tbody>
+                  </table>
                 </div>
+              </div>
+            </div>
+          </div>
+        </div>
 
-                <div class="form-actions mt-3">
-                  <button type="submit" class="btn btn-primary btn-lg">
-                    <span class="btn-icon">📌</span> Asignar Tarea
-                  </button>
-                </div>
-              </form>
+        <div id="tareas-sec-historial" class="hidden">
+          <div class="card p-4 mb-4">
+            <div class="card-header flex-row justify-between align-center mb-3">
+              <div>
+                <strong>Filtros del Historial de Tareas</strong>
+                <small class="text-muted d-block">Filtre por fecha inicial, fecha final, asesor o sucursal</small>
+              </div>
+              <button id="btn-emitir-reporte-tareas" class="btn btn-outline-danger">
+                <span class="btn-icon">📄</span> Emitir Reporte PDF
+              </button>
+            </div>
+            <div class="filter-grid">
+              <div class="filter-group">
+                <label for="filtro-tarea-fecha-desde">Fecha Inicial</label>
+                <input type="date" id="filtro-tarea-fecha-desde">
+              </div>
+              <div class="filter-group">
+                <label for="filtro-tarea-fecha-hasta">Fecha Final</label>
+                <input type="date" id="filtro-tarea-fecha-hasta">
+              </div>
+              <div class="filter-group">
+                <label for="filtro-tarea-asesor">Asesor</label>
+                <select id="filtro-tarea-asesor">
+                  <option value="">Todos los asesores</option>
+                </select>
+              </div>
+              <div class="filter-group">
+                <label for="filtro-tarea-sucursal">Sucursal</label>
+                <select id="filtro-tarea-sucursal">
+                  <option value="">Todas las sucursales</option>
+                </select>
+              </div>
+            </div>
+            <div class="filter-actions mt-3">
+              <button id="btn-aplicar-filtros-tareas" class="btn btn-primary">Buscar / Filtrar</button>
+              <button id="btn-limpiar-filtros-tareas" class="btn btn-outline-secondary">Limpiar Filtros</button>
             </div>
           </div>
 
-          <div class="tareas-col-list">
-            <div class="card p-4">
-              <div class="card-header flex-row justify-between align-center mb-3">
-                <div>
-                  <h3>Tareas Activas</h3>
-                  <p class="text-muted font-sm">Tareas vigentes en el sistema.</p>
-                </div>
-                <span id="tareas-contador" class="badge badge-primary">0 activas</span>
-              </div>
-
-              <div class="table-container">
-                <table class="data-table">
-                  <thead>
-                    <tr>
-                      <th>Usuario</th>
-                      <th>Sucursal(es)</th>
-                      <th>Tarea Diaria</th>
-                      <th>Estado</th>
-                      <th>Acciones</th>
-                    </tr>
-                  </thead>
-                  <tbody id="tabla-tareas-body">
-                    <tr>
-                      <td colspan="5" class="text-center py-4 text-muted">Cargando tareas asignadas...</td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
-            </div>
+          <div class="card table-container">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Fecha y Hora</th>
+                  <th>Asesor</th>
+                  <th>Sucursal 1</th>
+                  <th>Sucursal 2</th>
+                  <th>Tarea Diaria</th>
+                  <th>Estado</th>
+                  <th>Vigencia</th>
+                  <th>Asignado Por</th>
+                </tr>
+              </thead>
+              <tbody id="tabla-historial-tareas-body">
+                <tr>
+                  <td colspan="8" class="text-center py-4 text-muted">Cargando historial de tareas...</td>
+                </tr>
+              </tbody>
+            </table>
           </div>
         </div>
       </section>

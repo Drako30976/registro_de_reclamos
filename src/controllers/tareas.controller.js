@@ -295,10 +295,10 @@ const eliminarTarea = async (req, res) => {
     }
     const tareaOriginal = originalRes.rows[0];
 
-    await pool.query('DELETE FROM tareas_asignadas WHERE id = $1', [id]);
+    await pool.query('UPDATE tareas_asignadas SET activo = false, updated_at = CURRENT_TIMESTAMP WHERE id = $1', [id]);
 
     await registrarAuditoria({
-      accion: `Se eliminó la tarea asignada ID ${id} ("${tareaOriginal.tarea || 'Sin descripción'}")`,
+      accion: `Se finalizó la tarea asignada ID ${id} ("${tareaOriginal.tarea || 'Sin descripción'}")`,
       usuario_id: req.user.id,
       usuario_nombre: req.user.usuario,
       entidad: 'tareas_asignadas',
@@ -306,7 +306,7 @@ const eliminarTarea = async (req, res) => {
       datos_anteriores: tareaOriginal
     });
 
-    res.json({ message: 'Tarea eliminada correctamente.' });
+    res.json({ message: 'Tarea finalizada y archivada correctamente en el historial.' });
   } catch (error) {
     console.error('Error al eliminar tarea:', error);
     res.status(500).json({ error: 'Error al eliminar la tarea.' });
@@ -420,11 +420,80 @@ const marcarTarea = async (req, res) => {
   }
 };
 
+const getHistorialTareas = async (req, res) => {
+  try {
+    const { fecha_desde, fecha_hasta, asesor_id, sucursal_id } = req.query;
+
+    let query = `
+      SELECT 
+        t.id,
+        t.created_at,
+        TO_CHAR(t.created_at AT TIME ZONE 'America/Argentina/Buenos_Aires', 'DD/MM/YYYY') AS fecha_fmt,
+        TO_CHAR(t.created_at AT TIME ZONE 'America/Argentina/Buenos_Aires', 'HH24:MI') AS hora_fmt,
+        t.usuario_id,
+        u.nombre_completo AS asesor_nombre,
+        u.usuario AS asesor_usuario,
+        u.rol AS asesor_rol,
+        t.sucursal_1_id,
+        s1.nombre AS sucursal_1_nombre,
+        t.sucursal_2_id,
+        s2.nombre AS sucursal_2_nombre,
+        t.tarea,
+        t.completada,
+        t.completada_at,
+        TO_CHAR(t.completada_at AT TIME ZONE 'America/Argentina/Buenos_Aires', 'DD/MM/YYYY HH24:MI') AS completada_at_fmt,
+        t.activo,
+        (t.activo = true AND t.created_at >= NOW() - INTERVAL '14 hours') AS vigente,
+        cp.nombre_completo AS creado_por_nombre
+      FROM tareas_asignadas t
+      JOIN usuarios u ON t.usuario_id = u.id
+      JOIN sucursales s1 ON t.sucursal_1_id = s1.id
+      LEFT JOIN sucursales s2 ON t.sucursal_2_id = s2.id
+      JOIN usuarios cp ON t.creado_por_id = cp.id
+      WHERE 1=1
+    `;
+
+    const values = [];
+    let paramIndex = 1;
+
+    if (fecha_desde) {
+      query += ` AND (t.created_at AT TIME ZONE 'America/Argentina/Buenos_Aires')::date >= $${paramIndex++}::date`;
+      values.push(fecha_desde);
+    }
+
+    if (fecha_hasta) {
+      query += ` AND (t.created_at AT TIME ZONE 'America/Argentina/Buenos_Aires')::date <= $${paramIndex++}::date`;
+      values.push(fecha_hasta);
+    }
+
+    if (asesor_id) {
+      query += ` AND t.usuario_id = $${paramIndex++}`;
+      values.push(parseInt(asesor_id, 10));
+    }
+
+    if (sucursal_id) {
+      const sucId = parseInt(sucursal_id, 10);
+      query += ` AND (t.sucursal_1_id = $${paramIndex} OR t.sucursal_2_id = $${paramIndex})`;
+      paramIndex++;
+      values.push(sucId);
+    }
+
+    query += ` ORDER BY t.created_at DESC, t.id DESC`;
+
+    const result = await pool.query(query, values);
+    res.json(result.rows);
+  } catch (error) {
+    console.error('Error al consultar historial de tareas:', error);
+    res.status(500).json({ error: 'Error al consultar historial de tareas.' });
+  }
+};
+
 module.exports = {
   getTareas,
   crearTarea,
   actualizarTarea,
   eliminarTarea,
   getMisTareas,
-  marcarTarea
+  marcarTarea,
+  getHistorialTareas
 };
