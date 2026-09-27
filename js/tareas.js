@@ -248,8 +248,10 @@ const TareasModule = {
       const params = this.getHistorialQueryParams();
       const qs = params.toString() ? `?${params.toString()}` : '';
       const url = `/api/reportes/tareas-pdf${qs}`;
-
-      const token = localStorage.getItem('token') || sessionStorage.getItem('token');
+      const token = API.getToken();
+      if (!token) {
+        throw new Error('Sesión no encontrada o expirada. Por favor inicie sesión nuevamente.');
+      }
       const response = await fetch(url, {
         method: 'GET',
         headers: {
