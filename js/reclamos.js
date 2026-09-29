@@ -99,7 +99,7 @@ const ReclamosModule = {
                 </div>
                 <div class="masivo-detail-item">
                   <span class="detail-label">Zona Afectada:</span>
-                  <span>${m.zona_afectada}</span>
+                  <span class="masivo-zona-val">${m.zona_afectada}</span>
                 </div>
                 <div class="masivo-detail-item">
                   <span class="detail-label">Tiempo Estimado:</span>

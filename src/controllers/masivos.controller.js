@@ -97,6 +97,18 @@ const crearMasivo = async (req, res) => {
 
     const sucId = sucursal_id ? parseInt(sucursal_id, 10) : null;
 
+    let fechaInicioVal = fecha_inicio;
+    if (typeof fechaInicioVal === 'string' && !fechaInicioVal.includes('T') && !fechaInicioVal.includes(' ')) {
+      const now = new Date();
+      const hh = String(now.getHours()).padStart(2, '0');
+      const mm = String(now.getMinutes()).padStart(2, '0');
+      const ss = String(now.getSeconds()).padStart(2, '0');
+      fechaInicioVal = `${fechaInicioVal}T${hh}:${mm}:${ss}`;
+    }
+
+    const servUpper = servicio_afectado.trim().toUpperCase();
+    const zonaUpper = (zona_afectada && zona_afectada.trim()) ? zona_afectada.trim().toUpperCase() : null;
+
     const insertQuery = `
       INSERT INTO inconvenientes_masivos (
         fecha_inicio,
@@ -113,10 +125,10 @@ const crearMasivo = async (req, res) => {
     `;
 
     const result = await pool.query(insertQuery, [
-      fecha_inicio,
+      fechaInicioVal,
       sucId,
-      zona_afectada ? zona_afectada.trim() : null,
-      servicio_afectado.trim(),
+      zonaUpper,
+      servUpper,
       caracteristicas_dano ? caracteristicas_dano.trim() : null,
       tiempo_resolucion ? tiempo_resolucion.trim() : null,
       req.user.id
@@ -194,6 +206,8 @@ const modificarMasivo = async (req, res) => {
     }
 
     const sucId = sucursal_id ? parseInt(sucursal_id, 10) : null;
+    const servUpper = servicio_afectado.trim().toUpperCase();
+    const zonaUpper = (zona_afectada && zona_afectada.trim()) ? zona_afectada.trim().toUpperCase() : null;
 
     await pool.query(`
       UPDATE inconvenientes_masivos
@@ -209,8 +223,8 @@ const modificarMasivo = async (req, res) => {
     `, [
       fecha_inicio,
       sucId,
-      zona_afectada ? zona_afectada.trim() : null,
-      servicio_afectado.trim(),
+      zonaUpper,
+      servUpper,
       caracteristicas_dano ? caracteristicas_dano.trim() : null,
       tiempo_resolucion ? tiempo_resolucion.trim() : null,
       id

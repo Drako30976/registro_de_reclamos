@@ -20,9 +20,9 @@ const MasivosModule = {
 
   inicializarFechaCarga() {
     const inputFecha = document.getElementById('masivo-fecha-inicio');
-    if (inputFecha && !inputFecha.value) {
+    if (inputFecha) {
       const now = new Date(Date.now() - new Date().getTimezoneOffset() * 60000);
-      inputFecha.value = now.toISOString().slice(0, 16);
+      inputFecha.value = now.toISOString().slice(0, 10);
     }
   },
 
@@ -383,18 +383,28 @@ const MasivosModule = {
         const alertEl = document.getElementById('masivo-form-alert');
         alertEl.className = 'form-alert hidden';
 
-        const fecha_inicio = document.getElementById('masivo-fecha-inicio').value;
+        const fechaVal = document.getElementById('masivo-fecha-inicio').value;
         const sucursal_val = document.getElementById('masivo-sucursal').value;
         const sucursal_id = sucursal_val ? parseInt(sucursal_val, 10) : null;
-        const servicio_afectado = document.getElementById('masivo-servicio').value.trim();
+        const servicio_afectado = document.getElementById('masivo-servicio').value.trim().toUpperCase();
         const caracteristicas_dano = document.getElementById('masivo-caracteristicas-dano').value.trim();
-        const zona_afectada = document.getElementById('masivo-zona').value.trim();
+        const zona_afectada = document.getElementById('masivo-zona').value.trim().toUpperCase();
         const tiempo_resolucion = document.getElementById('masivo-tiempo-resolucion').value.trim();
 
-        if (!fecha_inicio || !servicio_afectado) {
+        if (!fechaVal || !servicio_afectado) {
           alertEl.textContent = 'Por favor complete todos los campos obligatorios (*)';
           alertEl.className = 'form-alert error';
           return;
+        }
+
+        // Se toma automáticamente el horario actual del reloj al momento de ingresar el masivo
+        let fecha_inicio = fechaVal;
+        if (fechaVal && !fechaVal.includes('T')) {
+          const now = new Date();
+          const hh = String(now.getHours()).padStart(2, '0');
+          const mm = String(now.getMinutes()).padStart(2, '0');
+          const ss = String(now.getSeconds()).padStart(2, '0');
+          fecha_inicio = `${fechaVal}T${hh}:${mm}:${ss}`;
         }
 
         if (servicio_afectado.length > 50) {
@@ -466,9 +476,9 @@ const MasivosModule = {
         const fecha_inicio = document.getElementById('edit-masivo-fecha-inicio').value;
         const sucursal_val = document.getElementById('edit-masivo-sucursal').value;
         const sucursal_id = sucursal_val ? parseInt(sucursal_val, 10) : null;
-        const servicio_afectado = document.getElementById('edit-masivo-servicio').value.trim();
+        const servicio_afectado = document.getElementById('edit-masivo-servicio').value.trim().toUpperCase();
         const caracteristicas_dano = document.getElementById('edit-masivo-caracteristicas-dano').value.trim();
-        const zona_afectada = document.getElementById('edit-masivo-zona').value.trim();
+        const zona_afectada = document.getElementById('edit-masivo-zona').value.trim().toUpperCase();
         const tiempo_resolucion = document.getElementById('edit-masivo-tiempo-resolucion').value.trim();
 
         if (!fecha_inicio || !servicio_afectado) {

@@ -1295,6 +1295,20 @@ body {
 .masivo-servicio-title {
   font-size: 0.9rem;
   color: #0F172A;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+
+.masivo-zona-val {
+  text-transform: uppercase;
+  font-weight: 600;
+}
+
+#masivo-servicio,
+#masivo-zona,
+#edit-masivo-servicio,
+#edit-masivo-zona {
+  text-transform: uppercase;
 }
 
 .masivo-accordion-right {
