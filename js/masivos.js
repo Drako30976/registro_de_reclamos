@@ -73,7 +73,7 @@ const MasivosModule = {
     const contador = document.getElementById('masivos-activos-contador');
     if (!tbody) return;
 
-    tbody.innerHTML = '<tr><td colspan="7" class="text-center py-4 text-muted">Cargando inconvenientes masivos...</td></tr>';
+    tbody.innerHTML = '<tr><td colspan="8" class="text-center py-4 text-muted">Cargando inconvenientes masivos...</td></tr>';
 
     try {
       const data = await API.get('/masivos/activos');
@@ -85,7 +85,7 @@ const MasivosModule = {
 
       this.renderTablaActivos();
     } catch (err) {
-      tbody.innerHTML = `<tr><td colspan="7" class="text-center text-danger py-4">Error al cargar masivos: ${err.message}</td></tr>`;
+      tbody.innerHTML = `<tr><td colspan="8" class="text-center text-danger py-4">Error al cargar masivos: ${err.message}</td></tr>`;
     }
   },
 
@@ -94,7 +94,7 @@ const MasivosModule = {
     if (!tbody) return;
 
     if (this.masivosActivos.length === 0) {
-      tbody.innerHTML = '<tr><td colspan="7" class="text-center py-6 text-muted">No hay inconvenientes masivos activos actualmente.</td></tr>';
+      tbody.innerHTML = '<tr><td colspan="8" class="text-center py-6 text-muted">No hay inconvenientes masivos activos actualmente.</td></tr>';
       return;
     }
 
@@ -111,9 +111,11 @@ const MasivosModule = {
           <td>${danoTexto}</td>
           <td>${zonaTexto}</td>
           <td>${tiempoTexto}</td>
+          <td>${m.creado_por_nombre || '-'}</td>
           <td class="table-actions">
             <button class="btn btn-sm btn-outline-primary mr-1" onclick="MasivosModule.abrirModalModificar(${m.id})">Modificar</button>
-            <button class="btn btn-sm btn-success" onclick="MasivosModule.abrirModalFinalizar(${m.id})">Finalizar</button>
+            <button class="btn btn-sm btn-success mr-1" onclick="MasivosModule.abrirModalFinalizar(${m.id})">Finalizar</button>
+            <button class="btn btn-sm btn-outline-danger" onclick="MasivosModule.eliminarMasivo(${m.id})">Eliminar</button>
           </td>
         </tr>
       `;
@@ -137,7 +139,7 @@ const MasivosModule = {
     const tbody = document.getElementById('tabla-historial-masivos-body');
     if (!tbody) return;
 
-    tbody.innerHTML = '<tr><td colspan="10" class="text-center py-4 text-muted">Cargando historial de masivos...</td></tr>';
+    tbody.innerHTML = '<tr><td colspan="12" class="text-center py-4 text-muted">Cargando historial de masivos...</td></tr>';
 
     try {
       const params = this.getHistorialQueryParams();
@@ -147,7 +149,7 @@ const MasivosModule = {
       this.renderTablaHistorial();
     } catch (err) {
       console.error('Error al consultar historial de masivos:', err);
-      tbody.innerHTML = `<tr><td colspan="10" class="text-center text-danger py-4">Error al cargar historial: ${err.message}</td></tr>`;
+      tbody.innerHTML = `<tr><td colspan="12" class="text-center text-danger py-4">Error al cargar historial: ${err.message}</td></tr>`;
     }
   },
 
@@ -156,7 +158,7 @@ const MasivosModule = {
     if (!tbody) return;
 
     if (this.historialMasivos.length === 0) {
-      tbody.innerHTML = '<tr><td colspan="10" class="text-center py-6 text-muted">No se encontraron inconvenientes con los filtros seleccionados.</td></tr>';
+      tbody.innerHTML = '<tr><td colspan="12" class="text-center py-6 text-muted">No se encontraron inconvenientes con los filtros seleccionados.</td></tr>';
       return;
     }
 
@@ -175,12 +177,30 @@ const MasivosModule = {
           <td>${m.zona_afectada}</td>
           <td>${m.tiempo_resolucion}</td>
           <td>${badgeEstado}</td>
+          <td>${m.creado_por_nombre || '-'}</td>
           <td>${m.fecha_fin_fmt ? m.fecha_fin_fmt + ' hs' : '-'}</td>
+          <td>${m.finalizado_por_nombre || '-'}</td>
           <td>${m.responsable_solucion}</td>
           <td>${m.arreglo}</td>
         </tr>
       `;
     }).join('');
+  },
+
+  async eliminarMasivo(id) {
+    if (!confirm('¿Está seguro de que desea eliminar este inconveniente masivo?')) return;
+    try {
+      await API.delete(`/masivos/${id}`);
+      await this.cargarMasivosActivos();
+      if (this.currentSubtab === 'historial') {
+        await this.cargarHistorial();
+      }
+      if (typeof ReclamosModule !== 'undefined' && ReclamosModule.cargarMasivosBanner) {
+        ReclamosModule.cargarMasivosBanner();
+      }
+    } catch (err) {
+      alert('Error al eliminar inconveniente masivo: ' + err.message);
+    }
   },
 
   async descargarReportePDF() {

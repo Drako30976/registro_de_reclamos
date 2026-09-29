@@ -123,7 +123,7 @@ const Auth = {
     }
 
     if (tabMasivos) {
-      tabMasivos.style.display = (rol === 'Admin' || rol === 'Supervisor') ? 'inline-flex' : 'none';
+      tabMasivos.style.display = (rol === 'Admin' || rol === 'Supervisor' || rol === 'Asesor') ? 'inline-flex' : 'none';
     }
 
     if (tabPerfil) {

@@ -19,10 +19,12 @@ const getMasivosVigentes = async (req, res) => {
         TO_CHAR(m.fecha_fin AT TIME ZONE 'America/Argentina/Buenos_Aires', 'DD/MM/YYYY HH24:MI') AS fecha_fin_fmt,
         COALESCE(m.responsable_solucion, '-') AS responsable_solucion,
         COALESCE(m.arreglo, '-') AS arreglo,
-        u.nombre_completo AS creado_por_nombre
+        u.nombre_completo AS creado_por_nombre,
+        uf.nombre_completo AS finalizado_por_nombre
       FROM inconvenientes_masivos m
       LEFT JOIN sucursales s ON m.sucursal_id = s.id
       LEFT JOIN usuarios u ON m.creado_por_id = u.id
+      LEFT JOIN usuarios uf ON m.finalizado_por_id = uf.id
       WHERE (m.estado = 'Activo' AND m.created_at >= NOW() - INTERVAL '14 hours')
          OR (m.estado = 'Finalizado' AND m.updated_at >= NOW() - INTERVAL '14 hours' AND m.created_at >= NOW() - INTERVAL '14 hours')
       ORDER BY CASE WHEN m.estado = 'Activo' THEN 0 ELSE 1 END, m.fecha_inicio DESC;
@@ -388,11 +390,40 @@ const getHistorialMasivos = async (req, res) => {
   }
 };
 
+const eliminarMasivo = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const checkRes = await pool.query('SELECT * FROM inconvenientes_masivos WHERE id = $1', [id]);
+    if (checkRes.rows.length === 0) {
+      return res.status(404).json({ error: 'Inconveniente masivo no encontrado.' });
+    }
+
+    const masivoOriginal = checkRes.rows[0];
+
+    await pool.query('DELETE FROM inconvenientes_masivos WHERE id = $1', [id]);
+
+    await registrarAuditoria({
+      accion: `Se eliminó el inconveniente masivo ID ${id} (${masivoOriginal.servicio_afectado})`,
+      usuario_id: req.user.id,
+      usuario_nombre: req.user.usuario,
+      entidad: 'inconvenientes_masivos',
+      registro_id: id,
+      datos_anteriores: masivoOriginal
+    });
+
+    res.json({ message: 'Inconveniente masivo eliminado con éxito.' });
+  } catch (error) {
+    console.error('Error al eliminar inconveniente masivo:', error);
+    res.status(500).json({ error: 'Error al eliminar el inconveniente masivo.' });
+  }
+};
+
 module.exports = {
   getMasivosVigentes,
   getMasivosActivos,
   crearMasivo,
   modificarMasivo,
   finalizarMasivo,
-  getHistorialMasivos
+  getHistorialMasivos,
+  eliminarMasivo
 };

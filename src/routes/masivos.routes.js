@@ -7,7 +7,7 @@ router.use(verifyToken);
 
 router.get('/vigentes', masivosController.getMasivosVigentes);
 
-router.use(checkRole('Admin', 'Supervisor'));
+router.use(checkRole('Admin', 'Supervisor', 'Asesor'));
 
 router.get('/activos', masivosController.getMasivosActivos);
 router.get('/historial', masivosController.getHistorialMasivos);
@@ -15,5 +15,6 @@ router.post('/', masivosController.crearMasivo);
 router.put('/:id', masivosController.modificarMasivo);
 router.patch('/:id/finalizar', masivosController.finalizarMasivo);
 router.put('/:id/finalizar', masivosController.finalizarMasivo);
+router.delete('/:id', masivosController.eliminarMasivo);
 
 module.exports = router;

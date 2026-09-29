@@ -437,15 +437,17 @@ const emitirReporteMasivosPDF = async (req, res) => {
       'Inicio',
       'Sucursal',
       'Servicio',
-      'Características del Daño',
+      'Daño / Causa',
       'Zona',
-      'Tiempo Est.',
+      'Tiempo',
       'Estado',
+      'Creado por',
       'Finalizado',
+      'Fin. por',
       'Responsable',
       'Arreglo'
     ];
-    const colW = [65, 70, 75, 115, 80, 55, 50, 65, 65, 142];
+    const colW = [58, 58, 62, 90, 62, 42, 44, 65, 58, 65, 55, 123];
     const colX = [30];
     for (let i = 0; i < colW.length - 1; i++) {
       colX.push(colX[i] + colW[i]);
@@ -498,9 +500,11 @@ const emitirReporteMasivosPDF = async (req, res) => {
         doc.text(m.estado, colX[6] + 4, currentY + 6, { width: colW[6] - 8, lineBreak: false });
 
         doc.fillColor('#0F172A').font('Helvetica');
-        doc.text(m.fecha_fin_fmt || '-', colX[7] + 4, currentY + 6, { width: colW[7] - 8, lineBreak: false });
-        doc.text(m.responsable_solucion, colX[8] + 4, currentY + 6, { width: colW[8] - 8, lineBreak: false });
-        doc.text(m.arreglo, colX[9] + 4, currentY + 6, { width: colW[9] - 8, lineBreak: false });
+        doc.text(m.creado_por_nombre || '-', colX[7] + 4, currentY + 6, { width: colW[7] - 8, lineBreak: false });
+        doc.text(m.fecha_fin_fmt || '-', colX[8] + 4, currentY + 6, { width: colW[8] - 8, lineBreak: false });
+        doc.text(m.finalizado_por_nombre || '-', colX[9] + 4, currentY + 6, { width: colW[9] - 8, lineBreak: false });
+        doc.text(m.responsable_solucion, colX[10] + 4, currentY + 6, { width: colW[10] - 8, lineBreak: false });
+        doc.text(m.arreglo, colX[11] + 4, currentY + 6, { width: colW[11] - 8, lineBreak: false });
 
         currentY += rowHeight;
         zebra = !zebra;

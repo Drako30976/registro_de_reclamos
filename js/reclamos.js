@@ -79,39 +79,69 @@ const ReclamosModule = {
           ? '<span class="badge badge-danger">Activo</span>' 
           : '<span class="badge badge-success">Finalizado</span>';
 
-        const tiempoRes = m.tiempo_resolucion && m.tiempo_resolucion !== '-'
-          ? `<span class="masivo-meta-tag"><strong>Est. resolución:</strong> ${m.tiempo_resolucion}</span>`
-          : '';
-
-        const danoTexto = m.caracteristicas_dano && m.caracteristicas_dano !== '-'
-          ? `<div class="font-sm mt-1" style="color: #991B1B;"><strong>Causa / Daño:</strong> ${m.caracteristicas_dano}</div>`
-          : '';
-
-        const resolucionDetalle = !esActivo && m.fecha_fin_fmt
-          ? `<div class="font-sm text-muted mt-1">
-               <span>✓ <strong>Resuelto:</strong> ${m.fecha_fin_fmt} hs</span>
-               ${m.responsable_solucion && m.responsable_solucion !== '-' ? ` | <strong>Resp:</strong> ${m.responsable_solucion}` : ''}
-               ${m.arreglo && m.arreglo !== '-' ? ` | <strong>Trabajo:</strong> ${m.arreglo}` : ''}
-             </div>`
-          : '';
-
         return `
-          <div class="masivos-banner-item ${esActivo ? '' : 'finalizado'}">
-            <div style="flex: 1; min-width: 250px;">
-              <div class="d-flex align-center gap-2 mb-1">
+          <details class="masivo-accordion-item ${esActivo ? 'masivo-activo' : 'masivo-finalizado'}">
+            <summary class="masivo-accordion-header">
+              <div class="masivo-accordion-left">
+                <span class="badge badge-secondary masivo-sucursal-badge">${m.sucursal_nombre}</span>
+                <strong class="masivo-servicio-title">${m.servicio_afectado}</strong>
+              </div>
+              <div class="masivo-accordion-right">
                 ${badgeEstado}
-                <strong style="font-size: 1rem; color: #0F172A;">${m.servicio_afectado}</strong>
-                <span class="badge badge-secondary">${m.sucursal_nombre}</span>
+                <span class="masivo-accordion-arrow">▾</span>
               </div>
-              ${danoTexto}
-              <div class="d-flex flex-wrap gap-3 font-sm mt-1">
-                <span class="masivo-meta-tag"><strong>Inicio:</strong> ${m.fecha_inicio_fmt} hs</span>
-                <span class="masivo-meta-tag"><strong>Zona:</strong> ${m.zona_afectada}</span>
-                ${tiempoRes}
+            </summary>
+            <div class="masivo-accordion-content">
+              <div class="masivo-detail-grid">
+                <div class="masivo-detail-item">
+                  <span class="detail-label">Fecha Inicio:</span>
+                  <span><strong>${m.fecha_inicio_fmt}</strong> hs</span>
+                </div>
+                <div class="masivo-detail-item">
+                  <span class="detail-label">Zona Afectada:</span>
+                  <span>${m.zona_afectada}</span>
+                </div>
+                <div class="masivo-detail-item">
+                  <span class="detail-label">Tiempo Estimado:</span>
+                  <span>${m.tiempo_resolucion}</span>
+                </div>
+                <div class="masivo-detail-item">
+                  <span class="detail-label">Informado por:</span>
+                  <span>${m.creado_por_nombre || '-'}</span>
+                </div>
               </div>
-              ${resolucionDetalle}
+
+              ${m.caracteristicas_dano && m.caracteristicas_dano !== '-' ? `
+                <div class="masivo-detail-box masivo-dano-box">
+                  <strong>Características del Daño:</strong>
+                  <div>${m.caracteristicas_dano}</div>
+                </div>
+              ` : ''}
+
+              ${!esActivo ? `
+                <div class="masivo-detail-box masivo-resuelto-box">
+                  <div class="masivo-detail-grid">
+                    <div class="masivo-detail-item">
+                      <span class="detail-label">Finalizado:</span>
+                      <span><strong>${m.fecha_fin_fmt || '-'}</strong> hs</span>
+                    </div>
+                    <div class="masivo-detail-item">
+                      <span class="detail-label">Finalizado por:</span>
+                      <span>${m.finalizado_por_nombre || '-'}</span>
+                    </div>
+                    <div class="masivo-detail-item">
+                      <span class="detail-label">Responsable:</span>
+                      <span>${m.responsable_solucion}</span>
+                    </div>
+                    <div class="masivo-detail-item">
+                      <span class="detail-label">Arreglo:</span>
+                      <span>${m.arreglo}</span>
+                    </div>
+                  </div>
+                </div>
+              ` : ''}
             </div>
-          </div>
+          </details>
         `;
       }).join('');
     } catch (err) {

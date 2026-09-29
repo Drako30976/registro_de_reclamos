@@ -91,21 +91,6 @@
           <p class="text-muted">Complete los datos de la interacción con el cliente.</p>
         </div>
 
-        <div id="sec-inconvenientes-masivos" class="card masivos-banner-card mb-4">
-          <div class="card-header flex-row justify-between align-center">
-            <div class="d-flex align-center gap-2">
-              <span style="font-size: 1.25rem;">⚠️</span>
-              <h3 class="m-0">Inconvenientes Masivos</h3>
-            </div>
-            <span id="masivos-banner-badge" class="badge badge-secondary">Sin inconvenientes activos</span>
-          </div>
-          <div id="masivos-banner-content" class="p-3">
-            <div class="text-center py-2 text-muted">
-              <span>✓</span> Sin inconvenientes activos
-            </div>
-          </div>
-        </div>
-
         <div class="gestion-top-layout">
           <div class="gestion-col-form">
             <div class="card card-form">
@@ -177,14 +162,31 @@
             </div>
           </div>
 
-          <div class="gestion-col-tareas">
-            <div class="card card-mis-tareas">
+          <div class="gestion-col-lateral">
+            <div id="sec-inconvenientes-masivos" class="card masivos-banner-card">
               <div class="card-header flex-row justify-between align-center">
-                <h3>📋 Mis Tareas Asignadas</h3>
-                <span id="mis-tareas-badge" class="badge badge-info">0</span>
+                <div class="d-flex align-center gap-2">
+                  <span style="font-size: 1.15rem;">⚠️</span>
+                  <h3 class="m-0">Inconvenientes Masivos</h3>
+                </div>
+                <span id="masivos-banner-badge" class="badge badge-secondary">Sin inconvenientes activos</span>
               </div>
-              <div class="card-body" id="mis-tareas-body">
-                <div class="text-center py-4 text-muted">Cargando tareas asignadas...</div>
+              <div id="masivos-banner-content" class="p-3">
+                <div class="text-center py-2 text-muted">
+                  <span>✓</span> Sin inconvenientes activos
+                </div>
+              </div>
+            </div>
+
+            <div class="gestion-col-tareas">
+              <div class="card card-mis-tareas">
+                <div class="card-header flex-row justify-between align-center">
+                  <h3>📋 Mis Tareas Asignadas</h3>
+                  <span id="mis-tareas-badge" class="badge badge-info">0</span>
+                </div>
+                <div class="card-body" id="mis-tareas-body">
+                  <div class="text-center py-4 text-muted">Cargando tareas asignadas...</div>
+                </div>
               </div>
             </div>
           </div>
@@ -722,12 +724,13 @@
                         <th>Características del Daño</th>
                         <th>Zona</th>
                         <th>Tiempo Est.</th>
+                        <th>Creado por</th>
                         <th>Acciones</th>
                       </tr>
                     </thead>
                     <tbody id="tabla-masivos-activos-body">
                       <tr>
-                        <td colspan="7" class="text-center py-4 text-muted">Cargando inconvenientes masivos...</td>
+                        <td colspan="8" class="text-center py-4 text-muted">Cargando inconvenientes masivos...</td>
                       </tr>
                     </tbody>
                   </table>
@@ -782,14 +785,16 @@
                   <th>Zona</th>
                   <th>Tiempo Est.</th>
                   <th>Estado</th>
+                  <th>Creado por</th>
                   <th>Finalizado</th>
+                  <th>Finalizado por</th>
                   <th>Responsable</th>
                   <th>Arreglo</th>
                 </tr>
               </thead>
               <tbody id="tabla-historial-masivos-body">
                 <tr>
-                  <td colspan="10" class="text-center py-4 text-muted">Cargando historial de masivos...</td>
+                  <td colspan="12" class="text-center py-4 text-muted">Cargando historial de masivos...</td>
                 </tr>
               </tbody>
             </table>
