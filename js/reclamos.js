@@ -29,9 +29,99 @@ const ReclamosModule = {
     this.renderPreviewReclamos();
     await Promise.all([
       this.loadCatalogos(),
-      this.cargarMisTareas()
+      this.cargarMisTareas(),
+      this.cargarMasivosBanner()
     ]);
     this.bindEvents();
+  },
+
+  async cargarMasivosBanner() {
+    const bannerBadge = document.getElementById('masivos-banner-badge');
+    const bannerContent = document.getElementById('masivos-banner-content');
+    const bannerCard = document.getElementById('sec-inconvenientes-masivos');
+    if (!bannerContent) return;
+
+    try {
+      const data = await API.get('/masivos/vigentes');
+      const masivos = data || [];
+      const activos = masivos.filter(m => m.estado === 'Activo');
+
+      if (bannerBadge) {
+        if (activos.length > 0) {
+          bannerBadge.className = 'badge badge-danger';
+          bannerBadge.textContent = `${activos.length} activo${activos.length > 1 ? 's' : ''}`;
+        } else {
+          bannerBadge.className = 'badge badge-secondary';
+          bannerBadge.textContent = 'Sin inconvenientes activos';
+        }
+      }
+
+      if (bannerCard) {
+        if (activos.length > 0) {
+          bannerCard.classList.remove('sin-masivos');
+        } else {
+          bannerCard.classList.add('sin-masivos');
+        }
+      }
+
+      if (masivos.length === 0) {
+        bannerContent.innerHTML = `
+          <div class="text-center py-2 text-muted">
+            <span style="color: #10B981; font-weight: bold;">✓</span> Sin inconvenientes activos
+          </div>
+        `;
+        return;
+      }
+
+      bannerContent.innerHTML = masivos.map(m => {
+        const esActivo = m.estado === 'Activo';
+        const badgeEstado = esActivo 
+          ? '<span class="badge badge-danger">Activo</span>' 
+          : '<span class="badge badge-success">Finalizado</span>';
+
+        const tiempoRes = m.tiempo_resolucion && m.tiempo_resolucion !== '-'
+          ? `<span class="masivo-meta-tag"><strong>Est. resolución:</strong> ${m.tiempo_resolucion}</span>`
+          : '';
+
+        const danoTexto = m.caracteristicas_dano && m.caracteristicas_dano !== '-'
+          ? `<div class="font-sm mt-1" style="color: #991B1B;"><strong>Causa / Daño:</strong> ${m.caracteristicas_dano}</div>`
+          : '';
+
+        const resolucionDetalle = !esActivo && m.fecha_fin_fmt
+          ? `<div class="font-sm text-muted mt-1">
+               <span>✓ <strong>Resuelto:</strong> ${m.fecha_fin_fmt} hs</span>
+               ${m.responsable_solucion && m.responsable_solucion !== '-' ? ` | <strong>Resp:</strong> ${m.responsable_solucion}` : ''}
+               ${m.arreglo && m.arreglo !== '-' ? ` | <strong>Trabajo:</strong> ${m.arreglo}` : ''}
+             </div>`
+          : '';
+
+        return `
+          <div class="masivos-banner-item ${esActivo ? '' : 'finalizado'}">
+            <div style="flex: 1; min-width: 250px;">
+              <div class="d-flex align-center gap-2 mb-1">
+                ${badgeEstado}
+                <strong style="font-size: 1rem; color: #0F172A;">${m.servicio_afectado}</strong>
+                <span class="badge badge-secondary">${m.sucursal_nombre}</span>
+              </div>
+              ${danoTexto}
+              <div class="d-flex flex-wrap gap-3 font-sm mt-1">
+                <span class="masivo-meta-tag"><strong>Inicio:</strong> ${m.fecha_inicio_fmt} hs</span>
+                <span class="masivo-meta-tag"><strong>Zona:</strong> ${m.zona_afectada}</span>
+                ${tiempoRes}
+              </div>
+              ${resolucionDetalle}
+            </div>
+          </div>
+        `;
+      }).join('');
+    } catch (err) {
+      console.error('Error al cargar masivos vigentes:', err);
+      bannerContent.innerHTML = `
+        <div class="text-center py-2 text-muted">
+          <span>✓</span> Sin inconvenientes activos
+        </div>
+      `;
+    }
   },
 
   async loadCatalogos() {

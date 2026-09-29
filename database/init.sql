@@ -108,12 +108,33 @@ CREATE TABLE IF NOT EXISTS tareas_asignadas (
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
 
+-- 10. TABLA: Inconvenientes Masivos
+CREATE TABLE IF NOT EXISTS inconvenientes_masivos (
+    id SERIAL PRIMARY KEY,
+    fecha_inicio TIMESTAMP WITH TIME ZONE NOT NULL,
+    sucursal_id INT REFERENCES sucursales(id) ON DELETE SET NULL,
+    zona_afectada VARCHAR(100),
+    servicio_afectado VARCHAR(50) NOT NULL,
+    caracteristicas_dano VARCHAR(255),
+    tiempo_resolucion VARCHAR(20),
+    estado VARCHAR(20) NOT NULL DEFAULT 'Activo' CHECK (estado IN ('Activo', 'Finalizado')),
+    fecha_fin TIMESTAMP WITH TIME ZONE,
+    responsable_solucion VARCHAR(20),
+    arreglo VARCHAR(50),
+    creado_por_id INT REFERENCES usuarios(id) ON DELETE SET NULL,
+    finalizado_por_id INT REFERENCES usuarios(id) ON DELETE SET NULL,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
 -- Índices para optimización de consultas y filtros
 CREATE INDEX IF NOT EXISTS idx_reclamos_fecha ON reclamos (fecha);
 CREATE INDEX IF NOT EXISTS idx_reclamos_sucursal ON reclamos (sucursal_id);
 CREATE INDEX IF NOT EXISTS idx_reclamos_usuario ON reclamos (usuario_id);
 CREATE INDEX IF NOT EXISTS idx_reclamos_tipo ON reclamos (tipo_consulta_id);
 CREATE INDEX IF NOT EXISTS idx_auditoria_fecha ON auditoria_logs (fecha DESC);
+CREATE INDEX IF NOT EXISTS idx_masivos_estado ON inconvenientes_masivos(estado);
+CREATE INDEX IF NOT EXISTS idx_masivos_fecha_inicio ON inconvenientes_masivos(fecha_inicio DESC);
 
 -- ==========================================================
 -- DATOS SEMILLA (SEED DATA)

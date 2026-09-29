@@ -74,6 +74,9 @@
         <button class="nav-tab-btn" data-tab="tareas">
           <span class="tab-icon">📋</span> Asignar Tareas
         </button>
+        <button class="nav-tab-btn" data-tab="masivos">
+          <span class="tab-icon">🚨</span> Masivos
+        </button>
         <button class="nav-tab-btn" data-tab="perfil">
           <span class="tab-icon">👤</span> Perfil
         </button>
@@ -86,6 +89,21 @@
         <div class="view-header">
           <h2>Nuevo Registro de Reclamo</h2>
           <p class="text-muted">Complete los datos de la interacción con el cliente.</p>
+        </div>
+
+        <div id="sec-inconvenientes-masivos" class="card masivos-banner-card mb-4">
+          <div class="card-header flex-row justify-between align-center">
+            <div class="d-flex align-center gap-2">
+              <span style="font-size: 1.25rem;">⚠️</span>
+              <h3 class="m-0">Inconvenientes Masivos</h3>
+            </div>
+            <span id="masivos-banner-badge" class="badge badge-secondary">Sin inconvenientes activos</span>
+          </div>
+          <div id="masivos-banner-content" class="p-3">
+            <div class="text-center py-2 text-muted">
+              <span>✓</span> Sin inconvenientes activos
+            </div>
+          </div>
         </div>
 
         <div class="gestion-top-layout">
@@ -612,6 +630,173 @@
         </div>
       </section>
 
+      <section id="view-masivos" class="tab-view hidden">
+        <div class="view-header">
+          <h2>Inconvenientes Masivos</h2>
+          <p class="text-muted">Carga, seguimiento y resolución de incidentes masivos en los servicios.</p>
+        </div>
+
+        <div class="subtabs-bar mb-3">
+          <button id="subtab-btn-informar-masivo" class="btn btn-tab active">Informar Masivo</button>
+          <button id="subtab-btn-historial-masivos" class="btn btn-tab">Historial de Masivos</button>
+        </div>
+
+        <div id="masivos-sec-informar">
+          <div class="tareas-layout">
+            <div class="tareas-col-form">
+              <div class="card p-4">
+                <div class="card-header mb-3">
+                  <h3>Cargar Masivo</h3>
+                </div>
+                <div id="masivo-form-alert" class="form-alert hidden"></div>
+
+                <form id="form-cargar-masivo">
+                  <div class="form-grid-2">
+                    <div class="form-group">
+                      <label for="masivo-fecha-inicio">Fecha de Inicio <span class="req">*</span></label>
+                      <input type="datetime-local" id="masivo-fecha-inicio" required>
+                      <small class="text-muted">Fecha y hora de inicio</small>
+                    </div>
+
+                    <div class="form-group">
+                      <label for="masivo-sucursal">Sucursal <span class="text-muted">(Opcional)</span></label>
+                      <select id="masivo-sucursal">
+                        <option value="">Todas las sucursales</option>
+                      </select>
+                      <small class="text-muted">En blanco si afecta a todas las sucursales</small>
+                    </div>
+                  </div>
+
+                  <div class="form-grid-2">
+                    <div class="form-group">
+                      <label for="masivo-servicio">Servicio Afectado <span class="req">*</span></label>
+                      <input type="text" id="masivo-servicio" maxlength="50" required placeholder="Ej: Fibra Óptica, Telefonía, TV">
+                      <small class="text-muted">Hasta 50 caracteres</small>
+                    </div>
+
+                    <div class="form-group">
+                      <label for="masivo-zona">Zona Afectada <span class="text-muted">(Opcional)</span></label>
+                      <input type="text" id="masivo-zona" maxlength="100" placeholder="Ej: Microcentro, Barrio San Martín">
+                      <small class="text-muted">Hasta 100 caracteres</small>
+                    </div>
+                  </div>
+
+                  <div class="form-group">
+                    <label for="masivo-caracteristicas-dano">Características del Daño <span class="text-muted">(Opcional)</span></label>
+                    <input type="text" id="masivo-caracteristicas-dano" maxlength="255" placeholder="Ej: Corte de fibra troncal por obras en vía pública, falla de energía en nodo">
+                    <small class="text-muted">Información del siniestro o problema causante de la falla (hasta 255 caracteres)</small>
+                  </div>
+
+                  <div class="form-group">
+                    <label for="masivo-tiempo-resolucion">Tiempo de Resolución <span class="text-muted">(Opcional)</span></label>
+                    <input type="text" id="masivo-tiempo-resolucion" maxlength="20" placeholder="Ej: 18:00 hs o 29/09">
+                    <small class="text-muted">Estimación opcional (hasta 20 caracteres)</small>
+                  </div>
+
+                  <div class="form-actions mt-3">
+                    <button type="submit" class="btn btn-danger btn-lg">
+                      <span class="btn-icon">🚨</span> Cargar Masivo
+                    </button>
+                  </div>
+                </form>
+              </div>
+            </div>
+
+            <div class="tareas-col-list">
+              <div class="card p-4">
+                <div class="card-header flex-row justify-between align-center mb-3">
+                  <div>
+                    <h3>Masivos Activos</h3>
+                    <p class="text-muted font-sm">Inconvenientes generales actualmente en curso.</p>
+                  </div>
+                  <span id="masivos-activos-contador" class="badge badge-danger">0 activos</span>
+                </div>
+
+                <div class="table-container">
+                  <table class="data-table">
+                    <thead>
+                      <tr>
+                        <th>Inicio</th>
+                        <th>Sucursal</th>
+                        <th>Servicio</th>
+                        <th>Características del Daño</th>
+                        <th>Zona</th>
+                        <th>Tiempo Est.</th>
+                        <th>Acciones</th>
+                      </tr>
+                    </thead>
+                    <tbody id="tabla-masivos-activos-body">
+                      <tr>
+                        <td colspan="7" class="text-center py-4 text-muted">Cargando inconvenientes masivos...</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div id="masivos-sec-historial" class="hidden">
+          <div class="card p-4 mb-4">
+            <div class="card-header flex-row justify-between align-center mb-3">
+              <div>
+                <strong>Filtros del Historial de Masivos</strong>
+                <small class="text-muted d-block">Filtre por fecha de inicio, fecha de finalización o sucursal</small>
+              </div>
+              <button id="btn-emitir-reporte-masivos" class="btn btn-outline-danger">
+                <span class="btn-icon">📄</span> Emitir Reporte PDF
+              </button>
+            </div>
+            <div class="filter-grid">
+              <div class="filter-group">
+                <label for="filtro-masivo-fecha-desde">Fecha de Inicio</label>
+                <input type="date" id="filtro-masivo-fecha-desde">
+              </div>
+              <div class="filter-group">
+                <label for="filtro-masivo-fecha-hasta">Fecha de Finalización</label>
+                <input type="date" id="filtro-masivo-fecha-hasta">
+              </div>
+              <div class="filter-group">
+                <label for="filtro-masivo-sucursal">Sucursal</label>
+                <select id="filtro-masivo-sucursal">
+                  <option value="">Todas</option>
+                  <option value="todas">Solo "Todas las sucursales"</option>
+                </select>
+              </div>
+            </div>
+            <div class="filter-actions mt-3">
+              <button id="btn-aplicar-filtros-masivos" class="btn btn-primary">Buscar / Filtrar</button>
+              <button id="btn-limpiar-filtros-masivos" class="btn btn-outline-secondary">Limpiar Filtros</button>
+            </div>
+          </div>
+
+          <div class="card table-container">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Inicio</th>
+                  <th>Sucursal</th>
+                  <th>Servicio</th>
+                  <th>Características del Daño</th>
+                  <th>Zona</th>
+                  <th>Tiempo Est.</th>
+                  <th>Estado</th>
+                  <th>Finalizado</th>
+                  <th>Responsable</th>
+                  <th>Arreglo</th>
+                </tr>
+              </thead>
+              <tbody id="tabla-historial-masivos-body">
+                <tr>
+                  <td colspan="10" class="text-center py-4 text-muted">Cargando historial de masivos...</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
     </main>
   </div>
 
@@ -899,6 +1084,96 @@
     </div>
   </div>
 
+  <div id="modal-modificar-masivo" class="modal-overlay hidden">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3>Modificar Inconveniente Masivo</h3>
+        <button class="modal-close" onclick="MasivosModule.cerrarModalModificar()">&times;</button>
+      </div>
+      <form id="form-modificar-masivo">
+        <div class="modal-body">
+          <div id="edit-masivo-alert" class="form-alert hidden"></div>
+
+          <div class="form-group">
+            <label for="edit-masivo-fecha-inicio">Fecha de Inicio <span class="req">*</span></label>
+            <input type="datetime-local" id="edit-masivo-fecha-inicio" required>
+          </div>
+
+          <div class="form-group">
+            <label for="edit-masivo-sucursal">Sucursal <span class="text-muted">(Opcional)</span></label>
+            <select id="edit-masivo-sucursal">
+              <option value="">Todas las sucursales</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="edit-masivo-servicio">Servicio Afectado <span class="req">*</span></label>
+            <input type="text" id="edit-masivo-servicio" maxlength="50" required>
+          </div>
+
+          <div class="form-group">
+            <label for="edit-masivo-zona">Zona Afectada <span class="text-muted">(Opcional)</span></label>
+            <input type="text" id="edit-masivo-zona" maxlength="100">
+          </div>
+
+          <div class="form-group">
+            <label for="edit-masivo-caracteristicas-dano">Características del Daño <span class="text-muted">(Opcional)</span></label>
+            <input type="text" id="edit-masivo-caracteristicas-dano" maxlength="255" placeholder="Información del siniestro o problema">
+          </div>
+
+          <div class="form-group">
+            <label for="edit-masivo-tiempo-resolucion">Tiempo de Resolución <span class="text-muted">(Opcional)</span></label>
+            <input type="text" id="edit-masivo-tiempo-resolucion" maxlength="20">
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline-secondary" onclick="MasivosModule.cerrarModalModificar()">Cancelar</button>
+          <button type="submit" class="btn btn-primary">Guardar Modificaciones</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div id="modal-finalizar-masivo" class="modal-overlay hidden">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3>Finalizar Inconveniente Masivo</h3>
+        <button class="modal-close" onclick="MasivosModule.cerrarModalFinalizar()">&times;</button>
+      </div>
+      <form id="form-finalizar-masivo">
+        <div class="modal-body">
+          <div id="fin-masivo-alert" class="form-alert hidden"></div>
+          
+          <div class="mb-3 p-3" style="background: var(--bg-hover, #f1f5f9); border-radius: 6px;">
+            <div id="fin-masivo-resumen" class="font-sm text-muted"></div>
+          </div>
+
+          <div class="form-group">
+            <label for="fin-masivo-fecha">Fecha de Finalización <span class="req">*</span></label>
+            <input type="datetime-local" id="fin-masivo-fecha" required>
+            <small class="text-muted">Fecha y hora en que se resolvió el inconveniente</small>
+          </div>
+
+          <div class="form-group">
+            <label for="fin-masivo-responsable">Responsable <span class="text-muted">(Opcional)</span></label>
+            <input type="text" id="fin-masivo-responsable" maxlength="20" placeholder="¿Quién informó la resolución?">
+            <small class="text-muted">Hasta 20 caracteres</small>
+          </div>
+
+          <div class="form-group">
+            <label for="fin-masivo-arreglo">Arreglo / Trabajo Realizado <span class="text-muted">(Opcional)</span></label>
+            <input type="text" id="fin-masivo-arreglo" maxlength="50" placeholder="Ej: Reparación de tendido principal">
+            <small class="text-muted">Hasta 50 caracteres</small>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline-secondary" onclick="MasivosModule.cerrarModalFinalizar()">Cancelar</button>
+          <button type="submit" class="btn btn-success">Confirmar Finalización</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
   <script src="/js/api.js"></script>
   <script src="/js/auth.js"></script>
   <script src="/js/reclamos.js"></script>
@@ -906,6 +1181,7 @@
   <script src="/js/registros.js"></script>
   <script src="/js/edicion.js"></script>
   <script src="/js/tareas.js"></script>
+  <script src="/js/masivos.js"></script>
   <script src="/js/perfil.js"></script>
   <script src="/js/app.js"></script>
 </body>

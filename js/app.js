@@ -63,6 +63,9 @@ const App = {
       case 'tareas':
         TareasModule.init();
         break;
+      case 'masivos':
+        MasivosModule.init();
+        break;
       case 'perfil':
         PerfilModule.init();
         break;

@@ -342,7 +342,180 @@ const emitirReporteTareasPDF = async (req, res) => {
   }
 };
 
+const emitirReporteMasivosPDF = async (req, res) => {
+  try {
+    const { fecha_desde, fecha_hasta, sucursal_id } = req.query;
+
+    let query = `
+      SELECT 
+        m.id,
+        m.fecha_inicio,
+        TO_CHAR(m.fecha_inicio AT TIME ZONE 'America/Argentina/Buenos_Aires', 'DD/MM/YYYY HH24:MI') AS fecha_inicio_fmt,
+        m.sucursal_id,
+        COALESCE(s.nombre, 'Todas las sucursales') AS sucursal_nombre,
+        COALESCE(m.zona_afectada, '-') AS zona_afectada,
+        m.servicio_afectado,
+        COALESCE(m.caracteristicas_dano, '-') AS caracteristicas_dano,
+        COALESCE(m.tiempo_resolucion, '-') AS tiempo_resolucion,
+        m.estado,
+        m.fecha_fin,
+        TO_CHAR(m.fecha_fin AT TIME ZONE 'America/Argentina/Buenos_Aires', 'DD/MM/YYYY HH24:MI') AS fecha_fin_fmt,
+        COALESCE(m.responsable_solucion, '-') AS responsable_solucion,
+        COALESCE(m.arreglo, '-') AS arreglo,
+        u.nombre_completo AS creado_por_nombre,
+        uf.nombre_completo AS finalizado_por_nombre
+      FROM inconvenientes_masivos m
+      LEFT JOIN sucursales s ON m.sucursal_id = s.id
+      LEFT JOIN usuarios u ON m.creado_por_id = u.id
+      LEFT JOIN usuarios uf ON m.finalizado_por_id = uf.id
+      WHERE 1=1
+    `;
+
+    const values = [];
+    let paramIndex = 1;
+
+    if (fecha_desde) {
+      query += ` AND (m.fecha_inicio AT TIME ZONE 'America/Argentina/Buenos_Aires')::date >= $${paramIndex++}::date`;
+      values.push(fecha_desde);
+    }
+
+    if (fecha_hasta) {
+      query += ` AND (COALESCE(m.fecha_fin, m.fecha_inicio) AT TIME ZONE 'America/Argentina/Buenos_Aires')::date <= $${paramIndex++}::date`;
+      values.push(fecha_hasta);
+    }
+
+    if (sucursal_id) {
+      if (sucursal_id === 'todas') {
+        query += ` AND m.sucursal_id IS NULL`;
+      } else {
+        query += ` AND m.sucursal_id = $${paramIndex++}`;
+        values.push(parseInt(sucursal_id, 10));
+      }
+    }
+
+    query += ` ORDER BY m.fecha_inicio DESC, m.id DESC`;
+
+    const result = await pool.query(query, values);
+    const masivos = result.rows;
+
+    const doc = new PDFDocument({
+      size: 'A4',
+      layout: 'landscape',
+      margin: 30
+    });
+
+    const filename = `Reporte_Masivos_${Date.now()}.pdf`;
+
+    res.setHeader('Content-Type', 'application/pdf');
+    res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
+
+    doc.pipe(res);
+
+    doc.rect(30, 25, 782, 50).fill('#B91C1C');
+    doc.fillColor('#FFFFFF').fontSize(16).font('Helvetica-Bold').text('REPORTE DE INCONVENIENTES MASIVOS', 45, 38);
+    doc.fontSize(9).font('Helvetica').text(`Generado por: ${req.user.nombre_completo} (${req.user.rol}) | Fecha: ${new Date().toLocaleString()}`, 45, 56);
+
+    let filtrosTexto = [];
+    if (fecha_desde) filtrosTexto.push(`Fecha Inicio Desde: ${fecha_desde}`);
+    if (fecha_hasta) filtrosTexto.push(`Fecha Fin Hasta: ${fecha_hasta}`);
+    if (sucursal_id) {
+      if (sucursal_id === 'todas') {
+        filtrosTexto.push('Sucursal: Todas las sucursales');
+      } else {
+        const sucRow = await pool.query('SELECT nombre FROM sucursales WHERE id = $1', [sucursal_id]);
+        filtrosTexto.push(`Sucursal: ${sucRow.rows[0]?.nombre || sucursal_id}`);
+      }
+    }
+
+    doc.rect(30, 85, 782, 35).fill('#F8FAFC');
+    doc.rect(30, 85, 782, 35).stroke('#E2E8F0');
+    doc.fillColor('#334155').fontSize(9).font('Helvetica-Bold').text('Filtros aplicados:', 40, 93);
+    doc.font('Helvetica').text(filtrosTexto.length > 0 ? filtrosTexto.join('   |   ') : 'Sin filtros (Todos los registros históricos)', 125, 93);
+    doc.font('Helvetica-Bold').text(`Total de inconvenientes masivos: ${masivos.length}`, 40, 107);
+
+    const headers = [
+      'Inicio',
+      'Sucursal',
+      'Servicio',
+      'Características del Daño',
+      'Zona',
+      'Tiempo Est.',
+      'Estado',
+      'Finalizado',
+      'Responsable',
+      'Arreglo'
+    ];
+    const colW = [65, 70, 75, 115, 80, 55, 50, 65, 65, 142];
+    const colX = [30];
+    for (let i = 0; i < colW.length - 1; i++) {
+      colX.push(colX[i] + colW[i]);
+    }
+
+    let startY = 130;
+    const rowHeight = 24;
+
+    const drawTableHeader = (y) => {
+      doc.rect(30, y, 782, 22).fill('#1E293B');
+      doc.fillColor('#FFFFFF').fontSize(8).font('Helvetica-Bold');
+      headers.forEach((h, i) => {
+        doc.text(h, colX[i] + 4, y + 6, { width: colW[i] - 8, lineBreak: false });
+      });
+    };
+
+    drawTableHeader(startY);
+    let currentY = startY + 22;
+    let zebra = false;
+
+    if (masivos.length === 0) {
+      doc.rect(30, currentY, 782, 30).fill('#FFFFFF');
+      doc.rect(30, currentY, 782, 30).stroke('#CBD5E1');
+      doc.fillColor('#64748B').fontSize(10).font('Helvetica-Oblique').text('No se encontraron registros con los criterios seleccionados.', 30, currentY + 10, { align: 'center', width: 782 });
+    } else {
+      masivos.forEach((m) => {
+        if (currentY + rowHeight > 550) {
+          doc.addPage({ size: 'A4', layout: 'landscape', margin: 30 });
+          currentY = 30;
+          drawTableHeader(currentY);
+          currentY += 22;
+          zebra = false;
+        }
+
+        doc.rect(30, currentY, 782, rowHeight).fill(zebra ? '#F8FAFC' : '#FFFFFF');
+        doc.rect(30, currentY, 782, rowHeight).stroke('#E2E8F0');
+
+        doc.fillColor('#0F172A').fontSize(7.5).font('Helvetica');
+
+        const estadoColor = m.estado === 'Activo' ? '#DC2626' : '#16A34A';
+
+        doc.text(m.fecha_inicio_fmt, colX[0] + 4, currentY + 6, { width: colW[0] - 8, lineBreak: false });
+        doc.text(m.sucursal_nombre, colX[1] + 4, currentY + 6, { width: colW[1] - 8, lineBreak: false });
+        doc.text(m.servicio_afectado, colX[2] + 4, currentY + 6, { width: colW[2] - 8, lineBreak: false });
+        doc.text(m.caracteristicas_dano, colX[3] + 4, currentY + 6, { width: colW[3] - 8, lineBreak: false });
+        doc.text(m.zona_afectada, colX[4] + 4, currentY + 6, { width: colW[4] - 8, lineBreak: false });
+        doc.text(m.tiempo_resolucion, colX[5] + 4, currentY + 6, { width: colW[5] - 8, lineBreak: false });
+
+        doc.fillColor(estadoColor).font('Helvetica-Bold');
+        doc.text(m.estado, colX[6] + 4, currentY + 6, { width: colW[6] - 8, lineBreak: false });
+
+        doc.fillColor('#0F172A').font('Helvetica');
+        doc.text(m.fecha_fin_fmt || '-', colX[7] + 4, currentY + 6, { width: colW[7] - 8, lineBreak: false });
+        doc.text(m.responsable_solucion, colX[8] + 4, currentY + 6, { width: colW[8] - 8, lineBreak: false });
+        doc.text(m.arreglo, colX[9] + 4, currentY + 6, { width: colW[9] - 8, lineBreak: false });
+
+        currentY += rowHeight;
+        zebra = !zebra;
+      });
+    }
+
+    doc.end();
+  } catch (error) {
+    console.error('Error al generar reporte de masivos en PDF:', error);
+    res.status(500).json({ error: 'Error al generar el reporte de masivos en PDF.' });
+  }
+};
+
 module.exports = {
   emitirReportePDF,
-  emitirReporteTareasPDF
+  emitirReporteTareasPDF,
+  emitirReporteMasivosPDF
 };

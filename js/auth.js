@@ -89,10 +89,16 @@ const Auth = {
     const tabRegistros = document.querySelector('[data-tab="registros"]');
     const tabEdicion = document.querySelector('[data-tab="edicion"]');
     const tabTareas = document.querySelector('[data-tab="tareas"]');
+    const tabMasivos = document.querySelector('[data-tab="masivos"]');
     const tabPerfil = document.querySelector('[data-tab="perfil"]');
 
     if (tabGestion) {
-      tabGestion.style.display = (rol === 'Espectador') ? 'none' : 'inline-flex';
+      tabGestion.style.display = 'inline-flex';
+    }
+
+    const formColGestion = document.querySelector('.gestion-col-form');
+    if (formColGestion) {
+      formColGestion.style.display = (rol === 'Espectador') ? 'none' : 'block';
     }
 
     if (tabHistorial) {
@@ -114,6 +120,10 @@ const Auth = {
 
     if (tabTareas) {
       tabTareas.style.display = (rol === 'Admin' || rol === 'Supervisor') ? 'inline-flex' : 'none';
+    }
+
+    if (tabMasivos) {
+      tabMasivos.style.display = (rol === 'Admin' || rol === 'Supervisor') ? 'inline-flex' : 'none';
     }
 
     if (tabPerfil) {

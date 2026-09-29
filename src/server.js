@@ -11,6 +11,7 @@ const usuariosRoutes = require('./routes/usuarios.routes');
 const auditoriaRoutes = require('./routes/auditoria.routes');
 const reportesRoutes = require('./routes/reportes.routes');
 const tareasRoutes = require('./routes/tareas.routes');
+const masivosRoutes = require('./routes/masivos.routes');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -30,6 +31,7 @@ app.use('/api/usuarios', usuariosRoutes);
 app.use('/api/auditoria', auditoriaRoutes);
 app.use('/api/reportes', reportesRoutes);
 app.use('/api/tareas', tareasRoutes);
+app.use('/api/masivos', masivosRoutes);
 
 app.get('/api/health', async (req, res) => {
   try {
