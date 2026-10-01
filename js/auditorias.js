@@ -29,6 +29,12 @@ const AuditoriasModule = {
         secNueva.classList.remove('hidden');
         secHistorial.classList.add('hidden');
         secEditar.classList.add('hidden');
+        if (Auth.currentUser) {
+          const idAud = document.getElementById('nueva-auditoria-auditor');
+          if (idAud) idAud.value = String(Auth.currentUser.id);
+          const txtAud = document.getElementById('nueva-auditoria-auditor-nombre');
+          if (txtAud) txtAud.value = `${Auth.currentUser.nombre_completo} (${Auth.currentUser.rol})`;
+        }
       };
     }
 
@@ -52,6 +58,7 @@ const AuditoriasModule = {
         secEditar.classList.remove('hidden');
         secNueva.classList.add('hidden');
         secHistorial.classList.add('hidden');
+        this.cargarCanalesAdmin();
         this.cargarCriteriosAdmin();
       };
     }
@@ -173,14 +180,15 @@ const AuditoriasModule = {
         });
       }
 
-      if (selAuditor) {
-        selAuditor.innerHTML = '<option value="">-- Seleccione Auditor --</option>';
-        auditores.forEach(au => {
-          selAuditor.innerHTML += `<option value="${au.id}">${au.nombre_completo}</option>`;
-        });
-        const currentUser = Auth.currentUser;
-        if (currentUser && (currentUser.rol === 'Supervisor' || currentUser.rol === 'Admin')) {
-          selAuditor.value = currentUser.id;
+      const currentUser = Auth.currentUser;
+      const txtAuditorNombre = document.getElementById('nueva-auditoria-auditor-nombre');
+      const inputAuditorId = document.getElementById('nueva-auditoria-auditor');
+      if (currentUser) {
+        if (txtAuditorNombre) {
+          txtAuditorNombre.value = `${currentUser.nombre_completo} (${currentUser.rol})`;
+        }
+        if (inputAuditorId) {
+          inputAuditorId.value = String(currentUser.id);
         }
       }
       if (selAuditorFiltro) {
@@ -378,16 +386,33 @@ const AuditoriasModule = {
     alertEl.classList.add('hidden');
     alertEl.textContent = '';
 
-    const fecha = document.getElementById('nueva-auditoria-fecha').value;
-    const asesor = document.getElementById('nueva-auditoria-asesor').value;
-    const auditor = document.getElementById('nueva-auditoria-auditor').value;
-    const canal = document.getElementById('nueva-auditoria-canal').value;
-    const referencia = document.getElementById('nueva-auditoria-referencia').value.trim();
+    const elFecha = document.getElementById('nueva-auditoria-fecha');
+    const elAsesor = document.getElementById('nueva-auditoria-asesor');
+    const elAuditor = document.getElementById('nueva-auditoria-auditor');
+    const elCanal = document.getElementById('nueva-auditoria-canal');
+    const elReferencia = document.getElementById('nueva-auditoria-referencia');
+
+    const fecha = elFecha ? elFecha.value : '';
+    const asesor = elAsesor ? elAsesor.value : '';
+    const auditor = elAuditor ? elAuditor.value : '';
+    const canal = elCanal ? elCanal.value : '';
+    const referencia = elReferencia ? elReferencia.value.trim() : '';
+
+    [elFecha, elAsesor, elAuditor, elCanal, elReferencia].forEach(el => {
+      if (el) el.style.borderColor = '';
+    });
 
     if (!fecha || !asesor || !auditor || !canal || !referencia) {
-      alertEl.textContent = 'Por favor complete todos los campos obligatorios de la cabecera (Fecha, Asesor, Auditor, Canal y Referencia).';
+      alertEl.textContent = 'Debe completar todos los campos de "Datos Principales de la Auditoría" (Fecha, Asesor Evaluado, Auditor / Evaluador, Canal de Ingreso y N° de Referencia) para poder continuar a la segunda etapa.';
       alertEl.classList.remove('hidden');
-      alertEl.scrollIntoView({ behavior: 'smooth' });
+
+      if (!fecha && elFecha) elFecha.style.borderColor = '#EF4444';
+      if (!asesor && elAsesor) elAsesor.style.borderColor = '#EF4444';
+      if (!auditor && elAuditor) elAuditor.style.borderColor = '#EF4444';
+      if (!canal && elCanal) elCanal.style.borderColor = '#EF4444';
+      if (!referencia && elReferencia) elReferencia.style.borderColor = '#EF4444';
+
+      alertEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
       return;
     }
 
@@ -521,8 +546,11 @@ const AuditoriasModule = {
     document.getElementById('nueva-auditoria-fecha').value = new Date().toISOString().split('T')[0];
 
     const currentUser = Auth.currentUser;
-    if (currentUser && (currentUser.rol === 'Supervisor' || currentUser.rol === 'Admin')) {
-      document.getElementById('nueva-auditoria-auditor').value = currentUser.id;
+    if (currentUser) {
+      const inputAuditorId = document.getElementById('nueva-auditoria-auditor');
+      if (inputAuditorId) inputAuditorId.value = String(currentUser.id);
+      const txtAuditorNombre = document.getElementById('nueva-auditoria-auditor-nombre');
+      if (txtAuditorNombre) txtAuditorNombre.value = `${currentUser.nombre_completo} (${currentUser.rol})`;
     }
 
     document.getElementById('check-error-critico').checked = false;
@@ -1028,6 +1056,122 @@ const AuditoriasModule = {
       await this.cargarCriteriosParaEvaluacion();
     } catch (err) {
       alert('Error al eliminar indicador: ' + err.message);
+    }
+  },
+
+  async cargarCanalesAdmin() {
+    const tbody = document.getElementById('tabla-canales-admin-body');
+    if (!tbody) return;
+
+    tbody.innerHTML = '<tr><td colspan="3" class="text-center py-4 text-muted">Cargando canales...</td></tr>';
+
+    try {
+      const list = await API.get('/auditorias/canales/admin');
+
+      if (!list || list.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="3" class="text-center py-4 text-muted">No hay canales de atención configurados.</td></tr>';
+        return;
+      }
+
+      let html = '';
+      list.forEach(c => {
+        html += `
+          <tr>
+            <td><strong>${c.nombre}</strong></td>
+            <td style="text-align: center;">
+              ${c.activo 
+                ? '<span class="badge" style="background:#DCFCE7; color:#15803D; font-weight:700;">Activo</span>' 
+                : '<span class="badge" style="background:#FEE2E2; color:#B91C1C; font-weight:700;">Inactivo</span>'}
+            </td>
+            <td style="text-align: center;">
+              <div class="flex-row gap-1 justify-center">
+                <button class="btn btn-sm btn-outline-primary" onclick="AuditoriasModule.abrirModalEditarCanal(${c.id}, '${encodeURIComponent(c.nombre)}', ${c.activo})">
+                  ✏️ Editar
+                </button>
+                <button class="btn btn-sm btn-outline-danger" onclick="AuditoriasModule.eliminarCanal(${c.id}, '${encodeURIComponent(c.nombre)}')">
+                  🗑️ Eliminar
+                </button>
+              </div>
+            </td>
+          </tr>
+        `;
+      });
+
+      tbody.innerHTML = html;
+    } catch (err) {
+      console.error('Error al cargar administración de canales:', err);
+      tbody.innerHTML = `<tr><td colspan="3" class="text-center py-4 text-danger">Error: ${err.message}</td></tr>`;
+    }
+  },
+
+  abrirModalCrearCanal() {
+    document.getElementById('nuevo-canal-nombre').value = '';
+    const modal = document.getElementById('modal-crear-canal');
+    modal.classList.remove('hidden');
+
+    const form = document.getElementById('form-crear-canal');
+    form.onsubmit = async (e) => {
+      e.preventDefault();
+      const nombre = document.getElementById('nuevo-canal-nombre').value.trim();
+
+      try {
+        await API.post('/auditorias/canales', { nombre });
+        modal.classList.add('hidden');
+        await this.cargarCanalesAdmin();
+        await this.cargarCatalogos();
+      } catch (err) {
+        alert('Error al crear canal: ' + err.message);
+      }
+    };
+  },
+
+  cerrarModalCrearCanal() {
+    document.getElementById('modal-crear-canal').classList.add('hidden');
+  },
+
+  abrirModalEditarCanal(id, nombreEnc, activo) {
+    const nombre = decodeURIComponent(nombreEnc);
+    document.getElementById('edit-canal-id').value = id;
+    document.getElementById('edit-canal-nombre').value = nombre;
+    document.getElementById('edit-canal-activo').value = String(activo);
+
+    const modal = document.getElementById('modal-editar-canal');
+    modal.classList.remove('hidden');
+
+    const form = document.getElementById('form-editar-canal');
+    form.onsubmit = async (e) => {
+      e.preventDefault();
+      const nuevoNombre = document.getElementById('edit-canal-nombre').value.trim();
+      const nuevoActivo = document.getElementById('edit-canal-activo').value === 'true';
+
+      try {
+        await API.put(`/auditorias/canales/${id}`, { nombre: nuevoNombre, activo: nuevoActivo });
+        modal.classList.add('hidden');
+        await this.cargarCanalesAdmin();
+        await this.cargarCatalogos();
+      } catch (err) {
+        alert('Error al modificar canal: ' + err.message);
+      }
+    };
+  },
+
+  cerrarModalEditarCanal() {
+    document.getElementById('modal-editar-canal').classList.add('hidden');
+  },
+
+  async eliminarCanal(id, nombreEnc) {
+    const nombre = decodeURIComponent(nombreEnc);
+    if (!confirm(`¿Está seguro de que desea eliminar o desactivar el canal "${nombre}"?`)) return;
+
+    try {
+      const res = await API.delete(`/auditorias/canales/${id}`);
+      if (res && res.mensaje) {
+        alert(res.mensaje);
+      }
+      await this.cargarCanalesAdmin();
+      await this.cargarCatalogos();
+    } catch (err) {
+      alert('Error al eliminar canal: ' + err.message);
     }
   }
 };

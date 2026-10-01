@@ -7,6 +7,11 @@ router.use(verifyToken);
 router.use(checkRole('Admin', 'Supervisor'));
 
 router.get('/canales', auditoriasController.getCanales);
+router.get('/canales/admin', auditoriasController.getCanalesAdmin);
+router.post('/canales', auditoriasController.crearCanal);
+router.put('/canales/:id', auditoriasController.modificarCanal);
+router.delete('/canales/:id', auditoriasController.eliminarCanal);
+
 router.get('/criterios', auditoriasController.getCriterios);
 router.get('/criterios/admin', auditoriasController.getCriteriosAdmin);
 

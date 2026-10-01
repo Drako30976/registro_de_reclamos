@@ -853,10 +853,9 @@
 
                 <div class="form-grid-3">
                   <div class="form-group">
-                    <label for="nueva-auditoria-auditor">Auditor / Evaluador <span class="req">*</span></label>
-                    <select id="nueva-auditoria-auditor" required>
-                      <option value="">-- Seleccione Auditor --</option>
-                    </select>
+                    <label for="nueva-auditoria-auditor-nombre">Auditor / Evaluador <span class="req">*</span></label>
+                    <input type="text" id="nueva-auditoria-auditor-nombre" readonly class="form-control" style="background: #F1F5F9; cursor: not-allowed; font-weight: 600;" placeholder="Cargando perfil...">
+                    <input type="hidden" id="nueva-auditoria-auditor" required>
                   </div>
                   <div class="form-group">
                     <label for="nueva-auditoria-canal">Canal de Ingreso / Atención <span class="req">*</span></label>
@@ -1077,23 +1076,78 @@
         </div>
 
         <div id="auditorias-sec-editar" class="hidden">
-          <div class="card p-4 mb-4">
-            <div class="card-header flex-row justify-between align-center mb-3">
-              <div>
-                <h3>Configuración de Criterios y Subcriterios</h3>
-                <small class="text-muted">Administre las categorías evaluadas y los indicadores de puntaje</small>
-              </div>
-              <button type="button" class="btn btn-primary" onclick="AuditoriasModule.abrirModalCrearCriterio()">
-                + Nueva Categoría
-              </button>
-            </div>
-
-            <div id="criterios-manager-alert" class="form-alert hidden mb-3"></div>
-
-            <div id="criterios-manager-lista" class="criterios-manager-grid">
-              <div class="text-center py-4 text-muted">Cargando categorías y criterios...</div>
-            </div>
+          <div class="view-header mb-3">
+            <h3>Panel de Configuración y Edición</h3>
+            <p class="text-muted">Despliegue las opciones para gestionar los canales de ingreso y los criterios de evaluación.</p>
           </div>
+
+          <details class="card mb-4" id="acordeon-canales" style="border: 1px solid #CBD5E1; border-radius: var(--radius-sm); overflow: hidden;">
+            <summary style="cursor: pointer; background: #F8FAFC; padding: 1rem 1.25rem; display: flex; justify-content: space-between; align-items: center; user-select: none; font-weight: 700; border-bottom: 1px solid #E2E8F0;">
+              <div class="flex-row align-center gap-2">
+                <span style="font-size: 1.15rem;">📡</span>
+                <div>
+                  <span class="font-md">Canales de Ingreso / Atención</span>
+                  <small class="text-muted d-block font-normal">Gestione los canales por los cuales ingresan los contactos (crear, modificar o desactivar)</small>
+                </div>
+              </div>
+              <span class="badge" style="background: #E2E8F0; color: #334155;">Desplegar ▼</span>
+            </summary>
+            <div class="p-4" style="background: #FFFFFF;">
+              <div class="card-header flex-row justify-between align-center mb-3 p-0" style="border: none;">
+                <div>
+                  <strong>Listado de Canales Registrados</strong>
+                </div>
+                <button type="button" class="btn btn-primary" onclick="AuditoriasModule.abrirModalCrearCanal()">
+                  + Nuevo Canal
+                </button>
+              </div>
+              <div class="table-container">
+                <table class="data-table">
+                  <thead>
+                    <tr>
+                      <th>Nombre del Canal</th>
+                      <th style="text-align: center;">Estado</th>
+                      <th style="text-align: center;">Acciones</th>
+                    </tr>
+                  </thead>
+                  <tbody id="tabla-canales-admin-body">
+                    <tr>
+                      <td colspan="3" class="text-center py-4 text-muted">Cargando canales...</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </details>
+
+          <details class="card mb-4" id="acordeon-criterios" style="border: 1px solid #CBD5E1; border-radius: var(--radius-sm); overflow: hidden;">
+            <summary style="cursor: pointer; background: #F8FAFC; padding: 1rem 1.25rem; display: flex; justify-content: space-between; align-items: center; user-select: none; font-weight: 700; border-bottom: 1px solid #E2E8F0;">
+              <div class="flex-row align-center gap-2">
+                <span style="font-size: 1.15rem;">📋</span>
+                <div>
+                  <span class="font-md">Categorías y Criterios de Evaluación</span>
+                  <small class="text-muted d-block font-normal">Administre las categorías evaluadas y los indicadores de puntaje</small>
+                </div>
+              </div>
+              <span class="badge" style="background: #E2E8F0; color: #334155;">Desplegar ▼</span>
+            </summary>
+            <div class="p-4" style="background: #FFFFFF;">
+              <div class="card-header flex-row justify-between align-center mb-3 p-0" style="border: none;">
+                <div>
+                  <strong>Categorías e Indicadores Oficiales</strong>
+                </div>
+                <button type="button" class="btn btn-primary" onclick="AuditoriasModule.abrirModalCrearCriterio()">
+                  + Nueva Categoría
+                </button>
+              </div>
+
+              <div id="criterios-manager-alert" class="form-alert hidden mb-3"></div>
+
+              <div id="criterios-manager-lista" class="criterios-manager-grid">
+                <div class="text-center py-4 text-muted">Cargando categorías y criterios...</div>
+              </div>
+            </div>
+          </details>
         </div>
       </section>
 
@@ -1669,6 +1723,56 @@
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-outline-secondary" onclick="AuditoriasModule.cerrarModalEditarSubcriterio()">Cancelar</button>
+          <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div id="modal-crear-canal" class="modal-overlay hidden">
+    <div class="modal-box modal-sm">
+      <div class="modal-header">
+        <h3>Nuevo Canal de Atención</h3>
+        <button class="modal-close" onclick="AuditoriasModule.cerrarModalCrearCanal()">&times;</button>
+      </div>
+      <form id="form-crear-canal">
+        <div class="modal-body">
+          <div class="form-group">
+            <label for="nuevo-canal-nombre">Nombre del Canal <span class="req">*</span></label>
+            <input type="text" id="nuevo-canal-nombre" maxlength="50" required placeholder="Ej: Portal Web">
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline-secondary" onclick="AuditoriasModule.cerrarModalCrearCanal()">Cancelar</button>
+          <button type="submit" class="btn btn-primary">Crear Canal</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div id="modal-editar-canal" class="modal-overlay hidden">
+    <div class="modal-box modal-sm">
+      <div class="modal-header">
+        <h3>Editar Canal de Atención</h3>
+        <button class="modal-close" onclick="AuditoriasModule.cerrarModalEditarCanal()">&times;</button>
+      </div>
+      <form id="form-editar-canal">
+        <div class="modal-body">
+          <input type="hidden" id="edit-canal-id">
+          <div class="form-group">
+            <label for="edit-canal-nombre">Nombre del Canal <span class="req">*</span></label>
+            <input type="text" id="edit-canal-nombre" maxlength="50" required>
+          </div>
+          <div class="form-group">
+            <label for="edit-canal-activo">Estado</label>
+            <select id="edit-canal-activo">
+              <option value="true">Activo</option>
+              <option value="false">Inactivo</option>
+            </select>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline-secondary" onclick="AuditoriasModule.cerrarModalEditarCanal()">Cancelar</button>
           <button type="submit" class="btn btn-primary">Guardar Cambios</button>
         </div>
       </form>

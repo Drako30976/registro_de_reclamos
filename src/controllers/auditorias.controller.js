@@ -670,8 +670,142 @@ const eliminarAuditoria = async (req, res) => {
   }
 };
 
+const getCanalesAdmin = async (req, res) => {
+  try {
+    const result = await pool.query('SELECT id, nombre, activo FROM canales_atencion ORDER BY id ASC');
+    res.json(result.rows);
+  } catch (error) {
+    console.error('Error al obtener canales:', error);
+    res.status(500).json({ error: 'Error al obtener los canales.' });
+  }
+};
+
+const crearCanal = async (req, res) => {
+  try {
+    const { nombre } = req.body;
+    if (!nombre || !nombre.trim()) {
+      return res.status(400).json({ error: 'El nombre del canal es obligatorio.' });
+    }
+
+    const existe = await pool.query('SELECT 1 FROM canales_atencion WHERE LOWER(nombre) = LOWER($1)', [nombre.trim()]);
+    if (existe.rows.length > 0) {
+      return res.status(400).json({ error: 'Ya existe un canal con ese nombre.' });
+    }
+
+    const result = await pool.query(
+      'INSERT INTO canales_atencion (nombre, activo) VALUES ($1, true) RETURNING *',
+      [nombre.trim()]
+    );
+
+    await registrarAuditoria({
+      accion: 'CREAR_CANAL_ATENCION',
+      usuario_id: req.user.id,
+      usuario_nombre: req.user.nombre_completo,
+      entidad: 'canales_atencion',
+      registro_id: result.rows[0].id,
+      datos_nuevos: result.rows[0]
+    });
+
+    res.status(201).json(result.rows[0]);
+  } catch (error) {
+    console.error('Error al crear canal:', error);
+    res.status(500).json({ error: 'Error al crear el canal.' });
+  }
+};
+
+const modificarCanal = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { nombre, activo } = req.body;
+
+    if (!nombre || !nombre.trim()) {
+      return res.status(400).json({ error: 'El nombre del canal es obligatorio.' });
+    }
+
+    const anteriorRes = await pool.query('SELECT * FROM canales_atencion WHERE id = $1', [id]);
+    if (anteriorRes.rows.length === 0) {
+      return res.status(404).json({ error: 'Canal no encontrado.' });
+    }
+
+    const result = await pool.query(
+      'UPDATE canales_atencion SET nombre = $1, activo = COALESCE($2, activo) WHERE id = $3 RETURNING *',
+      [
+        nombre.trim(),
+        activo !== undefined ? activo : anteriorRes.rows[0].activo,
+        id
+      ]
+    );
+
+    await registrarAuditoria({
+      accion: 'MODIFICAR_CANAL_ATENCION',
+      usuario_id: req.user.id,
+      usuario_nombre: req.user.nombre_completo,
+      entidad: 'canales_atencion',
+      registro_id: id,
+      datos_anteriores: anteriorRes.rows[0],
+      datos_nuevos: result.rows[0]
+    });
+
+    res.json(result.rows[0]);
+  } catch (error) {
+    console.error('Error al modificar canal:', error);
+    res.status(500).json({ error: 'Error al modificar el canal.' });
+  }
+};
+
+const eliminarCanal = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const anteriorRes = await pool.query('SELECT * FROM canales_atencion WHERE id = $1', [id]);
+    if (anteriorRes.rows.length === 0) {
+      return res.status(404).json({ error: 'Canal no encontrado.' });
+    }
+
+    const usadoRes = await pool.query('SELECT 1 FROM auditorias_calidad WHERE canal_id = $1 LIMIT 1', [id]);
+    if (usadoRes.rows.length > 0) {
+      await pool.query('UPDATE canales_atencion SET activo = false WHERE id = $1', [id]);
+
+      await registrarAuditoria({
+        accion: 'DESACTIVAR_CANAL_ATENCION',
+        usuario_id: req.user.id,
+        usuario_nombre: req.user.nombre_completo,
+        entidad: 'canales_atencion',
+        registro_id: id,
+        datos_anteriores: anteriorRes.rows[0],
+        datos_nuevos: { activo: false }
+      });
+
+      return res.json({
+        mensaje: 'El canal posee auditorías históricas asociadas. Se ha desactivado para proteger el historial.',
+        desactivado: true
+      });
+    }
+
+    await pool.query('DELETE FROM canales_atencion WHERE id = $1', [id]);
+
+    await registrarAuditoria({
+      accion: 'ELIMINAR_CANAL_ATENCION',
+      usuario_id: req.user.id,
+      usuario_nombre: req.user.nombre_completo,
+      entidad: 'canales_atencion',
+      registro_id: id,
+      datos_anteriores: anteriorRes.rows[0]
+    });
+
+    res.json({ mensaje: 'Canal eliminado correctamente.' });
+  } catch (error) {
+    console.error('Error al eliminar canal:', error);
+    res.status(500).json({ error: 'Error al eliminar el canal.' });
+  }
+};
+
 module.exports = {
   getCanales,
+  getCanalesAdmin,
+  crearCanal,
+  modificarCanal,
+  eliminarCanal,
   getCriterios,
   getCriteriosAdmin,
   crearCriterio,
