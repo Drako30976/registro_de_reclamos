@@ -1231,7 +1231,6 @@ body {
   padding: 0.85rem;
 }
 
-/* Acordeón de Inconvenientes Masivos */
 .masivo-accordion-item {
   border: 1px solid #E2E8F0;
   border-radius: var(--radius-sm);
@@ -1380,5 +1379,262 @@ body {
   gap: 0.35rem;
   font-size: 0.825rem;
   color: #475569;
+}
+
+.auditoria-stage-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.auditoria-stepper {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  background: #FFFFFF;
+  border: 1px solid #E2E8F0;
+  border-radius: var(--radius-sm);
+  padding: 0.75rem 1.25rem;
+}
+
+.auditoria-step {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #94A3B8;
+}
+
+.auditoria-step.active {
+  color: var(--primary);
+}
+
+.auditoria-step.completed {
+  color: #10B981;
+}
+
+.auditoria-step-circle {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: #F1F5F9;
+  color: #64748B;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+
+.auditoria-step.active .auditoria-step-circle {
+  background: var(--primary);
+  color: #FFFFFF;
+}
+
+.auditoria-step.completed .auditoria-step-circle {
+  background: #10B981;
+  color: #FFFFFF;
+}
+
+.auditoria-step-divider {
+  flex: 1;
+  height: 2px;
+  background: #E2E8F0;
+}
+
+.eval-category-header {
+  background: #F1F5F9 !important;
+  color: #1E293B !important;
+  font-weight: 700 !important;
+  font-size: 0.85rem !important;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  padding: 0.6rem 0.75rem !important;
+  border-top: 2px solid #CBD5E1;
+}
+
+.eval-select {
+  padding: 0.35rem 0.5rem;
+  font-size: 0.82rem;
+  border-radius: var(--radius-xs);
+  border: 1px solid #CBD5E1;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.eval-select.eval-cumple {
+  background: #ECFDF5;
+  color: #065F46;
+  border-color: #A7F3D0;
+}
+
+.eval-select.eval-no-cumple {
+  background: #FEF2F2;
+  color: #991B1B;
+  border-color: #FECACA;
+}
+
+.eval-select.eval-no-aplica {
+  background: #F1F5F9;
+  color: #475569;
+  border-color: #CBD5E1;
+}
+
+.eval-score-badge {
+  display: inline-block;
+  padding: 0.25rem 0.55rem;
+  border-radius: 9999px;
+  font-weight: 700;
+  font-size: 0.82rem;
+  text-align: center;
+  min-width: 32px;
+  background: #F8FAFC;
+  color: #334155;
+  border: 1px solid #E2E8F0;
+}
+
+.eval-score-badge.obtained-full {
+  background: #D1FAE5;
+  color: #065F46;
+  border-color: #6EE7B7;
+}
+
+.eval-score-badge.obtained-zero {
+  background: #FEE2E2;
+  color: #991B1B;
+  border-color: #FCA5A5;
+}
+
+.eval-score-badge.obtained-na {
+  background: #E2E8F0;
+  color: #64748B;
+  border-color: #CBD5E1;
+}
+
+.score-summary-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+}
+
+.score-stat-card {
+  background: #FFFFFF;
+  border: 1px solid #E2E8F0;
+  border-radius: var(--radius-sm);
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.score-stat-label {
+  font-size: 0.78rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  color: #64748B;
+}
+
+.score-stat-val {
+  font-size: 1.75rem;
+  font-weight: 800;
+  color: #0F172A;
+  line-height: 1.1;
+}
+
+.badge-resultado {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.35rem 0.75rem;
+  border-radius: 9999px;
+  font-size: 0.82rem;
+  font-weight: 800;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+}
+
+.badge-excelente {
+  background: #DCFCE7;
+  color: #15803D;
+  border: 1px solid #86EFAC;
+}
+
+.badge-muy-bueno {
+  background: #DBEAFE;
+  color: #1D4ED8;
+  border: 1px solid #93C5FD;
+}
+
+.badge-bueno {
+  background: #FEF3C7;
+  color: #B45309;
+  border: 1px solid #FCD34D;
+}
+
+.badge-mejorar {
+  background: #FFEDD5;
+  color: #C2410C;
+  border: 1px solid #FDBA74;
+}
+
+.badge-critico {
+  background: #FEE2E2;
+  color: #B91C1C;
+  border: 1px solid #FCA5A5;
+}
+
+.error-critico-card {
+  background: #FFF1F2;
+  border: 1px solid #FECDD3;
+  border-radius: var(--radius-sm);
+  padding: 1rem;
+}
+
+.error-critico-card.checked {
+  background: #FEF2F2;
+  border-color: #EF4444;
+}
+
+.criterios-manager-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
+}
+
+.criterio-card-item {
+  background: #FFFFFF;
+  border: 1px solid #E2E8F0;
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+}
+
+.criterio-card-header {
+  background: #F8FAFC;
+  padding: 0.85rem 1.25rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #E2E8F0;
+}
+
+.criterio-card-body {
+  padding: 1rem 1.25rem;
+}
+
+.subcriterio-pill-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.55rem 0.75rem;
+  background: #F8FAFC;
+  border: 1px solid #E2E8F0;
+  border-radius: var(--radius-xs);
+  margin-bottom: 0.5rem;
+}
+
+.subcriterio-pill-item:last-child {
+  margin-bottom: 0;
 }
 

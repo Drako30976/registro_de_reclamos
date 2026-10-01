@@ -77,6 +77,9 @@
         <button class="nav-tab-btn" data-tab="masivos">
           <span class="tab-icon">🚨</span> Masivos
         </button>
+        <button class="nav-tab-btn" data-tab="auditorias">
+          <span class="tab-icon">⭐</span> Auditorias de calidad
+        </button>
         <button class="nav-tab-btn" data-tab="perfil">
           <span class="tab-icon">👤</span> Perfil
         </button>
@@ -802,6 +805,298 @@
         </div>
       </section>
 
+      <section id="view-auditorias" class="tab-view hidden">
+        <div class="view-header">
+          <h2>Auditorías de Calidad</h2>
+          <p class="text-muted">Evaluación, feedback y seguimiento del desempeño de los asesores por canales de atención.</p>
+        </div>
+
+        <div class="subtabs-bar mb-3">
+          <button id="subtab-btn-nueva-auditoria" class="btn btn-tab active">Nueva Auditoría</button>
+          <button id="subtab-btn-historial-auditorias" class="btn btn-tab">Historial de Auditorías</button>
+          <button id="subtab-btn-editar-criterios" class="btn btn-tab">Editar</button>
+        </div>
+
+        <div id="auditorias-sec-nueva">
+          <div class="auditoria-stage-container">
+            <div class="auditoria-stepper">
+              <div id="auditoria-step-ind-1" class="auditoria-step active">
+                <span class="auditoria-step-circle">1</span>
+                <span>Etapa 1: Evaluación de Criterios</span>
+              </div>
+              <div class="auditoria-step-divider"></div>
+              <div id="auditoria-step-ind-2" class="auditoria-step">
+                <span class="auditoria-step-circle">2</span>
+                <span>Etapa 2: Resumen y Devolución</span>
+              </div>
+            </div>
+
+            <div id="auditoria-etapa-1">
+              <div class="card p-4 mb-4">
+                <div class="card-header mb-3">
+                  <h3>Datos Principales de la Auditoría</h3>
+                </div>
+                <div id="nueva-auditoria-alert" class="form-alert hidden"></div>
+
+                <div class="form-grid-2">
+                  <div class="form-group">
+                    <label for="nueva-auditoria-fecha">Fecha de Auditoría <span class="req">*</span></label>
+                    <input type="date" id="nueva-auditoria-fecha" required>
+                  </div>
+                  <div class="form-group">
+                    <label for="nueva-auditoria-asesor">Asesor Evaluado <span class="req">*</span></label>
+                    <select id="nueva-auditoria-asesor" required>
+                      <option value="">-- Seleccione Asesor --</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div class="form-grid-3">
+                  <div class="form-group">
+                    <label for="nueva-auditoria-auditor">Auditor / Evaluador <span class="req">*</span></label>
+                    <select id="nueva-auditoria-auditor" required>
+                      <option value="">-- Seleccione Auditor --</option>
+                    </select>
+                  </div>
+                  <div class="form-group">
+                    <label for="nueva-auditoria-canal">Canal de Ingreso / Atención <span class="req">*</span></label>
+                    <select id="nueva-auditoria-canal" required>
+                      <option value="">-- Seleccione Canal --</option>
+                    </select>
+                  </div>
+                  <div class="form-group">
+                    <label for="nueva-auditoria-referencia">ID / N° de Referencia <span class="req">*</span></label>
+                    <input type="text" id="nueva-auditoria-referencia" maxlength="15" placeholder="Hasta 15 caracteres" required>
+                  </div>
+                </div>
+              </div>
+
+              <div class="card table-container p-0">
+                <div class="card-header flex-row justify-between align-center p-3" style="border-bottom: 1px solid var(--border-color);">
+                  <div>
+                    <strong>Criterios a Evaluar</strong>
+                    <small class="text-muted d-block">Seleccione Cumple, No cumple o No aplica para cada criterio</small>
+                  </div>
+                  <div id="badge-score-en-vivo" class="font-bold text-main" style="background: #F1F5F9; padding: 0.35rem 0.75rem; border-radius: 9999px; font-size: 0.85rem;">
+                    Puntaje en vivo: 0 / 0 (0%)
+                  </div>
+                </div>
+
+                <table class="data-table">
+                  <thead>
+                    <tr>
+                      <th style="width: 32%;">Criterio / Indicador</th>
+                      <th style="width: 10%; text-align: center;">Puntaje Máx.</th>
+                      <th style="width: 18%;">Evaluación</th>
+                      <th style="width: 10%; text-align: center;">Puntaje Obt.</th>
+                      <th style="width: 30%;">Observación (hasta 250 car.)</th>
+                    </tr>
+                  </thead>
+                  <tbody id="tabla-criterios-evaluacion-body">
+                    <tr>
+                      <td colspan="5" class="text-center py-4 text-muted">Cargando criterios de evaluación...</td>
+                    </tr>
+                  </tbody>
+                </table>
+
+                <div class="p-3 flex-row justify-between align-center" style="background: #FAF5FF; border-top: 1px solid #E9D5FF;">
+                  <span class="text-muted font-sm">Complete la evaluación y avance a la siguiente etapa para generar el dictamen final.</span>
+                  <button type="button" id="btn-avanzar-etapa-2" class="btn btn-primary">
+                    Continuar a Segunda Etapa &rarr;
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <div id="auditoria-etapa-2" class="hidden">
+              <div class="card p-4 mb-4">
+                <div class="card-header mb-3">
+                  <h3>Dictamen Final de Calidad</h3>
+                  <small class="text-muted">Revise los cálculos obtenidos según la escala oficial de ponderación</small>
+                </div>
+
+                <div class="score-summary-grid mb-4">
+                  <div class="score-stat-card">
+                    <span class="score-stat-label">Total de Puntos Posibles</span>
+                    <span id="resumen-puntaje-maximo" class="score-stat-val">0</span>
+                    <small class="text-muted">Criterios 'No aplica' excluidos</small>
+                  </div>
+
+                  <div class="score-stat-card">
+                    <span class="score-stat-label">Puntaje Obtenido</span>
+                    <span id="resumen-puntaje-obtenido" class="score-stat-val text-primary">0</span>
+                    <small class="text-muted">Sumatoria de criterios cumplidos</small>
+                  </div>
+
+                  <div class="score-stat-card">
+                    <span class="score-stat-label">Porcentaje de Calidad</span>
+                    <span id="resumen-porcentaje-calidad" class="score-stat-val">0%</span>
+                    <small class="text-muted">Redondeo hacia arriba</small>
+                  </div>
+
+                  <div class="score-stat-card">
+                    <span class="score-stat-label">Resultado Final</span>
+                    <div class="mt-1">
+                      <span id="resumen-resultado-badge" class="badge-resultado badge-critico">CRÍTICO</span>
+                    </div>
+                    <small class="text-muted" id="resumen-escala-desc">Menor a 60%</small>
+                  </div>
+                </div>
+
+                <div class="mb-4">
+                  <h4 class="font-bold mb-2">Desglose por Categorías</h4>
+                  <div class="table-container">
+                    <table class="data-table">
+                      <thead>
+                        <tr>
+                          <th>Categoría</th>
+                          <th style="text-align: center;">Puntaje Máximo</th>
+                          <th style="text-align: center;">Puntaje Obtenido</th>
+                          <th style="text-align: center;">% Cumplimiento</th>
+                        </tr>
+                      </thead>
+                      <tbody id="tabla-resumen-categorias-body"></tbody>
+                    </table>
+                  </div>
+                </div>
+
+                <div class="error-critico-card mb-4" id="box-error-critico">
+                  <div class="flex-row align-center gap-2 mb-2">
+                    <input type="checkbox" id="check-error-critico" style="width: 18px; height: 18px; cursor: pointer;">
+                    <label for="check-error-critico" class="font-bold text-danger" style="cursor: pointer;">
+                      Marcar Error Crítico en la Atención
+                    </label>
+                  </div>
+                  <div id="grupo-comentario-error-critico" class="hidden mt-2">
+                    <label for="input-error-critico-detalle" class="font-sm text-danger font-bold">Detalle del Error Crítico (Hasta 100 caracteres) <span class="req">*</span></label>
+                    <input type="text" id="input-error-critico-detalle" maxlength="100" placeholder="Ej: No valida titularidad o corta comunicación sin motivo">
+                  </div>
+                </div>
+
+                <div class="form-group mb-4">
+                  <label for="input-auditoria-obs-generales">Observaciones Generales y Feedback / Devolución</label>
+                  <textarea id="input-auditoria-obs-generales" rows="4" placeholder="Ingrese comentarios sobre fortalezas, áreas de mejora y acuerdos alcanzados con el asesor..."></textarea>
+                </div>
+
+                <div id="guardar-auditoria-alert" class="form-alert hidden mb-3"></div>
+
+                <div class="flex-row justify-between align-center">
+                  <button type="button" id="btn-volver-etapa-1" class="btn btn-outline-secondary">
+                    &larr; Volver a Modificar Criterios
+                  </button>
+                  <button type="button" id="btn-guardar-auditoria" class="btn btn-success">
+                    <span class="btn-icon">💾</span> Finalizar y Guardar Auditoría
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div id="auditorias-sec-historial" class="hidden">
+          <div class="card p-4 mb-4">
+            <div class="card-header flex-row justify-between align-center mb-3">
+              <div>
+                <strong>Filtros del Historial de Auditorías</strong>
+                <small class="text-muted d-block">Filtre por fechas, asesor, evaluador, canal o resultado obtenido</small>
+              </div>
+              <button id="btn-emitir-reporte-auditorias" class="btn btn-outline-danger">
+                <span class="btn-icon">📄</span> Emitir Reporte PDF
+              </button>
+            </div>
+
+            <div class="filter-grid">
+              <div class="filter-group">
+                <label for="filtro-audit-fecha-desde">Fecha Desde</label>
+                <input type="date" id="filtro-audit-fecha-desde">
+              </div>
+              <div class="filter-group">
+                <label for="filtro-audit-fecha-hasta">Fecha Hasta</label>
+                <input type="date" id="filtro-audit-fecha-hasta">
+              </div>
+              <div class="filter-group">
+                <label for="filtro-audit-asesor">Asesor</label>
+                <select id="filtro-audit-asesor">
+                  <option value="">Todos los asesores</option>
+                </select>
+              </div>
+              <div class="filter-group">
+                <label for="filtro-audit-auditor">Auditor / Evaluador</label>
+                <select id="filtro-audit-auditor">
+                  <option value="">Todos los auditores</option>
+                </select>
+              </div>
+              <div class="filter-group">
+                <label for="filtro-audit-canal">Canal</label>
+                <select id="filtro-audit-canal">
+                  <option value="">Todos los canales</option>
+                </select>
+              </div>
+              <div class="filter-group">
+                <label for="filtro-audit-resultado">Nivel / Resultado</label>
+                <select id="filtro-audit-resultado">
+                  <option value="">Todos los niveles</option>
+                  <option value="EXCELENTE">Excelente (90% - 100%)</option>
+                  <option value="MUY BUENO">Muy Bueno (80% - 89%)</option>
+                  <option value="BUENO">Bueno (70% - 79%)</option>
+                  <option value="A MEJORAR">A Mejorar (60% - 69%)</option>
+                  <option value="CRÍTICO">Crítico (&lt; 60%)</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="filter-actions mt-3">
+              <button id="btn-aplicar-filtros-auditorias" class="btn btn-primary">Buscar / Filtrar</button>
+              <button id="btn-limpiar-filtros-auditorias" class="btn btn-outline-secondary">Limpiar Filtros</button>
+            </div>
+          </div>
+
+          <div class="card table-container">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Fecha</th>
+                  <th>Asesor</th>
+                  <th>Auditor</th>
+                  <th>Canal</th>
+                  <th>ID / Ref</th>
+                  <th style="text-align: center;">Puntos</th>
+                  <th style="text-align: center;">Calidad</th>
+                  <th style="text-align: center;">Resultado</th>
+                  <th style="text-align: center;">Error Crítico</th>
+                  <th style="text-align: center;">Acciones</th>
+                </tr>
+              </thead>
+              <tbody id="tabla-historial-auditorias-body">
+                <tr>
+                  <td colspan="10" class="text-center py-4 text-muted">Cargando auditorías...</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div id="auditorias-sec-editar" class="hidden">
+          <div class="card p-4 mb-4">
+            <div class="card-header flex-row justify-between align-center mb-3">
+              <div>
+                <h3>Configuración de Criterios y Subcriterios</h3>
+                <small class="text-muted">Administre las categorías evaluadas y los indicadores de puntaje</small>
+              </div>
+              <button type="button" class="btn btn-primary" onclick="AuditoriasModule.abrirModalCrearCriterio()">
+                + Nueva Categoría
+              </button>
+            </div>
+
+            <div id="criterios-manager-alert" class="form-alert hidden mb-3"></div>
+
+            <div id="criterios-manager-lista" class="criterios-manager-grid">
+              <div class="text-center py-4 text-muted">Cargando categorías y criterios...</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
     </main>
   </div>
 
@@ -1179,6 +1474,207 @@
     </div>
   </div>
 
+  <div id="modal-ver-auditoria" class="modal-overlay hidden">
+    <div class="modal-box modal-lg" style="max-width: 900px; max-height: 90vh; display: flex; flex-direction: column;">
+      <div class="modal-header">
+        <h3 id="ver-audit-titulo">Informe Detallado de Auditoría</h3>
+        <button class="modal-close" onclick="AuditoriasModule.cerrarModalVerDetalle()">&times;</button>
+      </div>
+      <div class="modal-body" style="overflow-y: auto; padding: 1.5rem;">
+        <div class="p-3 mb-3" style="background: #F8FAFC; border: 1px solid #CBD5E1; border-radius: 6px;">
+          <div class="form-grid-3 mb-2 font-sm">
+            <div><strong class="text-muted">Fecha:</strong> <span id="ver-audit-fecha">-</span></div>
+            <div><strong class="text-muted">Asesor:</strong> <span id="ver-audit-asesor">-</span></div>
+            <div><strong class="text-muted">Auditor:</strong> <span id="ver-audit-auditor">-</span></div>
+          </div>
+          <div class="form-grid-3 font-sm">
+            <div><strong class="text-muted">Canal:</strong> <span id="ver-audit-canal">-</span></div>
+            <div><strong class="text-muted">ID / Referencia:</strong> <span id="ver-audit-referencia">-</span></div>
+            <div><strong class="text-muted">Error Crítico:</strong> <span id="ver-audit-error-critico">-</span></div>
+          </div>
+        </div>
+
+        <div class="score-summary-grid mb-3">
+          <div class="score-stat-card p-3">
+            <span class="score-stat-label">Puntaje Máximo</span>
+            <span id="ver-audit-max" class="score-stat-val font-bold">0</span>
+          </div>
+          <div class="score-stat-card p-3">
+            <span class="score-stat-label">Puntaje Obtenido</span>
+            <span id="ver-audit-obt" class="score-stat-val text-primary font-bold">0</span>
+          </div>
+          <div class="score-stat-card p-3">
+            <span class="score-stat-label">% Calidad</span>
+            <span id="ver-audit-pct" class="score-stat-val font-bold">0%</span>
+          </div>
+          <div class="score-stat-card p-3">
+            <span class="score-stat-label">Resultado Final</span>
+            <div class="mt-1"><span id="ver-audit-badge" class="badge-resultado badge-critico">CRÍTICO</span></div>
+          </div>
+        </div>
+
+        <div id="ver-audit-alerta-critico" class="error-critico-card mb-3 hidden">
+          <strong class="text-danger">¡Error Crítico Registrado!</strong>
+          <p id="ver-audit-critico-comentario" class="font-sm mt-1 text-danger">-</p>
+        </div>
+
+        <div class="mb-3">
+          <h4 class="font-bold mb-2">Evaluación por Indicadores</h4>
+          <div class="table-container">
+            <table class="data-table font-sm">
+              <thead>
+                <tr>
+                  <th>Criterio / Indicador</th>
+                  <th style="text-align: center;">Máx</th>
+                  <th>Evaluación</th>
+                  <th style="text-align: center;">Obt</th>
+                  <th>Observación</th>
+                </tr>
+              </thead>
+              <tbody id="ver-audit-tabla-detalles-body"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="mb-3">
+          <h4 class="font-bold mb-2">Resumen por Categorías</h4>
+          <div class="table-container">
+            <table class="data-table font-sm">
+              <thead>
+                <tr>
+                  <th>Categoría</th>
+                  <th style="text-align: center;">Máximo</th>
+                  <th style="text-align: center;">Obtenido</th>
+                  <th style="text-align: center;">% Cumplimiento</th>
+                </tr>
+              </thead>
+              <tbody id="ver-audit-tabla-categorias-body"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <div>
+          <h4 class="font-bold mb-2">Observaciones Generales y Feedback / Devolución</h4>
+          <div class="p-3" style="background: #F8FAFC; border: 1px solid #CBD5E1; border-radius: 6px; font-size: 0.85rem;">
+            <p id="ver-audit-obs-generales" class="text-muted m-0">Sin observaciones generales registradas.</p>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer flex-row justify-between align-center">
+        <button type="button" id="btn-ver-audit-pdf" class="btn btn-outline-danger">
+          <span class="btn-icon">📄</span> Descargar Informe PDF Individual
+        </button>
+        <button type="button" class="btn btn-outline-secondary" onclick="AuditoriasModule.cerrarModalVerDetalle()">Cerrar</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="modal-crear-criterio" class="modal-overlay hidden">
+    <div class="modal-box modal-sm">
+      <div class="modal-header">
+        <h3>Nueva Categoría de Criterios</h3>
+        <button class="modal-close" onclick="AuditoriasModule.cerrarModalCrearCriterio()">&times;</button>
+      </div>
+      <form id="form-crear-criterio">
+        <div class="modal-body">
+          <div class="form-group">
+            <label for="nuevo-criterio-nombre">Nombre de la Categoría <span class="req">*</span></label>
+            <input type="text" id="nuevo-criterio-nombre" maxlength="100" required placeholder="Ej: Apertura de la llamada">
+          </div>
+          <div class="form-group">
+            <label for="nuevo-criterio-desc">Descripción (Opcional)</label>
+            <textarea id="nuevo-criterio-desc" rows="2" maxlength="255" placeholder="Detalle sobre qué evalúa esta categoría"></textarea>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline-secondary" onclick="AuditoriasModule.cerrarModalCrearCriterio()">Cancelar</button>
+          <button type="submit" class="btn btn-primary">Crear Categoría</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div id="modal-editar-criterio" class="modal-overlay hidden">
+    <div class="modal-box modal-sm">
+      <div class="modal-header">
+        <h3>Editar Categoría</h3>
+        <button class="modal-close" onclick="AuditoriasModule.cerrarModalEditarCriterio()">&times;</button>
+      </div>
+      <form id="form-editar-criterio">
+        <div class="modal-body">
+          <input type="hidden" id="edit-criterio-id">
+          <div class="form-group">
+            <label for="edit-criterio-nombre">Nombre de la Categoría <span class="req">*</span></label>
+            <input type="text" id="edit-criterio-nombre" maxlength="100" required>
+          </div>
+          <div class="form-group">
+            <label for="edit-criterio-desc">Descripción</label>
+            <textarea id="edit-criterio-desc" rows="2" maxlength="255"></textarea>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline-secondary" onclick="AuditoriasModule.cerrarModalEditarCriterio()">Cancelar</button>
+          <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div id="modal-crear-subcriterio" class="modal-overlay hidden">
+    <div class="modal-box modal-sm">
+      <div class="modal-header">
+        <h3>Nuevo Indicador / Subcriterio</h3>
+        <button class="modal-close" onclick="AuditoriasModule.cerrarModalCrearSubcriterio()">&times;</button>
+      </div>
+      <form id="form-crear-subcriterio">
+        <div class="modal-body">
+          <input type="hidden" id="nuevo-subcriterio-criterio-id">
+          <div class="mb-3 p-2 font-sm" style="background: #F1F5F9; border-radius: 4px;">
+            Categoría: <strong id="nuevo-subcriterio-criterio-nombre">-</strong>
+          </div>
+          <div class="form-group">
+            <label for="nuevo-subcriterio-nombre">Nombre del Indicador <span class="req">*</span></label>
+            <input type="text" id="nuevo-subcriterio-nombre" maxlength="150" required placeholder="Ej: Saludo e identificación correcta">
+          </div>
+          <div class="form-group">
+            <label for="nuevo-subcriterio-puntaje">Puntaje Máximo <span class="req">*</span></label>
+            <input type="number" id="nuevo-subcriterio-puntaje" step="0.5" min="0.5" max="100" required placeholder="Ej: 4">
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline-secondary" onclick="AuditoriasModule.cerrarModalCrearSubcriterio()">Cancelar</button>
+          <button type="submit" class="btn btn-primary">Agregar Indicador</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div id="modal-editar-subcriterio" class="modal-overlay hidden">
+    <div class="modal-box modal-sm">
+      <div class="modal-header">
+        <h3>Editar Indicador / Subcriterio</h3>
+        <button class="modal-close" onclick="AuditoriasModule.cerrarModalEditarSubcriterio()">&times;</button>
+      </div>
+      <form id="form-editar-subcriterio">
+        <div class="modal-body">
+          <input type="hidden" id="edit-subcriterio-id">
+          <div class="form-group">
+            <label for="edit-subcriterio-nombre">Nombre del Indicador <span class="req">*</span></label>
+            <input type="text" id="edit-subcriterio-nombre" maxlength="150" required>
+          </div>
+          <div class="form-group">
+            <label for="edit-subcriterio-puntaje">Puntaje Máximo <span class="req">*</span></label>
+            <input type="number" id="edit-subcriterio-puntaje" step="0.5" min="0.5" max="100" required>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline-secondary" onclick="AuditoriasModule.cerrarModalEditarSubcriterio()">Cancelar</button>
+          <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
   <script src="/js/api.js"></script>
   <script src="/js/auth.js"></script>
   <script src="/js/reclamos.js"></script>
@@ -1187,6 +1683,7 @@
   <script src="/js/edicion.js"></script>
   <script src="/js/tareas.js"></script>
   <script src="/js/masivos.js"></script>
+  <script src="/js/auditorias.js"></script>
   <script src="/js/perfil.js"></script>
   <script src="/js/app.js"></script>
 </body>

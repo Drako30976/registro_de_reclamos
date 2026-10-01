@@ -127,7 +127,64 @@ CREATE TABLE IF NOT EXISTS inconvenientes_masivos (
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
 
--- Índices para optimización de consultas y filtros
+CREATE TABLE IF NOT EXISTS canales_atencion (
+    id SERIAL PRIMARY KEY,
+    nombre VARCHAR(20) NOT NULL UNIQUE,
+    activo BOOLEAN DEFAULT TRUE,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS auditoria_criterios (
+    id SERIAL PRIMARY KEY,
+    nombre VARCHAR(100) NOT NULL,
+    descripcion VARCHAR(255) DEFAULT '',
+    orden INT DEFAULT 0,
+    activo BOOLEAN DEFAULT TRUE,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS auditoria_subcriterios (
+    id SERIAL PRIMARY KEY,
+    criterio_id INT NOT NULL REFERENCES auditoria_criterios(id) ON DELETE CASCADE,
+    nombre VARCHAR(150) NOT NULL,
+    descripcion VARCHAR(255) DEFAULT '',
+    puntaje_maximo NUMERIC(5,2) NOT NULL DEFAULT 0,
+    orden INT DEFAULT 0,
+    activo BOOLEAN DEFAULT TRUE,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS auditorias_calidad (
+    id SERIAL PRIMARY KEY,
+    fecha TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    asesor_id INT NOT NULL REFERENCES usuarios(id) ON DELETE RESTRICT,
+    auditor_id INT NOT NULL REFERENCES usuarios(id) ON DELETE RESTRICT,
+    canal_id INT NOT NULL REFERENCES canales_atencion(id) ON DELETE RESTRICT,
+    referencia VARCHAR(15) NOT NULL,
+    puntaje_maximo NUMERIC(5,2) NOT NULL DEFAULT 0,
+    puntaje_obtenido NUMERIC(5,2) NOT NULL DEFAULT 0,
+    porcentaje_calidad NUMERIC(5,2) NOT NULL DEFAULT 0,
+    resultado VARCHAR(20) NOT NULL,
+    error_critico BOOLEAN DEFAULT FALSE,
+    comentario_error_critico VARCHAR(100),
+    observaciones_generales TEXT,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS auditorias_calidad_detalle (
+    id SERIAL PRIMARY KEY,
+    auditoria_id INT NOT NULL REFERENCES auditorias_calidad(id) ON DELETE CASCADE,
+    criterio_id INT NOT NULL REFERENCES auditoria_criterios(id) ON DELETE RESTRICT,
+    subcriterio_id INT NOT NULL REFERENCES auditoria_subcriterios(id) ON DELETE RESTRICT,
+    criterio_nombre VARCHAR(100) NOT NULL,
+    subcriterio_nombre VARCHAR(150) NOT NULL,
+    puntaje_maximo NUMERIC(5,2) NOT NULL,
+    evaluacion VARCHAR(20) NOT NULL CHECK (evaluacion IN ('Cumple', 'No cumple', 'No aplica')),
+    puntaje_obtenido NUMERIC(5,2) NOT NULL DEFAULT 0,
+    observacion VARCHAR(250)
+);
+
 CREATE INDEX IF NOT EXISTS idx_reclamos_fecha ON reclamos (fecha);
 CREATE INDEX IF NOT EXISTS idx_reclamos_sucursal ON reclamos (sucursal_id);
 CREATE INDEX IF NOT EXISTS idx_reclamos_usuario ON reclamos (usuario_id);
@@ -135,6 +192,11 @@ CREATE INDEX IF NOT EXISTS idx_reclamos_tipo ON reclamos (tipo_consulta_id);
 CREATE INDEX IF NOT EXISTS idx_auditoria_fecha ON auditoria_logs (fecha DESC);
 CREATE INDEX IF NOT EXISTS idx_masivos_estado ON inconvenientes_masivos(estado);
 CREATE INDEX IF NOT EXISTS idx_masivos_fecha_inicio ON inconvenientes_masivos(fecha_inicio DESC);
+CREATE INDEX IF NOT EXISTS idx_auditorias_fecha ON auditorias_calidad(fecha DESC);
+CREATE INDEX IF NOT EXISTS idx_auditorias_asesor ON auditorias_calidad(asesor_id);
+CREATE INDEX IF NOT EXISTS idx_auditorias_auditor ON auditorias_calidad(auditor_id);
+CREATE INDEX IF NOT EXISTS idx_auditorias_canal ON auditorias_calidad(canal_id);
+CREATE INDEX IF NOT EXISTS idx_auditorias_detalle_audit ON auditorias_calidad_detalle(auditoria_id);
 
 -- ==========================================================
 -- DATOS SEMILLA (SEED DATA)
@@ -425,3 +487,58 @@ BEGIN
 
     END IF;
 END $$;
+
+INSERT INTO canales_atencion (nombre) VALUES
+    ('Telefónico'),
+    ('WhatsApp'),
+    ('Presencial'),
+    ('Correo Electrónico'),
+    ('Redes Sociales')
+ON CONFLICT (nombre) DO NOTHING;
+
+INSERT INTO auditoria_criterios (id, nombre, descripcion, orden) VALUES
+    (1, 'Inicio de la atención', 'Apertura y trato inicial con el cliente', 1),
+    (2, 'Indagación', 'Identificación del motivo y necesidades de la consulta', 2),
+    (3, 'Información brindada', 'Claridad, veracidad y conocimiento transmitido', 3),
+    (4, 'Resolución y gestión', 'Efectividad en el tratamiento del caso y procedimientos', 4),
+    (5, 'Cierre y experiencia', 'Conclusión del contacto y fidelización', 5),
+    (6, 'Retención ante pedido de baja', 'Manejo de solicitudes de desvinculación o baja de servicio', 6)
+ON CONFLICT (id) DO NOTHING;
+
+SELECT setval('auditoria_criterios_id_seq', (SELECT COALESCE(MAX(id), 1) FROM auditoria_criterios));
+
+INSERT INTO auditoria_subcriterios (criterio_id, nombre, puntaje_maximo, orden) VALUES
+    (1, 'Saludo e identificación correcta', 2, 1),
+    (1, 'Cordialidad y disposición', 2, 2),
+    (1, 'Tono y lenguaje profesional', 2, 3),
+
+    (2, 'Escucha activa sin interrumpir', 4, 1),
+    (2, 'Realiza preguntas pertinentes', 4, 2),
+    (2, 'Detecta correctamente la necesidad', 6, 3),
+    (2, 'Evita preguntas innecesarias o repetitivas', 3, 4),
+    (2, 'Demuestra comprensión del caso', 3, 5),
+
+    (3, 'Información correcta y actualizada', 7, 1),
+    (3, 'Explicación clara y comprensible', 6, 2),
+    (3, 'Conocimiento del servicio/proceso', 5, 3),
+    (3, 'No genera falsas expectativas/promesas', 4, 4),
+    (3, 'Adapta la explicación al cliente', 3, 5),
+
+    (4, 'Resuelve correctamente la consulta', 8, 1),
+    (4, 'Aplica correctamente los procedimientos', 6, 2),
+    (4, 'Ofrece alternativas cuando corresponde', 4, 3),
+    (4, 'Gestiona la situación con autonomía', 4, 4),
+    (4, 'Registra/deriva correctamente cuando corresponde', 3, 5),
+
+    (5, 'Confirma que la necesidad fue resuelta', 5, 1),
+    (5, 'Verifica si necesita algo más', 3, 2),
+    (5, 'Cierre cordial y profesional', 4, 3),
+    (5, 'Deja una experiencia positiva', 4, 4),
+
+    (6, 'Indaga el motivo real del pedido de baja', 4, 1),
+    (6, 'Escucha y demuestra empatía sin confrontar', 4, 2),
+    (6, 'Presenta una propuesta acorde a la necesidad', 4, 3),
+    (6, 'Informa alternativas y beneficios con claridad', 4, 4),
+    (6, 'Respeta la decisión sin presionar ni obstaculizar', 4, 5),
+    (6, 'Registra correctamente la gestión y su resultado', 4, 6)
+ON CONFLICT DO NOTHING;

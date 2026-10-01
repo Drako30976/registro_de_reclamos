@@ -66,6 +66,9 @@ const App = {
       case 'masivos':
         MasivosModule.init();
         break;
+      case 'auditorias':
+        AuditoriasModule.init();
+        break;
       case 'perfil':
         PerfilModule.init();
         break;

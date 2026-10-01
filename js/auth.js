@@ -90,6 +90,7 @@ const Auth = {
     const tabEdicion = document.querySelector('[data-tab="edicion"]');
     const tabTareas = document.querySelector('[data-tab="tareas"]');
     const tabMasivos = document.querySelector('[data-tab="masivos"]');
+    const tabAuditorias = document.querySelector('[data-tab="auditorias"]');
     const tabPerfil = document.querySelector('[data-tab="perfil"]');
 
     if (tabGestion) {
@@ -124,6 +125,10 @@ const Auth = {
 
     if (tabMasivos) {
       tabMasivos.style.display = (rol === 'Admin' || rol === 'Supervisor' || rol === 'Asesor') ? 'inline-flex' : 'none';
+    }
+
+    if (tabAuditorias) {
+      tabAuditorias.style.display = (rol === 'Admin' || rol === 'Supervisor') ? 'inline-flex' : 'none';
     }
 
     if (tabPerfil) {
