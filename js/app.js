@@ -2,6 +2,7 @@ const App = {
   currentTab: 'gestion',
 
   init() {
+    this.initTheme();
     Auth.init();
     this.bindNavigation();
 
@@ -13,6 +14,51 @@ const App = {
         this.switchTab('gestion');
       }
     }
+  },
+
+  initTheme() {
+    const savedTheme = localStorage.getItem('reclamos_theme') || 'light';
+    this.setTheme(savedTheme);
+
+    const toggleMain = document.getElementById('btn-theme-toggle');
+    if (toggleMain) {
+      toggleMain.addEventListener('click', () => this.toggleTheme());
+    }
+
+    const toggleLogin = document.getElementById('btn-theme-toggle-login');
+    if (toggleLogin) {
+      toggleLogin.addEventListener('click', () => this.toggleTheme());
+    }
+  },
+
+  toggleTheme() {
+    const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+    this.setTheme(isDark ? 'light' : 'dark');
+  },
+
+  setTheme(theme) {
+    if (theme === 'dark') {
+      document.documentElement.setAttribute('data-theme', 'dark');
+      localStorage.setItem('reclamos_theme', 'dark');
+    } else {
+      document.documentElement.removeAttribute('data-theme');
+      localStorage.setItem('reclamos_theme', 'light');
+    }
+
+    const icons = document.querySelectorAll('.theme-toggle-icon');
+    icons.forEach(icon => {
+      icon.textContent = theme === 'dark' ? '☀️' : '🌙';
+    });
+
+    const toggles = [
+      document.getElementById('btn-theme-toggle'),
+      document.getElementById('btn-theme-toggle-login')
+    ];
+    toggles.forEach(btn => {
+      if (btn) {
+        btn.setAttribute('title', theme === 'dark' ? 'Cambiar a modo claro' : 'Cambiar a modo oscuro');
+      }
+    });
   },
 
   bindNavigation() {

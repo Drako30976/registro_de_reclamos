@@ -396,8 +396,6 @@ const MasivosModule = {
           alertEl.className = 'form-alert error';
           return;
         }
-
-        // Se toma automáticamente el horario actual del reloj al momento de ingresar el masivo
         let fecha_inicio = fechaVal;
         if (fechaVal && !fechaVal.includes('T')) {
           const now = new Date();

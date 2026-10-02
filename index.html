@@ -9,13 +9,27 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <script>
+    (function() {
+      const savedTheme = localStorage.getItem('reclamos_theme');
+      if (savedTheme === 'dark') {
+        document.documentElement.setAttribute('data-theme', 'dark');
+      }
+    })();
+  </script>
 </head>
 <body>
 
   <div id="login-modal" class="auth-overlay">
     <div class="auth-card">
       <div class="auth-header">
-        <div class="auth-logo-badge">⚡</div>
+        <div class="flex-row justify-between align-center mb-2">
+          <div style="width: 36px;"></div>
+          <div class="auth-logo-badge" style="margin: 0;">⚡</div>
+          <button type="button" id="btn-theme-toggle-login" class="btn-theme-toggle" title="Cambiar tema claro / oscuro" aria-label="Cambiar tema">
+            <span class="theme-toggle-icon">🌙</span>
+          </button>
+        </div>
         <h2>Registro de Reclamos</h2>
         <p>Inicie sesión para acceder a su panel de gestión</p>
       </div>
@@ -51,6 +65,9 @@
       </div>
 
       <div class="header-user-profile">
+        <button type="button" id="btn-theme-toggle" class="btn-theme-toggle" title="Cambiar a modo oscuro / claro" aria-label="Cambiar tema">
+          <span id="theme-toggle-icon" class="theme-toggle-icon">🌙</span>
+        </button>
         <img id="header-user-avatar" src="https://ui-avatars.com/api/?name=User&background=3B82F6&color=fff" alt="Avatar" class="user-avatar">
         <span id="header-user-name" class="user-name">Cargando...</span>
         <button id="btn-logout" class="btn btn-sm btn-outline-danger" title="Cerrar sesión">Salir</button>
