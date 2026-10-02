@@ -311,9 +311,14 @@ const HistorialModule = {
     const numero_cliente = document.getElementById('edit-cliente').value.trim();
     const tipo_consulta_id = parseInt(document.getElementById('edit-tipo').value, 10);
     const caracteristica_id = parseInt(document.getElementById('edit-caracteristica').value, 10);
-    const definicion_id = parseInt(document.getElementById('edit-definicion').value, 10) || null;
-    const finalizacion_id = parseInt(document.getElementById('edit-finalizacion').value, 10) || null;
+    const definicion_id = parseInt(document.getElementById('edit-definicion').value, 10);
+    const finalizacion_id = parseInt(document.getElementById('edit-finalizacion').value, 10);
     const comentario = document.getElementById('edit-comentario')?.value?.trim() || null;
+
+    if (!sucursal_id || !numero_cliente || !tipo_consulta_id || !caracteristica_id || !definicion_id || !finalizacion_id) {
+      alert('Por favor complete todos los campos obligatorios (*)');
+      return;
+    }
 
     if (comentario && comentario.length > 500) {
       alert('El comentario no puede superar los 500 caracteres.');

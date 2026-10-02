@@ -153,15 +153,15 @@
 
                 <div class="form-grid-2">
                   <div class="form-group">
-                    <label for="reclamo-definicion">Definición <span class="text-muted">(Opcional)</span></label>
-                    <select id="reclamo-definicion" disabled>
+                    <label for="reclamo-definicion">Definición <span class="req">*</span></label>
+                    <select id="reclamo-definicion" required disabled>
                       <option value="">-- Seleccione Definición --</option>
                     </select>
                   </div>
 
                   <div class="form-group">
-                    <label for="reclamo-finalizacion">Finalización <span class="text-muted">(Opcional)</span></label>
-                    <select id="reclamo-finalizacion" disabled>
+                    <label for="reclamo-finalizacion">Finalización <span class="req">*</span></label>
+                    <select id="reclamo-finalizacion" required disabled>
                       <option value="">-- Seleccione Finalización --</option>
                     </select>
                   </div>
@@ -1196,12 +1196,12 @@
             <select id="edit-caracteristica" required></select>
           </div>
           <div class="form-group">
-            <label>Definición</label>
-            <select id="edit-definicion"></select>
+            <label>Definición <span class="req">*</span></label>
+            <select id="edit-definicion" required></select>
           </div>
           <div class="form-group">
-            <label>Finalización</label>
-            <select id="edit-finalizacion"></select>
+            <label>Finalización <span class="req">*</span></label>
+            <select id="edit-finalizacion" required></select>
           </div>
           <div class="form-group">
             <label for="edit-comentario">Comentario <span class="text-muted">(Opcional)</span></label>

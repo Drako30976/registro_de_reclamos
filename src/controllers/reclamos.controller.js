@@ -15,9 +15,9 @@ const crearReclamo = async (req, res) => {
 
     const asesor_id = req.user.id;
 
-    if (!sucursal_id || !numero_cliente || !tipo_consulta_id || !caracteristica_id) {
+    if (!sucursal_id || !numero_cliente || !tipo_consulta_id || !caracteristica_id || !definicion_id || !finalizacion_id) {
       return res.status(400).json({
-        error: 'Los campos Sucursal, Número de Cliente, Tipo de Consulta y Características son obligatorios.'
+        error: 'Los campos Sucursal, Número de Cliente, Tipo de Consulta, Características, Definición y Finalización son obligatorios.'
       });
     }
 
@@ -73,8 +73,8 @@ const crearReclamo = async (req, res) => {
       numero_cliente.trim(),
       tipo_consulta_id,
       caracteristica_id,
-      definicion_id || null,
-      finalizacion_id || null,
+      definicion_id,
+      finalizacion_id,
       comentarioTexto
     ];
 
@@ -320,6 +320,13 @@ const actualizarReclamo = async (req, res) => {
       return res.status(400).json({ error: 'El comentario no puede superar los 500 caracteres.' });
     }
 
+    const definicionFinal = definicion_id !== undefined ? definicion_id : registroOriginal.definicion_id;
+    const finalizacionFinal = finalizacion_id !== undefined ? finalizacion_id : registroOriginal.finalizacion_id;
+
+    if (!definicionFinal || !finalizacionFinal) {
+      return res.status(400).json({ error: 'Los campos Definición y Finalización son obligatorios.' });
+    }
+
     const updateQuery = `
       UPDATE reclamos
       SET 
@@ -340,8 +347,8 @@ const actualizarReclamo = async (req, res) => {
       numero_cliente ? numero_cliente.trim() : null,
       tipo_consulta_id || null,
       caracteristica_id || null,
-      definicion_id !== undefined ? definicion_id : registroOriginal.definicion_id,
-      finalizacion_id !== undefined ? finalizacion_id : registroOriginal.finalizacion_id,
+      definicionFinal,
+      finalizacionFinal,
       comentarioTexto,
       id
     ];

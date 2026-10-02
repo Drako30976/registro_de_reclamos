@@ -195,8 +195,8 @@ const ReclamosModule = {
     });
 
     this.resetSelect('reclamo-caracteristica', '-- Seleccione Característica --', true);
-    this.resetSelect('reclamo-definicion', '-- Seleccione Definición (Opcional) --', true);
-    this.resetSelect('reclamo-finalizacion', '-- Seleccione Finalización (Opcional) --', true);
+    this.resetSelect('reclamo-definicion', '-- Seleccione Definición --', true);
+    this.resetSelect('reclamo-finalizacion', '-- Seleccione Finalización --', true);
   },
 
   resetSelect(elementId, placeholder, disabled = false) {
@@ -216,8 +216,8 @@ const ReclamosModule = {
       tipoSelect.onchange = () => {
         const tipoId = parseInt(tipoSelect.value, 10);
         this.resetSelect('reclamo-caracteristica', '-- Seleccione Característica --', true);
-        this.resetSelect('reclamo-definicion', '-- Seleccione Definición (Opcional) --', true);
-        this.resetSelect('reclamo-finalizacion', '-- Seleccione Finalización (Opcional) --', true);
+        this.resetSelect('reclamo-definicion', '-- Seleccione Definición --', true);
+        this.resetSelect('reclamo-finalizacion', '-- Seleccione Finalización --', true);
 
         if (!tipoId) return;
 
@@ -239,8 +239,8 @@ const ReclamosModule = {
         const tipoId = parseInt(tipoSelect.value, 10);
         const carId = parseInt(carSelect.value, 10);
 
-        this.resetSelect('reclamo-definicion', '-- Seleccione Definición (Opcional) --', true);
-        this.resetSelect('reclamo-finalizacion', '-- Seleccione Finalización (Opcional) --', true);
+        this.resetSelect('reclamo-definicion', '-- Seleccione Definición --', true);
+        this.resetSelect('reclamo-finalizacion', '-- Seleccione Finalización --', true);
 
         if (!carId) return;
 
@@ -266,7 +266,7 @@ const ReclamosModule = {
         const defId = parseInt(defSelect.value, 10);
         const finSelect = document.getElementById('reclamo-finalizacion');
 
-        this.resetSelect('reclamo-finalizacion', '-- Seleccione Finalización (Opcional) --', true);
+        this.resetSelect('reclamo-finalizacion', '-- Seleccione Finalización --', true);
 
         if (!defId) return;
 
@@ -305,11 +305,11 @@ const ReclamosModule = {
         const numero_cliente = document.getElementById('reclamo-cliente').value.trim();
         const tipo_consulta_id = document.getElementById('reclamo-tipo').value;
         const caracteristica_id = document.getElementById('reclamo-caracteristica').value;
-        const definicion_id = document.getElementById('reclamo-definicion').value || null;
-        const finalizacion_id = document.getElementById('reclamo-finalizacion').value || null;
+        const definicion_id = document.getElementById('reclamo-definicion').value;
+        const finalizacion_id = document.getElementById('reclamo-finalizacion').value;
         const comentario = inputComentario ? inputComentario.value.trim() : '';
 
-        if (!sucursal_id || !numero_cliente || !tipo_consulta_id || !caracteristica_id) {
+        if (!sucursal_id || !numero_cliente || !tipo_consulta_id || !caracteristica_id || !definicion_id || !finalizacion_id) {
           alertEl.textContent = 'Por favor complete todos los campos obligatorios (*)';
           alertEl.className = 'form-alert error';
           return;
@@ -337,8 +337,8 @@ const ReclamosModule = {
             numero_cliente,
             tipo_consulta_id: parseInt(tipo_consulta_id, 10),
             caracteristica_id: parseInt(caracteristica_id, 10),
-            definicion_id: definicion_id ? parseInt(definicion_id, 10) : null,
-            finalizacion_id: finalizacion_id ? parseInt(finalizacion_id, 10) : null,
+            definicion_id: parseInt(definicion_id, 10),
+            finalizacion_id: parseInt(finalizacion_id, 10),
             comentario: comentario || null
           });
 
