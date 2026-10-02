@@ -56,6 +56,189 @@ const HistorialModule = {
         selAsesor.innerHTML += `<option value="${u.id}">${u.nombre_completo}</option>`;
       });
     }
+
+    this.actualizarOpcionesCaracteristicas();
+    this.actualizarOpcionesDefiniciones();
+    this.actualizarOpcionesFinalizaciones();
+  },
+
+  actualizarOpcionesCaracteristicas(tipoId = null, selectedCarId = null) {
+    const selCar = document.getElementById('filtro-caracteristica');
+    if (!selCar) return;
+
+    let cars = [];
+    if (tipoId) {
+      const tipo = this.catalogos.tipos.find(t => t.id === tipoId);
+      cars = tipo ? (tipo.caracteristicas || []) : [];
+    } else {
+      this.catalogos.tipos.forEach(t => {
+        (t.caracteristicas || []).forEach(c => cars.push(c));
+      });
+    }
+
+    selCar.innerHTML = '<option value="">Todas las características</option>';
+    cars.forEach(c => {
+      selCar.innerHTML += `<option value="${c.id}" ${c.id === selectedCarId ? 'selected' : ''}>${c.contenido}</option>`;
+    });
+    if (!selectedCarId) selCar.value = '';
+  },
+
+  actualizarOpcionesDefiniciones(tipoId = null, carId = null, selectedDefId = null) {
+    const selDef = document.getElementById('filtro-definicion');
+    if (!selDef) return;
+
+    let defs = [];
+    if (carId) {
+      for (const t of this.catalogos.tipos) {
+        const c = (t.caracteristicas || []).find(item => item.id === carId);
+        if (c) {
+          defs = c.definiciones || [];
+          break;
+        }
+      }
+    } else if (tipoId) {
+      const tipo = this.catalogos.tipos.find(t => t.id === tipoId);
+      if (tipo) {
+        (tipo.caracteristicas || []).forEach(c => {
+          (c.definiciones || []).forEach(d => defs.push(d));
+        });
+      }
+    } else {
+      this.catalogos.tipos.forEach(t => {
+        (t.caracteristicas || []).forEach(c => {
+          (c.definiciones || []).forEach(d => defs.push(d));
+        });
+      });
+    }
+
+    selDef.innerHTML = '<option value="">Todas las definiciones</option>';
+    defs.forEach(d => {
+      selDef.innerHTML += `<option value="${d.id}" ${d.id === selectedDefId ? 'selected' : ''}>${d.contenido}</option>`;
+    });
+    if (!selectedDefId) selDef.value = '';
+  },
+
+  actualizarOpcionesFinalizaciones(tipoId = null, carId = null, defId = null, selectedFin = null) {
+    const selFin = document.getElementById('filtro-finalizacion');
+    if (!selFin) return;
+
+    selFin.innerHTML = '<option value="">Todas las finalizaciones</option>';
+
+    if (defId) {
+      let finList = [];
+      for (const t of this.catalogos.tipos) {
+        for (const c of (t.caracteristicas || [])) {
+          const d = (c.definiciones || []).find(item => item.id === defId);
+          if (d) {
+            finList = d.finalizaciones || [];
+            break;
+          }
+        }
+        if (finList.length > 0) break;
+      }
+      finList.forEach(f => {
+        selFin.innerHTML += `<option value="${f.id}" ${f.id === selectedFin ? 'selected' : ''}>${f.contenido}</option>`;
+      });
+    } else {
+      const distinctFin = [];
+      const seen = new Set();
+      let tiposFiltrados = this.catalogos.tipos;
+      if (tipoId) {
+        tiposFiltrados = tiposFiltrados.filter(t => t.id === tipoId);
+      }
+
+      tiposFiltrados.forEach(t => {
+        let carsFiltrados = t.caracteristicas || [];
+        if (carId) {
+          carsFiltrados = carsFiltrados.filter(c => c.id === carId);
+        }
+        carsFiltrados.forEach(c => {
+          (c.definiciones || []).forEach(d => {
+            (d.finalizaciones || []).forEach(f => {
+              if (f.contenido) {
+                const norm = f.contenido.trim();
+                const key = norm.toLowerCase();
+                if (!seen.has(key)) {
+                  seen.add(key);
+                  distinctFin.push(norm);
+                }
+              }
+            });
+          });
+        });
+      });
+
+      distinctFin.sort((a, b) => a.localeCompare(b));
+      distinctFin.forEach(name => {
+        selFin.innerHTML += `<option value="${name}" ${name === selectedFin ? 'selected' : ''}>${name}</option>`;
+      });
+    }
+
+    if (!selectedFin) selFin.value = '';
+  },
+
+  initCascadaFiltros() {
+    const selTipo = document.getElementById('filtro-tipo');
+    const selCar = document.getElementById('filtro-caracteristica');
+    const selDef = document.getElementById('filtro-definicion');
+    const selFin = document.getElementById('filtro-finalizacion');
+
+    if (!selTipo || !selCar || !selDef || !selFin) return;
+
+    selTipo.onchange = () => {
+      const tipoId = parseInt(selTipo.value, 10);
+      this.actualizarOpcionesCaracteristicas(tipoId || null);
+      this.actualizarOpcionesDefiniciones(tipoId || null, null);
+      this.actualizarOpcionesFinalizaciones(tipoId || null, null, null);
+    };
+
+    selCar.onchange = () => {
+      const carId = parseInt(selCar.value, 10);
+      if (carId) {
+        const parentTipo = this.catalogos.tipos.find(t => (t.caracteristicas || []).some(c => c.id === carId));
+        if (parentTipo && parseInt(selTipo.value, 10) !== parentTipo.id) {
+          selTipo.value = parentTipo.id;
+          this.actualizarOpcionesCaracteristicas(parentTipo.id, carId);
+        }
+        this.actualizarOpcionesDefiniciones(parentTipo ? parentTipo.id : null, carId);
+        this.actualizarOpcionesFinalizaciones(parentTipo ? parentTipo.id : null, carId, null);
+      } else {
+        const tipoId = parseInt(selTipo.value, 10) || null;
+        this.actualizarOpcionesDefiniciones(tipoId, null);
+        this.actualizarOpcionesFinalizaciones(tipoId, null, null);
+      }
+    };
+
+    selDef.onchange = () => {
+      const defId = parseInt(selDef.value, 10);
+      if (defId) {
+        let foundCar = null;
+        let foundTipo = null;
+        for (const t of this.catalogos.tipos) {
+          for (const c of (t.caracteristicas || [])) {
+            if ((c.definiciones || []).some(d => d.id === defId)) {
+              foundCar = c;
+              foundTipo = t;
+              break;
+            }
+          }
+          if (foundTipo) break;
+        }
+
+        if (foundTipo && parseInt(selTipo.value, 10) !== foundTipo.id) {
+          selTipo.value = foundTipo.id;
+          this.actualizarOpcionesCaracteristicas(foundTipo.id, foundCar ? foundCar.id : null);
+        } else if (foundCar && parseInt(selCar.value, 10) !== foundCar.id) {
+          selCar.value = foundCar.id;
+        }
+
+        this.actualizarOpcionesFinalizaciones(foundTipo ? foundTipo.id : null, foundCar ? foundCar.id : null, defId);
+      } else {
+        const tipoId = parseInt(selTipo.value, 10) || null;
+        const carId = parseInt(selCar.value, 10) || null;
+        this.actualizarOpcionesFinalizaciones(tipoId, carId, null);
+      }
+    };
   },
 
   getFilterQueryParams() {
@@ -64,6 +247,9 @@ const HistorialModule = {
     const fechaHasta = document.getElementById('filtro-fecha-hasta')?.value;
     const sucursalId = document.getElementById('filtro-sucursal')?.value;
     const tipoId = document.getElementById('filtro-tipo')?.value;
+    const caracteristicaId = document.getElementById('filtro-caracteristica')?.value;
+    const definicionId = document.getElementById('filtro-definicion')?.value;
+    const finalizacionId = document.getElementById('filtro-finalizacion')?.value;
     const asesorId = document.getElementById('filtro-asesor')?.value;
     const cliente = document.getElementById('filtro-cliente')?.value;
 
@@ -71,6 +257,9 @@ const HistorialModule = {
     if (fechaHasta) params.append('fecha_hasta', fechaHasta);
     if (sucursalId) params.append('sucursal_id', sucursalId);
     if (tipoId) params.append('tipo_consulta_id', tipoId);
+    if (caracteristicaId) params.append('caracteristica_id', caracteristicaId);
+    if (definicionId) params.append('definicion_id', definicionId);
+    if (finalizacionId) params.append('finalizacion_id', finalizacionId);
     if (asesorId) params.append('asesor_id', asesorId);
     if (cliente) params.append('numero_cliente', cliente);
 
@@ -156,6 +345,7 @@ const HistorialModule = {
   },
 
   bindEvents() {
+    this.initCascadaFiltros();
 
     const btnFiltrar = document.getElementById('btn-aplicar-filtros');
     const btnLimpiar = document.getElementById('btn-limpiar-filtros');
@@ -167,11 +357,24 @@ const HistorialModule = {
 
     if (btnLimpiar) {
       btnLimpiar.onclick = () => {
-        const inputs = ['filtro-fecha-desde', 'filtro-fecha-hasta', 'filtro-sucursal', 'filtro-tipo', 'filtro-asesor', 'filtro-cliente'];
+        const inputs = [
+          'filtro-fecha-desde',
+          'filtro-fecha-hasta',
+          'filtro-sucursal',
+          'filtro-tipo',
+          'filtro-caracteristica',
+          'filtro-definicion',
+          'filtro-finalizacion',
+          'filtro-asesor',
+          'filtro-cliente'
+        ];
         inputs.forEach(id => {
           const el = document.getElementById(id);
           if (el) el.value = '';
         });
+        this.actualizarOpcionesCaracteristicas();
+        this.actualizarOpcionesDefiniciones();
+        this.actualizarOpcionesFinalizaciones();
         this.cargarReclamos();
       };
     }

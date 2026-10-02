@@ -142,6 +142,9 @@ const getReclamos = async (req, res) => {
       asesor_id,
       sucursal_id,
       tipo_consulta_id,
+      caracteristica_id,
+      definicion_id,
+      finalizacion_id,
       numero_cliente
     } = req.query;
 
@@ -202,6 +205,23 @@ const getReclamos = async (req, res) => {
     if (tipo_consulta_id) {
       query += ` AND r.tipo_consulta_id = $${paramIndex++}`;
       values.push(tipo_consulta_id);
+    }
+    if (caracteristica_id) {
+      query += ` AND r.caracteristica_id = $${paramIndex++}`;
+      values.push(caracteristica_id);
+    }
+    if (definicion_id) {
+      query += ` AND r.definicion_id = $${paramIndex++}`;
+      values.push(definicion_id);
+    }
+    if (finalizacion_id) {
+      if (!isNaN(parseInt(finalizacion_id, 10)) && String(parseInt(finalizacion_id, 10)) === String(finalizacion_id).trim()) {
+        query += ` AND r.finalizacion_id = $${paramIndex++}`;
+        values.push(parseInt(finalizacion_id, 10));
+      } else {
+        query += ` AND f.contenido ILIKE $${paramIndex++}`;
+        values.push(finalizacion_id.trim());
+      }
     }
     if (numero_cliente) {
       query += ` AND r.numero_cliente ILIKE $${paramIndex++}`;

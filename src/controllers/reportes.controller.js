@@ -10,6 +10,9 @@ const emitirReportePDF = async (req, res) => {
       asesor_id,
       sucursal_id,
       tipo_consulta_id,
+      caracteristica_id,
+      definicion_id,
+      finalizacion_id,
       numero_cliente
     } = req.query;
 
@@ -62,6 +65,23 @@ const emitirReportePDF = async (req, res) => {
       query += ` AND r.tipo_consulta_id = $${paramIndex++}`;
       values.push(tipo_consulta_id);
     }
+    if (caracteristica_id) {
+      query += ` AND r.caracteristica_id = $${paramIndex++}`;
+      values.push(caracteristica_id);
+    }
+    if (definicion_id) {
+      query += ` AND r.definicion_id = $${paramIndex++}`;
+      values.push(definicion_id);
+    }
+    if (finalizacion_id) {
+      if (!isNaN(parseInt(finalizacion_id, 10)) && String(parseInt(finalizacion_id, 10)) === String(finalizacion_id).trim()) {
+        query += ` AND r.finalizacion_id = $${paramIndex++}`;
+        values.push(parseInt(finalizacion_id, 10));
+      } else {
+        query += ` AND f.contenido ILIKE $${paramIndex++}`;
+        values.push(finalizacion_id.trim());
+      }
+    }
     if (numero_cliente) {
       query += ` AND r.numero_cliente ILIKE $${paramIndex++}`;
       values.push(`%${numero_cliente.trim()}%`);
@@ -94,6 +114,34 @@ const emitirReportePDF = async (req, res) => {
     if (fecha_desde) filtrosTexto.push(`Desde: ${fecha_desde}`);
     if (fecha_hasta) filtrosTexto.push(`Hasta: ${fecha_hasta}`);
     if (numero_cliente) filtrosTexto.push(`Abonado: ${numero_cliente}`);
+    if (sucursal_id) {
+      const s = await pool.query('SELECT nombre FROM sucursales WHERE id = $1', [sucursal_id]);
+      if (s.rows.length > 0) filtrosTexto.push(`Sucursal: ${s.rows[0].nombre}`);
+    }
+    if (asesor_id) {
+      const u = await pool.query('SELECT nombre_completo FROM usuarios WHERE id = $1', [asesor_id]);
+      if (u.rows.length > 0) filtrosTexto.push(`Asesor: ${u.rows[0].nombre_completo}`);
+    }
+    if (tipo_consulta_id) {
+      const tc = await pool.query('SELECT contenido FROM tipos_consulta WHERE id = $1', [tipo_consulta_id]);
+      if (tc.rows.length > 0) filtrosTexto.push(`Tipo: ${tc.rows[0].contenido}`);
+    }
+    if (caracteristica_id) {
+      const cc = await pool.query('SELECT contenido FROM caracteristicas_consulta WHERE id = $1', [caracteristica_id]);
+      if (cc.rows.length > 0) filtrosTexto.push(`Caract.: ${cc.rows[0].contenido}`);
+    }
+    if (definicion_id) {
+      const dc = await pool.query('SELECT contenido FROM definiciones_consulta WHERE id = $1', [definicion_id]);
+      if (dc.rows.length > 0) filtrosTexto.push(`Def.: ${dc.rows[0].contenido}`);
+    }
+    if (finalizacion_id) {
+      if (!isNaN(parseInt(finalizacion_id, 10)) && String(parseInt(finalizacion_id, 10)) === String(finalizacion_id).trim()) {
+        const fin = await pool.query('SELECT contenido FROM finalizaciones WHERE id = $1', [finalizacion_id]);
+        if (fin.rows.length > 0) filtrosTexto.push(`Fin.: ${fin.rows[0].contenido}`);
+      } else {
+        filtrosTexto.push(`Fin.: ${finalizacion_id.trim()}`);
+      }
+    }
     const filtrosResumen = filtrosTexto.length > 0 ? filtrosTexto.join(' | ') : 'Todos los registros (Sin filtros específicos)';
 
     doc.fillColor('#334155').fontSize(9).font('Helvetica-Bold').text(`Filtros aplicados: `, 30, 85, { continued: true });
