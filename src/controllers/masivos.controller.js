@@ -25,8 +25,8 @@ const getMasivosVigentes = async (req, res) => {
       LEFT JOIN sucursales s ON m.sucursal_id = s.id
       LEFT JOIN usuarios u ON m.creado_por_id = u.id
       LEFT JOIN usuarios uf ON m.finalizado_por_id = uf.id
-      WHERE (m.estado = 'Activo' AND m.created_at >= NOW() - INTERVAL '14 hours')
-         OR (m.estado = 'Finalizado' AND m.updated_at >= NOW() - INTERVAL '14 hours' AND m.created_at >= NOW() - INTERVAL '14 hours')
+      WHERE (m.estado = 'Activo')
+         OR (m.estado = 'Finalizado' AND m.updated_at >= NOW() - INTERVAL '12 hours')
       ORDER BY CASE WHEN m.estado = 'Activo' THEN 0 ELSE 1 END, m.fecha_inicio DESC;
     `;
     const result = await pool.query(query);

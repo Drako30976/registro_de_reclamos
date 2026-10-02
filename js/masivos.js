@@ -528,6 +528,9 @@ const MasivosModule = {
           if (this.currentSubtab === 'historial') {
             await this.cargarHistorial();
           }
+          if (typeof ReclamosModule !== 'undefined' && ReclamosModule.cargarMasivosBanner) {
+            ReclamosModule.cargarMasivosBanner();
+          }
           alert('Inconveniente masivo modificado exitosamente.');
         } catch (err) {
           alertEl.textContent = err.message || 'Error al modificar inconveniente masivo.';
@@ -584,6 +587,9 @@ const MasivosModule = {
           await this.cargarMasivosActivos();
           if (this.currentSubtab === 'historial') {
             await this.cargarHistorial();
+          }
+          if (typeof ReclamosModule !== 'undefined' && ReclamosModule.cargarMasivosBanner) {
+            ReclamosModule.cargarMasivosBanner();
           }
           alert('Inconveniente masivo finalizado exitosamente.');
         } catch (err) {
