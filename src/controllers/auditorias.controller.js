@@ -359,6 +359,8 @@ const crearAuditoria = async (req, res) => {
       asesor_id,
       canal_id,
       referencia,
+      numero_abonado,
+      comentario,
       error_critico,
       comentario_error_critico,
       observaciones_generales,
@@ -366,7 +368,7 @@ const crearAuditoria = async (req, res) => {
     } = req.body;
 
     if (!asesor_id || !canal_id || !referencia || !referencia.trim()) {
-      return res.status(400).json({ error: 'Asesor, Canal y Número/ID de referencia son obligatorios.' });
+      return res.status(400).json({ error: 'Asesor, Canal y Teléfono de contacto son obligatorios.' });
     }
 
     if (!detalles || !Array.isArray(detalles) || detalles.length === 0) {
@@ -378,7 +380,9 @@ const crearAuditoria = async (req, res) => {
     }
 
     const auditor_id = req.user.id;
-    const refLimpia = referencia.trim().substring(0, 15);
+    const refLimpia = referencia.trim().substring(0, 20);
+    const numAbonado = numero_abonado ? numero_abonado.trim().substring(0, 15) : null;
+    const comentarioContacto = comentario ? comentario.trim().substring(0, 150) : null;
 
     let puntajeMaximoTotal = 0;
     let puntajeObtenidoTotal = 0;
@@ -413,10 +417,10 @@ const crearAuditoria = async (req, res) => {
 
     const auditInsertQuery = `
       INSERT INTO auditorias_calidad 
-        (fecha, asesor_id, auditor_id, canal_id, referencia, puntaje_maximo, puntaje_obtenido, 
+        (fecha, asesor_id, auditor_id, canal_id, referencia, numero_abonado, comentario, puntaje_maximo, puntaje_obtenido, 
          porcentaje_calidad, resultado, error_critico, comentario_error_critico, observaciones_generales)
       VALUES 
-        (COALESCE($1::timestamptz, CURRENT_TIMESTAMP), $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)
+        (COALESCE($1::timestamptz, CURRENT_TIMESTAMP), $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14)
       RETURNING *;
     `;
 
@@ -426,6 +430,8 @@ const crearAuditoria = async (req, res) => {
       auditor_id,
       canal_id,
       refLimpia,
+      numAbonado,
+      comentarioContacto,
       puntajeMaximoTotal,
       puntajeObtenidoTotal,
       porcentajeCalidad,
@@ -468,20 +474,19 @@ const crearAuditoria = async (req, res) => {
 
     await client.query('COMMIT');
 
+    const asesorNombreRes = await pool.query('SELECT nombre_completo FROM usuarios WHERE id = $1', [asesor_id]);
+    const asesorNombre = asesorNombreRes.rows[0]?.nombre_completo || 'Asesor #' + asesor_id;
+
     await registrarAuditoria({
-      accion: 'REGISTRAR_AUDITORIA_CALIDAD',
+      accion: `Se registró auditoría de calidad N° ${auditoriaCreada.id} para asesor ${asesorNombre}`,
       usuario_id: req.user.id,
       usuario_nombre: req.user.nombre_completo,
       entidad: 'auditorias_calidad',
       registro_id: auditoriaCreada.id,
-      datos_nuevos: {
-        id: auditoriaCreada.id,
-        asesor_id,
-        referencia: refLimpia,
-        porcentaje_calidad: porcentajeCalidad,
-        resultado,
-        error_critico: !!error_critico
-      }
+      datos_anteriores: {
+        resumen: `Calidad: ${porcentajeCalidad}% (${resultado}) - Tel: ${refLimpia}${numAbonado ? ' - Abonado: ' + numAbonado : ''}`
+      },
+      datos_nuevos: auditoriaCreada
     });
 
     res.status(201).json(auditoriaCreada);
@@ -517,6 +522,8 @@ const getHistorialAuditorias = async (req, res) => {
         ac.canal_id,
         ca.nombre AS canal_nombre,
         ac.referencia,
+        ac.numero_abonado,
+        ac.comentario,
         ac.puntaje_maximo::float AS puntaje_maximo,
         ac.puntaje_obtenido::float AS puntaje_obtenido,
         ac.porcentaje_calidad::float AS porcentaje_calidad,
@@ -591,6 +598,8 @@ const getAuditoriaById = async (req, res) => {
         ac.canal_id,
         ca.nombre AS canal_nombre,
         ac.referencia,
+        ac.numero_abonado,
+        ac.comentario,
         ac.puntaje_maximo::float AS puntaje_maximo,
         ac.puntaje_obtenido::float AS puntaje_obtenido,
         ac.porcentaje_calidad::float AS porcentaje_calidad,
@@ -639,6 +648,194 @@ const getAuditoriaById = async (req, res) => {
   }
 };
 
+const modificarAuditoria = async (req, res) => {
+  const client = await pool.connect();
+  try {
+    const { id } = req.params;
+    const {
+      fecha,
+      asesor_id,
+      canal_id,
+      referencia,
+      numero_abonado,
+      comentario,
+      error_critico,
+      comentario_error_critico,
+      observaciones_generales,
+      detalles
+    } = req.body;
+
+    const anteriorRes = await pool.query(`
+      SELECT ac.*, u.nombre_completo AS asesor_nombre
+      FROM auditorias_calidad ac
+      JOIN usuarios u ON ac.asesor_id = u.id
+      WHERE ac.id = $1
+    `, [id]);
+
+    if (anteriorRes.rows.length === 0) {
+      return res.status(404).json({ error: 'Auditoría no encontrada.' });
+    }
+
+    const anterior = anteriorRes.rows[0];
+
+    const asesorIdFinal = asesor_id ? parseInt(asesor_id, 10) : anterior.asesor_id;
+    const canalIdFinal = canal_id ? parseInt(canal_id, 10) : anterior.canal_id;
+    const refLimpia = (referencia !== undefined ? referencia.trim() : anterior.referencia).substring(0, 20);
+    const numAbonado = numero_abonado !== undefined 
+      ? (numero_abonado ? numero_abonado.trim().substring(0, 15) : null)
+      : anterior.numero_abonado;
+    const comentarioContacto = comentario !== undefined
+      ? (comentario ? comentario.trim().substring(0, 150) : null)
+      : anterior.comentario;
+
+    if (!asesorIdFinal || !canalIdFinal || !refLimpia) {
+      return res.status(400).json({ error: 'Asesor, Canal y Teléfono de contacto son obligatorios.' });
+    }
+
+    if (error_critico && (!comentario_error_critico || !comentario_error_critico.trim())) {
+      return res.status(400).json({ error: 'Si se marca Error Crítico, debe detallar el motivo (hasta 100 caracteres).' });
+    }
+
+    let puntajeMaximoTotal = parseFloat(anterior.puntaje_maximo) || 0;
+    let puntajeObtenidoTotal = parseFloat(anterior.puntaje_obtenido) || 0;
+    let porcentajeCalidad = parseFloat(anterior.porcentaje_calidad) || 0;
+    let resultado = anterior.resultado;
+
+    if (detalles && Array.isArray(detalles) && detalles.length > 0) {
+      puntajeMaximoTotal = 0;
+      puntajeObtenidoTotal = 0;
+
+      for (const item of detalles) {
+        const pm = parseFloat(item.puntaje_maximo) || 0;
+        if (item.evaluacion !== 'No aplica') {
+          puntajeMaximoTotal += pm;
+          if (item.evaluacion === 'Cumple') {
+            puntajeObtenidoTotal += pm;
+          }
+        }
+      }
+
+      if (puntajeMaximoTotal > 0) {
+        porcentajeCalidad = Math.ceil((puntajeObtenidoTotal / puntajeMaximoTotal) * 100);
+      } else {
+        porcentajeCalidad = 0;
+      }
+
+      resultado = 'CRÍTICO';
+      if (porcentajeCalidad >= 90) {
+        resultado = 'EXCELENTE';
+      } else if (porcentajeCalidad >= 80) {
+        resultado = 'MUY BUENO';
+      } else if (porcentajeCalidad >= 70) {
+        resultado = 'BUENO';
+      } else if (porcentajeCalidad >= 60) {
+        resultado = 'A MEJORAR';
+      }
+    }
+
+    await client.query('BEGIN');
+
+    const updateQuery = `
+      UPDATE auditorias_calidad
+      SET 
+        fecha = COALESCE($1::timestamptz, fecha),
+        asesor_id = $2,
+        canal_id = $3,
+        referencia = $4,
+        numero_abonado = $5,
+        comentario = $6,
+        puntaje_maximo = $7,
+        puntaje_obtenido = $8,
+        porcentaje_calidad = $9,
+        resultado = $10,
+        error_critico = $11,
+        comentario_error_critico = $12,
+        observaciones_generales = $13,
+        updated_at = CURRENT_TIMESTAMP
+      WHERE id = $14
+      RETURNING *;
+    `;
+
+    const updateRes = await client.query(updateQuery, [
+      fecha || null,
+      asesorIdFinal,
+      canalIdFinal,
+      refLimpia,
+      numAbonado,
+      comentarioContacto,
+      puntajeMaximoTotal,
+      puntajeObtenidoTotal,
+      porcentajeCalidad,
+      resultado,
+      error_critico !== undefined ? !!error_critico : anterior.error_critico,
+      error_critico ? comentario_error_critico.trim().substring(0, 100) : null,
+      observaciones_generales !== undefined ? (observaciones_generales ? observaciones_generales.trim() : null) : anterior.observaciones_generales,
+      id
+    ]);
+
+    const auditoriaActualizada = updateRes.rows[0];
+
+    if (detalles && Array.isArray(detalles) && detalles.length > 0) {
+      await client.query('DELETE FROM auditorias_calidad_detalle WHERE auditoria_id = $1', [id]);
+
+      const detalleInsertQuery = `
+        INSERT INTO auditorias_calidad_detalle
+          (auditoria_id, criterio_id, subcriterio_id, criterio_nombre, subcriterio_nombre, 
+           puntaje_maximo, evaluacion, puntaje_obtenido, observacion)
+        VALUES
+          ($1, $2, $3, $4, $5, $6, $7, $8, $9);
+      `;
+
+      for (const d of detalles) {
+        const pm = parseFloat(d.puntaje_maximo) || 0;
+        let po = 0;
+        if (d.evaluacion === 'Cumple') {
+          po = pm;
+        }
+        const obs = d.observacion ? d.observacion.toString().trim().substring(0, 250) : null;
+
+        await client.query(detalleInsertQuery, [
+          id,
+          d.criterio_id,
+          d.subcriterio_id,
+          d.criterio_nombre,
+          d.subcriterio_nombre,
+          pm,
+          d.evaluacion,
+          po,
+          obs
+        ]);
+      }
+    }
+
+    await client.query('COMMIT');
+
+    const asesorNombre = anterior.asesor_nombre;
+
+    await registrarAuditoria({
+      accion: `Se modificó auditoría de calidad N° ${id} de asesor ${asesorNombre}`,
+      usuario_id: req.user.id,
+      usuario_nombre: req.user.nombre_completo,
+      entidad: 'auditorias_calidad',
+      registro_id: id,
+      datos_anteriores: {
+        resumen: `Antes: Calidad ${anterior.porcentaje_calidad}% (${anterior.resultado}) - Tel: ${anterior.referencia}`
+      },
+      datos_nuevos: {
+        resumen: `Ahora: Calidad ${porcentajeCalidad}% (${resultado}) - Tel: ${refLimpia}`
+      }
+    });
+
+    res.json(auditoriaActualizada);
+  } catch (error) {
+    await client.query('ROLLBACK');
+    console.error('Error al modificar auditoría:', error);
+    res.status(500).json({ error: 'Error al actualizar la auditoría.' });
+  } finally {
+    client.release();
+  }
+};
+
 const eliminarAuditoria = async (req, res) => {
   try {
     const { id } = req.params;
@@ -647,20 +844,30 @@ const eliminarAuditoria = async (req, res) => {
       return res.status(403).json({ error: 'Sólo los usuarios Administradores tienen permisos para eliminar auditorías.' });
     }
 
-    const anteriorRes = await pool.query('SELECT * FROM auditorias_calidad WHERE id = $1', [id]);
+    const anteriorRes = await pool.query(`
+      SELECT ac.*, u.nombre_completo AS asesor_nombre 
+      FROM auditorias_calidad ac
+      JOIN usuarios u ON ac.asesor_id = u.id
+      WHERE ac.id = $1
+    `, [id]);
+
     if (anteriorRes.rows.length === 0) {
       return res.status(404).json({ error: 'Auditoría no encontrada.' });
     }
 
+    const ant = anteriorRes.rows[0];
+
     await pool.query('DELETE FROM auditorias_calidad WHERE id = $1', [id]);
 
     await registrarAuditoria({
-      accion: 'ELIMINAR_AUDITORIA_CALIDAD',
+      accion: `Se eliminó auditoría de calidad N° ${id} de asesor ${ant.asesor_nombre}`,
       usuario_id: req.user.id,
       usuario_nombre: req.user.nombre_completo,
       entidad: 'auditorias_calidad',
       registro_id: id,
-      datos_anteriores: anteriorRes.rows[0]
+      datos_anteriores: {
+        resumen: `Auditoría eliminada: Calidad ${ant.porcentaje_calidad}% (${ant.resultado}) - Tel: ${ant.referencia}${ant.numero_abonado ? ' - Abonado: ' + ant.numero_abonado : ''}`
+      }
     });
 
     res.json({ mensaje: 'Auditoría eliminada con éxito.' });
@@ -815,6 +1022,7 @@ module.exports = {
   modificarSubcriterio,
   eliminarSubcriterio,
   crearAuditoria,
+  modificarAuditoria,
   getHistorialAuditorias,
   getAuditoriaById,
   eliminarAuditoria

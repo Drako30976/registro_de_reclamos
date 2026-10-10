@@ -26,6 +26,7 @@ router.delete('/subcriterios/:id', auditoriasController.eliminarSubcriterio);
 router.post('/', auditoriasController.crearAuditoria);
 router.get('/historial', auditoriasController.getHistorialAuditorias);
 router.get('/:id', auditoriasController.getAuditoriaById);
+router.put('/:id', auditoriasController.modificarAuditoria);
 
 router.delete('/:id', checkRole('Admin'), auditoriasController.eliminarAuditoria);
 

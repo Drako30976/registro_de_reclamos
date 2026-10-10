@@ -873,7 +873,7 @@
                 </div>
                 <div id="nueva-auditoria-alert" class="form-alert hidden"></div>
 
-                <div class="form-grid-2">
+                <div class="form-grid-3">
                   <div class="form-group">
                     <label for="nueva-auditoria-fecha">Fecha de Auditoría <span class="req">*</span></label>
                     <input type="date" id="nueva-auditoria-fecha" required>
@@ -884,14 +884,14 @@
                       <option value="">-- Seleccione Asesor --</option>
                     </select>
                   </div>
-                </div>
-
-                <div class="form-grid-3">
                   <div class="form-group">
                     <label for="nueva-auditoria-auditor-nombre">Auditor / Evaluador <span class="req">*</span></label>
                     <input type="text" id="nueva-auditoria-auditor-nombre" readonly class="form-control" style="background: #F1F5F9; cursor: not-allowed; font-weight: 600;" placeholder="Cargando perfil...">
                     <input type="hidden" id="nueva-auditoria-auditor" required>
                   </div>
+                </div>
+
+                <div class="form-grid-3 mt-2">
                   <div class="form-group">
                     <label for="nueva-auditoria-canal">Canal de Ingreso / Atención <span class="req">*</span></label>
                     <select id="nueva-auditoria-canal" required>
@@ -899,9 +899,19 @@
                     </select>
                   </div>
                   <div class="form-group">
-                    <label for="nueva-auditoria-referencia">ID / N° de Referencia <span class="req">*</span></label>
-                    <input type="text" id="nueva-auditoria-referencia" maxlength="15" placeholder="Hasta 15 caracteres" required>
+                    <label for="nueva-auditoria-referencia">Teléfono de contacto <span class="req">*</span></label>
+                    <input type="text" id="nueva-auditoria-referencia" maxlength="20" placeholder="Ej: 3815551234" required>
                   </div>
+                  <div class="form-group">
+                    <label for="nueva-auditoria-abonado">Número de abonado <span class="text-muted">(Opcional)</span></label>
+                    <input type="text" id="nueva-auditoria-abonado" maxlength="15" placeholder="Hasta 15 caracteres">
+                  </div>
+                </div>
+
+                <div class="form-group mt-2">
+                  <label for="nueva-auditoria-comentario">Comentario <span class="text-muted">(Opcional)</span></label>
+                  <textarea id="nueva-auditoria-comentario" rows="2" maxlength="150" placeholder="Comentario sobre la interacción o caso (opcional, hasta 150 caracteres)"></textarea>
+                  <small id="nueva-auditoria-comentario-counter" class="text-muted">Opcional - Hasta 150 caracteres (0 / 150)</small>
                 </div>
               </div>
 
@@ -1093,7 +1103,7 @@
                   <th>Asesor</th>
                   <th>Auditor</th>
                   <th>Canal</th>
-                  <th>ID / Ref</th>
+                  <th>Teléfono</th>
                   <th style="text-align: center;">Puntos</th>
                   <th style="text-align: center;">Calidad</th>
                   <th style="text-align: center;">Resultado</th>
@@ -1576,10 +1586,14 @@
             <div><strong class="text-muted">Asesor:</strong> <span id="ver-audit-asesor">-</span></div>
             <div><strong class="text-muted">Auditor:</strong> <span id="ver-audit-auditor">-</span></div>
           </div>
-          <div class="form-grid-3 font-sm">
+          <div class="form-grid-3 font-sm mb-2">
             <div><strong class="text-muted">Canal:</strong> <span id="ver-audit-canal">-</span></div>
-            <div><strong class="text-muted">ID / Referencia:</strong> <span id="ver-audit-referencia">-</span></div>
+            <div><strong class="text-muted">Tel. Contacto:</strong> <span id="ver-audit-referencia">-</span></div>
+            <div><strong class="text-muted">N° Abonado:</strong> <span id="ver-audit-abonado">-</span></div>
+          </div>
+          <div class="form-grid-2 font-sm">
             <div><strong class="text-muted">Error Crítico:</strong> <span id="ver-audit-error-critico">-</span></div>
+            <div><strong class="text-muted">Comentario:</strong> <span id="ver-audit-comentario">-</span></div>
           </div>
         </div>
 
@@ -1655,6 +1669,109 @@
         </button>
         <button type="button" class="btn btn-outline-secondary" onclick="AuditoriasModule.cerrarModalVerDetalle()">Cerrar</button>
       </div>
+    </div>
+  </div>
+
+  <div id="modal-editar-auditoria" class="modal-overlay hidden" style="z-index: 1050;">
+    <div class="modal-box modal-lg" style="max-width: 980px; max-height: 92vh; display: flex; flex-direction: column;">
+      <div class="modal-header flex-row justify-between align-center">
+        <h3>Editar Auditoría N° <span id="edit-audit-id-badge"></span></h3>
+        <button class="modal-close" onclick="AuditoriasModule.cerrarModalEditarAuditoria()">&times;</button>
+      </div>
+      <form id="form-editar-auditoria" style="display: flex; flex-direction: column; overflow: hidden; height: 100%;">
+        <div class="modal-body" style="overflow-y: auto; padding: 1.5rem;">
+          <input type="hidden" id="edit-audit-id">
+          <div id="edit-auditoria-alert" class="form-alert hidden mb-3"></div>
+
+          <div class="card p-3 mb-3" style="background: #F8FAFC; border: 1px solid #CBD5E1;">
+            <h4 class="font-bold mb-2 font-sm text-muted">Datos Principales</h4>
+            <div class="form-grid-3">
+              <div class="form-group">
+                <label for="edit-audit-fecha">Fecha de Auditoría <span class="req">*</span></label>
+                <input type="date" id="edit-audit-fecha" required>
+              </div>
+              <div class="form-group">
+                <label for="edit-audit-asesor">Asesor Evaluado <span class="req">*</span></label>
+                <select id="edit-audit-asesor" required></select>
+              </div>
+              <div class="form-group">
+                <label for="edit-audit-auditor-nombre">Auditor / Evaluador <span class="req">*</span></label>
+                <input type="text" id="edit-audit-auditor-nombre" readonly class="form-control" style="background: #E2E8F0; cursor: not-allowed; font-weight: 600;">
+                <input type="hidden" id="edit-audit-auditor" required>
+              </div>
+            </div>
+
+            <div class="form-grid-3 mt-2">
+              <div class="form-group">
+                <label for="edit-audit-canal">Canal de Ingreso / Atención <span class="req">*</span></label>
+                <select id="edit-audit-canal" required></select>
+              </div>
+              <div class="form-group">
+                <label for="edit-audit-referencia">Teléfono de contacto <span class="req">*</span></label>
+                <input type="text" id="edit-audit-referencia" maxlength="20" required>
+              </div>
+              <div class="form-group">
+                <label for="edit-audit-abonado">Número de abonado <span class="text-muted">(Opcional)</span></label>
+                <input type="text" id="edit-audit-abonado" maxlength="15" placeholder="Hasta 15 caracteres">
+              </div>
+            </div>
+
+            <div class="form-group mt-2">
+              <label for="edit-audit-comentario">Comentario <span class="text-muted">(Opcional)</span></label>
+              <textarea id="edit-audit-comentario" rows="2" maxlength="150" placeholder="Comentario sobre la interacción (opcional, hasta 150 caracteres)"></textarea>
+            </div>
+          </div>
+
+          <div class="card table-container p-0 mb-3">
+            <div class="card-header flex-row justify-between align-center p-3" style="border-bottom: 1px solid var(--border-color);">
+              <div>
+                <strong>Criterios e Indicadores de Evaluación</strong>
+                <small class="text-muted d-block">Modifique la evaluación u observaciones según corresponda</small>
+              </div>
+              <div id="edit-badge-score-en-vivo" class="font-bold text-main" style="background: #F1F5F9; padding: 0.35rem 0.75rem; border-radius: 9999px; font-size: 0.85rem;">
+                Puntaje en vivo: 0 / 0 (0%)
+              </div>
+            </div>
+
+            <table class="data-table font-sm">
+              <thead>
+                <tr>
+                  <th style="width: 32%;">Criterio / Indicador</th>
+                  <th style="width: 10%; text-align: center;">Máx</th>
+                  <th style="width: 18%;">Evaluación</th>
+                  <th style="width: 10%; text-align: center;">Obt</th>
+                  <th style="width: 30%;">Observación</th>
+                </tr>
+              </thead>
+              <tbody id="tabla-edit-criterios-body"></tbody>
+            </table>
+          </div>
+
+          <div class="error-critico-card mb-3" id="edit-box-error-critico">
+            <div class="flex-row align-center gap-2 mb-2">
+              <input type="checkbox" id="edit-check-error-critico" style="width: 18px; height: 18px; cursor: pointer;">
+              <label for="edit-check-error-critico" class="font-bold text-danger" style="cursor: pointer;">
+                Marcar Error Crítico en la Atención
+              </label>
+            </div>
+            <div id="edit-grupo-comentario-error-critico" class="hidden mt-2">
+              <label for="edit-input-error-critico-detalle" class="font-sm text-danger font-bold">Detalle del Error Crítico (Hasta 100 caracteres) <span class="req">*</span></label>
+              <input type="text" id="edit-input-error-critico-detalle" maxlength="100" placeholder="Ej: No valida titularidad o corta comunicación sin motivo">
+            </div>
+          </div>
+
+          <div class="form-group mb-2">
+            <label for="edit-audit-obs-generales">Observaciones Generales y Feedback / Devolución</label>
+            <textarea id="edit-audit-obs-generales" rows="3" placeholder="Comentarios sobre fortalezas, áreas de mejora y acuerdos..."></textarea>
+          </div>
+        </div>
+        <div class="modal-footer flex-row justify-between align-center">
+          <button type="button" class="btn btn-outline-secondary" onclick="AuditoriasModule.cerrarModalEditarAuditoria()">Cancelar</button>
+          <button type="submit" id="btn-guardar-edicion-auditoria" class="btn btn-success">
+            <span class="btn-icon">💾</span> Guardar Cambios
+          </button>
+        </div>
+      </form>
     </div>
   </div>
 

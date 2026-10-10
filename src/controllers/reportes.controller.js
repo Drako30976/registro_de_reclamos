@@ -694,7 +694,7 @@ const emitirReporteAuditoriasPDF = async (req, res) => {
       'Asesor',
       'Auditor',
       'Canal',
-      'ID / Ref',
+      'Teléfono',
       'Máx',
       'Obt',
       '% Calidad',
@@ -795,6 +795,8 @@ const emitirReporteAuditoriaIndividualPDF = async (req, res) => {
         ac.canal_id,
         ca.nombre AS canal_nombre,
         ac.referencia,
+        ac.numero_abonado,
+        ac.comentario,
         ac.puntaje_maximo::float AS puntaje_maximo,
         ac.puntaje_obtenido::float AS puntaje_obtenido,
         ac.porcentaje_calidad::float AS porcentaje_calidad,
@@ -853,22 +855,28 @@ const emitirReporteAuditoriaIndividualPDF = async (req, res) => {
     doc.fillColor('#FFFFFF').fontSize(14).font('Helvetica-Bold').text('INFORME DE AUDITORÍA DE CALIDAD', 45, 36);
     doc.fontSize(8.5).font('Helvetica').text(`Auditoría N°: ${auditoria.id}   |   Fecha: ${auditoria.fecha_fmt}`, 45, 53);
 
-    doc.rect(30, 78, 535, 60).fill('#F8FAFC');
-    doc.rect(30, 78, 535, 60).stroke('#CBD5E1');
+    doc.rect(30, 78, 535, 68).fill('#F8FAFC');
+    doc.rect(30, 78, 535, 68).stroke('#CBD5E1');
 
     doc.fillColor('#334155').fontSize(8.5).font('Helvetica-Bold').text('DATOS DE LA EVALUACIÓN', 40, 85);
     
-    doc.font('Helvetica-Bold').text('Asesor Evaluado:', 40, 100);
-    doc.font('Helvetica').text(auditoria.asesor_nombre, 130, 100);
+    doc.font('Helvetica-Bold').text('Asesor Evaluado:', 40, 99);
+    doc.font('Helvetica').text(auditoria.asesor_nombre, 130, 99);
 
-    doc.font('Helvetica-Bold').text('Auditor / Evaluador:', 40, 116);
-    doc.font('Helvetica').text(auditoria.auditor_nombre, 130, 116);
+    doc.font('Helvetica-Bold').text('Auditor / Evaluador:', 40, 113);
+    doc.font('Helvetica').text(auditoria.auditor_nombre, 130, 113);
 
-    doc.font('Helvetica-Bold').text('Canal de Atención:', 310, 100);
-    doc.font('Helvetica').text(auditoria.canal_nombre, 405, 100);
+    doc.font('Helvetica-Bold').text('Canal de Atención:', 310, 99);
+    doc.font('Helvetica').text(auditoria.canal_nombre, 405, 99);
 
-    doc.font('Helvetica-Bold').text('ID / Referencia:', 310, 116);
-    doc.font('Helvetica').text(auditoria.referencia, 405, 116);
+    doc.font('Helvetica-Bold').text('Tel. Contacto:', 310, 113);
+    doc.font('Helvetica').text(auditoria.referencia, 405, 113);
+
+    doc.font('Helvetica-Bold').text('N° Abonado:', 40, 127);
+    doc.font('Helvetica').text(auditoria.numero_abonado || '-', 130, 127);
+
+    doc.font('Helvetica-Bold').text('Comentario:', 310, 127);
+    doc.font('Helvetica').text(auditoria.comentario || '-', 405, 127, { width: 150, lineBreak: false });
 
     let resColor = '#16A34A';
     if (auditoria.resultado === 'CRÍTICO') resColor = '#DC2626';
@@ -876,15 +884,15 @@ const emitirReporteAuditoriaIndividualPDF = async (req, res) => {
     else if (auditoria.resultado === 'BUENO') resColor = '#D97706';
     else if (auditoria.resultado === 'MUY BUENO') resColor = '#2563EB';
 
-    doc.rect(30, 146, 535, 42).fill('#F1F5F9');
-    doc.rect(30, 146, 535, 42).stroke('#CBD5E1');
+    doc.rect(30, 154, 535, 40).fill('#F1F5F9');
+    doc.rect(30, 154, 535, 40).stroke('#CBD5E1');
 
     doc.fillColor('#0F172A').fontSize(9).font('Helvetica-Bold');
-    doc.text(`Puntaje: ${auditoria.puntaje_obtenido} / ${auditoria.puntaje_maximo}`, 45, 161);
-    doc.text(`Calidad: ${auditoria.porcentaje_calidad}%`, 210, 161);
+    doc.text(`Puntaje: ${auditoria.puntaje_obtenido} / ${auditoria.puntaje_maximo}`, 45, 168);
+    doc.text(`Calidad: ${auditoria.porcentaje_calidad}%`, 210, 168);
 
     doc.fillColor(resColor).fontSize(10).font('Helvetica-Bold');
-    doc.text(`Resultado: ${auditoria.resultado}`, 340, 161);
+    doc.text(`Resultado: ${auditoria.resultado}`, 340, 168);
 
     let currentY = 196;
 

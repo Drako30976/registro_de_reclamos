@@ -8,8 +8,19 @@ const AuditoriasModule = {
     this.bindSubtabs();
     this.bindStageEvents();
     this.bindFiltros();
+    this.bindComentarioCounter();
     await this.cargarCatalogos();
     await this.cargarCriteriosParaEvaluacion();
+  },
+
+  bindComentarioCounter() {
+    const inputComentario = document.getElementById('nueva-auditoria-comentario');
+    const counter = document.getElementById('nueva-auditoria-comentario-counter');
+    if (inputComentario && counter) {
+      inputComentario.oninput = () => {
+        counter.textContent = `Opcional - Hasta 150 caracteres (${inputComentario.value.length} / 150)`;
+      };
+    }
   },
 
   bindSubtabs() {
@@ -403,7 +414,7 @@ const AuditoriasModule = {
     });
 
     if (!fecha || !asesor || !auditor || !canal || !referencia) {
-      alertEl.textContent = 'Debe completar todos los campos de "Datos Principales de la Auditoría" (Fecha, Asesor Evaluado, Auditor / Evaluador, Canal de Ingreso y N° de Referencia) para poder continuar a la segunda etapa.';
+      alertEl.textContent = 'Debe completar todos los campos obligatorios de "Datos Principales de la Auditoría" (Fecha, Asesor Evaluado, Auditor / Evaluador, Canal de Ingreso y Teléfono de contacto) para poder continuar a la segunda etapa.';
       alertEl.classList.remove('hidden');
 
       if (!fecha && elFecha) elFecha.style.borderColor = '#EF4444';
@@ -507,12 +518,17 @@ const AuditoriasModule = {
       });
     });
 
+    const elAbonado = document.getElementById('nueva-auditoria-abonado');
+    const elComentario = document.getElementById('nueva-auditoria-comentario');
+
     const payload = {
       fecha: document.getElementById('nueva-auditoria-fecha').value,
       asesor_id: parseInt(document.getElementById('nueva-auditoria-asesor').value, 10),
       auditor_id: parseInt(document.getElementById('nueva-auditoria-auditor').value, 10),
       canal_id: parseInt(document.getElementById('nueva-auditoria-canal').value, 10),
       referencia: document.getElementById('nueva-auditoria-referencia').value.trim(),
+      numero_abonado: elAbonado && elAbonado.value.trim() ? elAbonado.value.trim() : null,
+      comentario: elComentario && elComentario.value.trim() ? elComentario.value.trim() : null,
       error_critico: checkCritico,
       comentario_error_critico: checkCritico ? detalleCritico : null,
       observaciones_generales: document.getElementById('input-auditoria-obs-generales').value.trim(),
@@ -541,6 +557,13 @@ const AuditoriasModule = {
 
   resetearFormularioNuevaAuditoria() {
     document.getElementById('nueva-auditoria-referencia').value = '';
+    const elAbonado = document.getElementById('nueva-auditoria-abonado');
+    if (elAbonado) elAbonado.value = '';
+    const elComentario = document.getElementById('nueva-auditoria-comentario');
+    if (elComentario) elComentario.value = '';
+    const counter = document.getElementById('nueva-auditoria-comentario-counter');
+    if (counter) counter.textContent = 'Opcional - Hasta 150 caracteres (0 / 150)';
+
     document.getElementById('nueva-auditoria-asesor').value = '';
     document.getElementById('nueva-auditoria-canal').value = '';
     document.getElementById('nueva-auditoria-fecha').value = new Date().toISOString().split('T')[0];
@@ -614,7 +637,10 @@ const AuditoriasModule = {
             <td><strong>${a.asesor_nombre}</strong></td>
             <td>${a.auditor_nombre}</td>
             <td>${a.canal_nombre}</td>
-            <td><code>${a.referencia}</code></td>
+            <td>
+              <code>${a.referencia}</code>
+              ${a.numero_abonado ? `<br><small class="text-muted">Abo: ${a.numero_abonado}</small>` : ''}
+            </td>
             <td style="text-align: center;">${a.puntaje_obtenido} / ${a.puntaje_maximo}</td>
             <td style="text-align: center;"><strong>${a.porcentaje_calidad}%</strong></td>
             <td style="text-align: center;">
@@ -628,8 +654,8 @@ const AuditoriasModule = {
                 <button class="btn btn-sm btn-outline-primary" onclick="AuditoriasModule.verDetalle(${a.id})" title="Ver informe y devolución">
                   👁️ Detalle
                 </button>
-                <button class="btn btn-sm btn-outline-danger" onclick="AuditoriasModule.descargarPdfIndividual(${a.id})" title="Descargar PDF">
-                  📄 PDF
+                <button class="btn btn-sm btn-outline-warning" onclick="AuditoriasModule.abrirModalEditarAuditoria(${a.id})" title="Editar auditoría realizada">
+                  ✏️ Editar
                 </button>
                 ${esAdmin ? `
                   <button class="btn btn-sm btn-outline-danger" onclick="AuditoriasModule.eliminarAuditoria(${a.id})" title="Eliminar registro">
@@ -663,6 +689,10 @@ const AuditoriasModule = {
       document.getElementById('ver-audit-auditor').textContent = a.auditor_nombre;
       document.getElementById('ver-audit-canal').textContent = a.canal_nombre;
       document.getElementById('ver-audit-referencia').textContent = a.referencia;
+      const elAbo = document.getElementById('ver-audit-abonado');
+      if (elAbo) elAbo.textContent = a.numero_abonado || '-';
+      const elCom = document.getElementById('ver-audit-comentario');
+      if (elCom) elCom.textContent = a.comentario || '-';
       document.getElementById('ver-audit-error-critico').textContent = a.error_critico ? 'SÍ' : 'No';
 
       document.getElementById('ver-audit-max').textContent = a.puntaje_maximo;
@@ -745,6 +775,299 @@ const AuditoriasModule = {
   cerrarModalVerDetalle() {
     this.currentAuditIdDetalle = null;
     document.getElementById('modal-ver-auditoria').classList.add('hidden');
+  },
+
+  currentAuditIdEditing: null,
+
+  async abrirModalEditarAuditoria(id) {
+    this.currentAuditIdEditing = id;
+    const modal = document.getElementById('modal-editar-auditoria');
+    const alertEl = document.getElementById('edit-auditoria-alert');
+    if (alertEl) {
+      alertEl.classList.add('hidden');
+      alertEl.textContent = '';
+    }
+
+    try {
+      const a = await API.get(`/auditorias/${id}`);
+      document.getElementById('edit-audit-id').value = String(a.id);
+      document.getElementById('edit-audit-id-badge').textContent = String(a.id);
+
+      const inputFecha = document.getElementById('edit-audit-fecha');
+      if (inputFecha) {
+        inputFecha.value = a.fecha ? a.fecha.split('T')[0] : '';
+      }
+
+      const selAsesor = document.getElementById('edit-audit-asesor');
+      if (selAsesor) {
+        selAsesor.innerHTML = '<option value="">-- Seleccione Asesor --</option>';
+        const asesores = (this.usuariosData || []).filter(u => u.rol === 'Asesor');
+        asesores.forEach(ase => {
+          selAsesor.innerHTML += `<option value="${ase.id}" ${ase.id === a.asesor_id ? 'selected' : ''}>${ase.nombre_completo}</option>`;
+        });
+      }
+
+      const txtAuditor = document.getElementById('edit-audit-auditor-nombre');
+      const inputAuditor = document.getElementById('edit-audit-auditor');
+      if (txtAuditor) txtAuditor.value = `${a.auditor_nombre}`;
+      if (inputAuditor) inputAuditor.value = String(a.auditor_id);
+
+      const selCanal = document.getElementById('edit-audit-canal');
+      if (selCanal) {
+        selCanal.innerHTML = '<option value="">-- Seleccione Canal --</option>';
+        (this.canalesData || []).forEach(c => {
+          selCanal.innerHTML += `<option value="${c.id}" ${c.id === a.canal_id ? 'selected' : ''}>${c.nombre}</option>`;
+        });
+      }
+
+      document.getElementById('edit-audit-referencia').value = a.referencia || '';
+      document.getElementById('edit-audit-abonado').value = a.numero_abonado || '';
+      document.getElementById('edit-audit-comentario').value = a.comentario || '';
+
+      const checkCritico = document.getElementById('edit-check-error-critico');
+      const boxCritico = document.getElementById('edit-box-error-critico');
+      const grupoCritico = document.getElementById('edit-grupo-comentario-error-critico');
+      const inputCriticoDetalle = document.getElementById('edit-input-error-critico-detalle');
+
+      if (checkCritico) {
+        checkCritico.checked = !!a.error_critico;
+        if (a.error_critico) {
+          if (grupoCritico) grupoCritico.classList.remove('hidden');
+          if (boxCritico) boxCritico.classList.add('checked');
+          if (inputCriticoDetalle) inputCriticoDetalle.value = a.comentario_error_critico || '';
+        } else {
+          if (grupoCritico) grupoCritico.classList.add('hidden');
+          if (boxCritico) boxCritico.classList.remove('checked');
+          if (inputCriticoDetalle) inputCriticoDetalle.value = '';
+        }
+        checkCritico.onchange = () => {
+          if (checkCritico.checked) {
+            grupoCritico.classList.remove('hidden');
+            boxCritico.classList.add('checked');
+            inputCriticoDetalle.focus();
+          } else {
+            grupoCritico.classList.add('hidden');
+            boxCritico.classList.remove('checked');
+            inputCriticoDetalle.value = '';
+          }
+        };
+      }
+
+      document.getElementById('edit-audit-obs-generales').value = a.observaciones_generales || '';
+
+      const tbody = document.getElementById('tabla-edit-criterios-body');
+      if (tbody) {
+        let html = '';
+        let lastCat = '';
+
+        (a.detalles || []).forEach(d => {
+          if (d.criterio_nombre !== lastCat) {
+            lastCat = d.criterio_nombre;
+            html += `
+              <tr class="eval-category-header">
+                <td colspan="5"><span>${lastCat.toUpperCase()}</span></td>
+              </tr>
+            `;
+          }
+
+          let scoreBadgeClass = 'obtained-full';
+          if (d.evaluacion === 'No cumple') scoreBadgeClass = 'obtained-zero';
+          else if (d.evaluacion === 'No aplica') scoreBadgeClass = 'obtained-na';
+
+          let evalSelectClass = 'eval-cumple';
+          if (d.evaluacion === 'No cumple') evalSelectClass = 'eval-no-cumple';
+          else if (d.evaluacion === 'No aplica') evalSelectClass = 'eval-no-aplica';
+
+          html += `
+            <tr class="criterio-eval-row-edit" 
+                data-cat-id="${d.criterio_id}" 
+                data-cat-nombre="${encodeURIComponent(d.criterio_nombre)}" 
+                data-sub-id="${d.subcriterio_id}" 
+                data-sub-nombre="${encodeURIComponent(d.subcriterio_nombre)}" 
+                data-max="${d.puntaje_maximo}">
+              <td><strong>${d.subcriterio_nombre}</strong></td>
+              <td style="text-align: center;">
+                <span class="badge" style="background: #E2E8F0; color: #1E293B; font-weight: 700;">${d.puntaje_maximo} pts</span>
+              </td>
+              <td>
+                <select class="eval-select-edit ${evalSelectClass}" onchange="AuditoriasModule.onEvaluacionEditChange(this)">
+                  <option value="Cumple" ${d.evaluacion === 'Cumple' ? 'selected' : ''}>Cumple</option>
+                  <option value="No cumple" ${d.evaluacion === 'No cumple' ? 'selected' : ''}>No cumple</option>
+                  <option value="No aplica" ${d.evaluacion === 'No aplica' ? 'selected' : ''}>No aplica</option>
+                </select>
+              </td>
+              <td style="text-align: center;">
+                <span class="eval-score-badge ${scoreBadgeClass} score-display-edit">${d.puntaje_obtenido}</span>
+              </td>
+              <td>
+                <input type="text" maxlength="250" class="form-control eval-obs-edit" value="${d.observacion || ''}" style="padding: 0.35rem 0.5rem; font-size: 0.8rem;">
+              </td>
+            </tr>
+          `;
+        });
+
+        tbody.innerHTML = html;
+      }
+
+      this.recalcularTotalesEditEnVivo();
+
+      const formEdit = document.getElementById('form-editar-auditoria');
+      if (formEdit) {
+        formEdit.onsubmit = (e) => {
+          e.preventDefault();
+          this.guardarEdicionAuditoria();
+        };
+      }
+
+      modal.classList.remove('hidden');
+    } catch (err) {
+      console.error('Error al abrir modal para editar auditoría:', err);
+      alert('Error al consultar auditoría: ' + err.message);
+    }
+  },
+
+  onEvaluacionEditChange(selectEl) {
+    const row = selectEl.closest('tr');
+    const maxScore = parseFloat(row.getAttribute('data-max')) || 0;
+    const scoreBadge = row.querySelector('.score-display-edit');
+    const valor = selectEl.value;
+
+    selectEl.classList.remove('eval-cumple', 'eval-no-cumple', 'eval-no-aplica');
+    scoreBadge.classList.remove('obtained-full', 'obtained-zero', 'obtained-na');
+
+    if (valor === 'Cumple') {
+      selectEl.classList.add('eval-cumple');
+      scoreBadge.classList.add('obtained-full');
+      scoreBadge.textContent = maxScore;
+    } else if (valor === 'No cumple') {
+      selectEl.classList.add('eval-no-cumple');
+      scoreBadge.classList.add('obtained-zero');
+      scoreBadge.textContent = '0';
+    } else if (valor === 'No aplica') {
+      selectEl.classList.add('eval-no-aplica');
+      scoreBadge.classList.add('obtained-na');
+      scoreBadge.textContent = '-';
+    }
+
+    this.recalcularTotalesEditEnVivo();
+  },
+
+  recalcularTotalesEditEnVivo() {
+    const rows = document.querySelectorAll('.criterio-eval-row-edit');
+    let puntajeMaximo = 0;
+    let puntajeObtenido = 0;
+
+    rows.forEach(r => {
+      const maxScore = parseFloat(r.getAttribute('data-max')) || 0;
+      const selectVal = r.querySelector('.eval-select-edit').value;
+      if (selectVal !== 'No aplica') {
+        puntajeMaximo += maxScore;
+        if (selectVal === 'Cumple') {
+          puntajeObtenido += maxScore;
+        }
+      }
+    });
+
+    const porcentajeCalidad = puntajeMaximo > 0 ? Math.ceil((puntajeObtenido / puntajeMaximo) * 100) : 0;
+    const liveBadge = document.getElementById('edit-badge-score-en-vivo');
+    if (liveBadge) {
+      liveBadge.textContent = `Puntaje en vivo: ${puntajeObtenido} / ${puntajeMaximo} (${porcentajeCalidad}%)`;
+    }
+  },
+
+  cerrarModalEditarAuditoria() {
+    this.currentAuditIdEditing = null;
+    const modal = document.getElementById('modal-editar-auditoria');
+    if (modal) modal.classList.add('hidden');
+  },
+
+  async guardarEdicionAuditoria() {
+    const id = this.currentAuditIdEditing;
+    if (!id) return;
+
+    const alertEl = document.getElementById('edit-auditoria-alert');
+    if (alertEl) {
+      alertEl.classList.add('hidden');
+      alertEl.textContent = '';
+    }
+
+    const fecha = document.getElementById('edit-audit-fecha').value;
+    const asesor_id = document.getElementById('edit-audit-asesor').value;
+    const canal_id = document.getElementById('edit-audit-canal').value;
+    const referencia = document.getElementById('edit-audit-referencia').value.trim();
+    const numero_abonado = document.getElementById('edit-audit-abonado').value.trim();
+    const comentario = document.getElementById('edit-audit-comentario').value.trim();
+
+    if (!fecha || !asesor_id || !canal_id || !referencia) {
+      if (alertEl) {
+        alertEl.textContent = 'Por favor complete todos los campos obligatorios (*) (Fecha, Asesor, Canal y Teléfono de contacto).';
+        alertEl.classList.remove('hidden');
+      }
+      return;
+    }
+
+    const checkCritico = document.getElementById('edit-check-error-critico').checked;
+    const detalleCritico = document.getElementById('edit-input-error-critico-detalle').value.trim();
+
+    if (checkCritico && !detalleCritico) {
+      if (alertEl) {
+        alertEl.textContent = 'Debe detallar el motivo del Error Crítico (hasta 100 caracteres).';
+        alertEl.classList.remove('hidden');
+      }
+      return;
+    }
+
+    const rows = document.querySelectorAll('.criterio-eval-row-edit');
+    const detalles = [];
+
+    rows.forEach(r => {
+      detalles.push({
+        criterio_id: parseInt(r.getAttribute('data-cat-id'), 10),
+        subcriterio_id: parseInt(r.getAttribute('data-sub-id'), 10),
+        criterio_nombre: decodeURIComponent(r.getAttribute('data-cat-nombre')),
+        subcriterio_nombre: decodeURIComponent(r.getAttribute('data-sub-nombre')),
+        puntaje_maximo: parseFloat(r.getAttribute('data-max')) || 0,
+        evaluacion: r.querySelector('.eval-select-edit').value,
+        observacion: r.querySelector('.eval-obs-edit').value.trim()
+      });
+    });
+
+    const payload = {
+      fecha,
+      asesor_id: parseInt(asesor_id, 10),
+      canal_id: parseInt(canal_id, 10),
+      referencia,
+      numero_abonado: numero_abonado || null,
+      comentario: comentario || null,
+      error_critico: checkCritico,
+      comentario_error_critico: checkCritico ? detalleCritico : null,
+      observaciones_generales: document.getElementById('edit-audit-obs-generales').value.trim(),
+      detalles
+    };
+
+    const btnSubmit = document.getElementById('btn-guardar-edicion-auditoria');
+    if (btnSubmit) {
+      btnSubmit.disabled = true;
+      btnSubmit.textContent = 'Guardando cambios...';
+    }
+
+    try {
+      await API.put(`/auditorias/${id}`, payload);
+      alert(`Auditoría N° ${id} actualizada con éxito. El cambio fue registrado en la auditoría.`);
+      this.cerrarModalEditarAuditoria();
+      await this.cargarHistorial();
+    } catch (err) {
+      console.error('Error al actualizar auditoría:', err);
+      if (alertEl) {
+        alertEl.textContent = err.message || 'Error al guardar los cambios en la auditoría.';
+        alertEl.classList.remove('hidden');
+      }
+    } finally {
+      if (btnSubmit) {
+        btnSubmit.disabled = false;
+        btnSubmit.innerHTML = '<span class="btn-icon">💾</span> Guardar Cambios';
+      }
+    }
   },
 
   async descargarReporteGeneralPDF() {
