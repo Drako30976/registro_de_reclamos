@@ -214,6 +214,9 @@ body {
   top: calc(100% + 8px);
   right: 0;
   width: 280px;
+  max-height: calc(100vh - 80px);
+  overflow-y: auto;
+  overscroll-behavior: contain;
   background: #FFFFFF;
   border: 1px solid var(--border-color);
   border-radius: var(--radius-md);
@@ -221,6 +224,23 @@ body {
   padding: 0.65rem 0;
   z-index: 300;
   animation: zeusFadeIn 0.15s ease-out;
+}
+
+.zeus-dropdown::-webkit-scrollbar {
+  width: 6px;
+}
+
+.zeus-dropdown::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.zeus-dropdown::-webkit-scrollbar-thumb {
+  background: #CBD5E1;
+  border-radius: 9999px;
+}
+
+[data-theme="dark"] .zeus-dropdown::-webkit-scrollbar-thumb {
+  background: #475569;
 }
 
 @keyframes zeusFadeIn {
