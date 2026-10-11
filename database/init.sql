@@ -1,12 +1,5 @@
--- ==========================================================
--- SISTEMA DE GESTIÓN Y REGISTRO DE RECLAMOS
--- Script de Inicialización de Base de Datos PostgreSQL
--- ==========================================================
-
--- Asegurar codificación UTF-8
 SET client_encoding = 'UTF8';
 
--- 1. TABLA: Sucursales
 CREATE TABLE IF NOT EXISTS sucursales (
     id SERIAL PRIMARY KEY,
     nombre VARCHAR(50) NOT NULL,
@@ -14,7 +7,6 @@ CREATE TABLE IF NOT EXISTS sucursales (
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
 
--- 2. TABLA: Usuarios
 CREATE TABLE IF NOT EXISTS usuarios (
     id SERIAL PRIMARY KEY,
     nombre_completo VARCHAR(100) NOT NULL,
@@ -28,7 +20,6 @@ CREATE TABLE IF NOT EXISTS usuarios (
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
 
--- 3. TABLA: Tipos de Consulta
 CREATE TABLE IF NOT EXISTS tipos_consulta (
     id SERIAL PRIMARY KEY,
     contenido VARCHAR(50) NOT NULL,
@@ -36,7 +27,6 @@ CREATE TABLE IF NOT EXISTS tipos_consulta (
     activo BOOLEAN DEFAULT TRUE
 );
 
--- 4. TABLA: Características de la Consulta
 CREATE TABLE IF NOT EXISTS caracteristicas_consulta (
     id SERIAL PRIMARY KEY,
     tipo_consulta_id INT NOT NULL REFERENCES tipos_consulta(id) ON DELETE CASCADE,
@@ -45,7 +35,6 @@ CREATE TABLE IF NOT EXISTS caracteristicas_consulta (
     activo BOOLEAN DEFAULT TRUE
 );
 
--- 5. TABLA: Definición de la Consulta
 CREATE TABLE IF NOT EXISTS definiciones_consulta (
     id SERIAL PRIMARY KEY,
     caracteristica_id INT NOT NULL REFERENCES caracteristicas_consulta(id) ON DELETE CASCADE,
@@ -54,7 +43,6 @@ CREATE TABLE IF NOT EXISTS definiciones_consulta (
     activo BOOLEAN DEFAULT TRUE
 );
 
--- 6. TABLA: Finalización de la Consulta
 CREATE TABLE IF NOT EXISTS finalizaciones (
     id SERIAL PRIMARY KEY,
     definicion_id INT REFERENCES definiciones_consulta(id) ON DELETE CASCADE,
@@ -63,7 +51,6 @@ CREATE TABLE IF NOT EXISTS finalizaciones (
     activo BOOLEAN DEFAULT TRUE
 );
 
--- 7. TABLA: Reclamos
 CREATE TABLE IF NOT EXISTS reclamos (
     id SERIAL PRIMARY KEY,
     fecha TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
@@ -94,7 +81,6 @@ CREATE TABLE IF NOT EXISTS llamadas (
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
 
--- 8. TABLA: Registros de Auditoría
 CREATE TABLE IF NOT EXISTS auditoria_logs (
     id SERIAL PRIMARY KEY,
     fecha TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
@@ -108,7 +94,6 @@ CREATE TABLE IF NOT EXISTS auditoria_logs (
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
 
--- 9. TABLA: Tareas Asignadas
 CREATE TABLE IF NOT EXISTS tareas_asignadas (
     id SERIAL PRIMARY KEY,
     usuario_id INT NOT NULL REFERENCES usuarios(id) ON DELETE CASCADE,
@@ -123,7 +108,6 @@ CREATE TABLE IF NOT EXISTS tareas_asignadas (
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
 
--- 10. TABLA: Inconvenientes Masivos
 CREATE TABLE IF NOT EXISTS inconvenientes_masivos (
     id SERIAL PRIMARY KEY,
     fecha_inicio TIMESTAMP WITH TIME ZONE NOT NULL,
@@ -215,11 +199,6 @@ CREATE INDEX IF NOT EXISTS idx_auditorias_auditor ON auditorias_calidad(auditor_
 CREATE INDEX IF NOT EXISTS idx_auditorias_canal ON auditorias_calidad(canal_id);
 CREATE INDEX IF NOT EXISTS idx_auditorias_detalle_audit ON auditorias_calidad_detalle(auditoria_id);
 
--- ==========================================================
--- DATOS SEMILLA (SEED DATA)
--- ==========================================================
-
--- Usuario Administrador por defecto (Contraseña: admin123)
 INSERT INTO usuarios (nombre_completo, documento, usuario, password_hash, rol)
 VALUES (
     'Administrador del Sistema',
@@ -229,7 +208,6 @@ VALUES (
     'Admin'
 ) ON CONFLICT (usuario) DO NOTHING;
 
--- Sucursales iniciales
 INSERT INTO sucursales (nombre) VALUES
     ('San Miguel'),
     ('Central'),
@@ -238,10 +216,8 @@ INSERT INTO sucursales (nombre) VALUES
     ('Sur')
 ON CONFLICT DO NOTHING;
 
--- Función de ayuda temporal para insertar el árbol jerárquico
 DO $$
 DECLARE
-    -- Tipos
     t_tec INT;
     t_fac INT;
     t_ven INT;
@@ -249,7 +225,6 @@ DECLARE
     t_gen INT;
     t_bpar INT;
     
-    -- Características
     c_catv INT;
     c_con INT;
     c_mas INT;
@@ -285,16 +260,12 @@ DECLARE
     c_bp_dec INT;
     c_bp_app INT;
 
-    -- Definiciones auxiliares
     d_id INT;
 BEGIN
-    -- Evitar duplicación si ya existen tipos
     IF NOT EXISTS (SELECT 1 FROM tipos_consulta WHERE contenido = 'Reclamos Tecnicos') THEN
 
-        -- 1. RECLAMOS TECNICOS
         INSERT INTO tipos_consulta (contenido, descripcion) VALUES ('Reclamos Tecnicos', 'Reclamos técnicos del servicio') RETURNING id INTO t_tec;
 
-        -- Inconveniente catv
         INSERT INTO caracteristicas_consulta (tipo_consulta_id, contenido) VALUES (t_tec, 'Inconveniente catv') RETURNING id INTO c_catv;
         INSERT INTO definiciones_consulta (caracteristica_id, contenido) VALUES (c_catv, 'Sin señal') RETURNING id INTO d_id;
         INSERT INTO finalizaciones (definicion_id, contenido) VALUES (d_id, 'Resuelto'), (d_id, 'OT'), (d_id, 'Pendiente');
@@ -303,7 +274,6 @@ BEGIN
         INSERT INTO definiciones_consulta (caracteristica_id, contenido) VALUES (c_catv, 'Deco') RETURNING id INTO d_id;
         INSERT INTO finalizaciones (definicion_id, contenido) VALUES (d_id, 'Resuelto'), (d_id, 'OT'), (d_id, 'Pendiente');
 
-        -- Inconveniente conexion
         INSERT INTO caracteristicas_consulta (tipo_consulta_id, contenido) VALUES (t_tec, 'Inconveniente conexion') RETURNING id INTO c_con;
         INSERT INTO definiciones_consulta (caracteristica_id, contenido) VALUES (c_con, 'Los Rojo') RETURNING id INTO d_id;
         INSERT INTO finalizaciones (definicion_id, contenido) VALUES (d_id, 'Resuelto'), (d_id, 'OT'), (d_id, 'Pendiente');
@@ -312,7 +282,6 @@ BEGIN
         INSERT INTO definiciones_consulta (caracteristica_id, contenido) VALUES (c_con, 'No Navega') RETURNING id INTO d_id;
         INSERT INTO finalizaciones (definicion_id, contenido) VALUES (d_id, 'Resuelto'), (d_id, 'OT'), (d_id, 'Pendiente');
 
-        -- Inconveniente Masivo
         INSERT INTO caracteristicas_consulta (tipo_consulta_id, contenido) VALUES (t_tec, 'Inconveniente Masivo') RETURNING id INTO c_mas;
         INSERT INTO definiciones_consulta (caracteristica_id, contenido) VALUES (c_mas, 'Internet') RETURNING id INTO d_id;
         INSERT INTO finalizaciones (definicion_id, contenido) VALUES (d_id, 'Informado');
@@ -323,7 +292,6 @@ BEGIN
         INSERT INTO definiciones_consulta (caracteristica_id, contenido) VALUES (c_mas, 'Deco') RETURNING id INTO d_id;
         INSERT INTO finalizaciones (definicion_id, contenido) VALUES (d_id, 'Informado');
 
-        -- Reclamo pendiente
         INSERT INTO caracteristicas_consulta (tipo_consulta_id, contenido) VALUES (t_tec, 'Reclamo pendiente') RETURNING id INTO c_pen;
         INSERT INTO definiciones_consulta (caracteristica_id, contenido) VALUES (c_pen, 'Internet') RETURNING id INTO d_id;
         INSERT INTO finalizaciones (definicion_id, contenido) VALUES (d_id, 'Reclamo pendiente');
@@ -332,8 +300,6 @@ BEGIN
         INSERT INTO definiciones_consulta (caracteristica_id, contenido) VALUES (c_pen, 'Deco') RETURNING id INTO d_id;
         INSERT INTO finalizaciones (definicion_id, contenido) VALUES (d_id, 'Reclamo pendiente');
 
-
-        -- 2. FACTURACION
         INSERT INTO tipos_consulta (contenido, descripcion) VALUES ('Facturacion', 'Consultas y reclamos de facturación') RETURNING id INTO t_fac;
 
         INSERT INTO caracteristicas_consulta (tipo_consulta_id, contenido) VALUES (t_fac, 'App') RETURNING id INTO c_app;
@@ -380,8 +346,6 @@ BEGIN
         INSERT INTO definiciones_consulta (caracteristica_id, contenido) VALUES (c_bon, 'Se aplica bonificacion') RETURNING id INTO d_id;
         INSERT INTO finalizaciones (definicion_id, contenido) VALUES (d_id, 'Informado');
 
-
-        -- 3. VENTA
         INSERT INTO tipos_consulta (contenido, descripcion) VALUES ('Venta', 'Consultas comerciales y de ventas') RETURNING id INTO t_ven;
 
         INSERT INTO caracteristicas_consulta (tipo_consulta_id, contenido) VALUES (t_ven, 'Consulta disponibilidad') RETURNING id INTO c_disp;
@@ -418,8 +382,6 @@ BEGIN
         INSERT INTO definiciones_consulta (caracteristica_id, contenido) VALUES (c_mud, 'Mudanza') RETURNING id INTO d_id;
         INSERT INTO finalizaciones (definicion_id, contenido) VALUES (d_id, 'Informado');
 
-
-        -- 4. BAJA
         INSERT INTO tipos_consulta (contenido, descripcion) VALUES ('Baja', 'Gestión de bajas totales') RETURNING id INTO t_baj;
 
         INSERT INTO caracteristicas_consulta (tipo_consulta_id, contenido) VALUES (t_baj, 'Economico') RETURNING id INTO c_eco;
@@ -438,8 +400,6 @@ BEGIN
         INSERT INTO definiciones_consulta (caracteristica_id, contenido) VALUES (c_com, 'Mejor oferta de competencia') RETURNING id INTO d_id;
         INSERT INTO finalizaciones (definicion_id, contenido) VALUES (d_id, 'Retenido'), (d_id, 'No retenido'), (d_id, 'Pendiente');
 
-
-        -- 5. CONSULTA GENERALES
         INSERT INTO tipos_consulta (contenido, descripcion) VALUES ('Consulta generales', 'Consultas administrativas y generales') RETURNING id INTO t_gen;
 
         INSERT INTO caracteristicas_consulta (tipo_consulta_id, contenido) VALUES (t_gen, 'Cambio de contraseña') RETURNING id INTO c_pass;
@@ -462,11 +422,8 @@ BEGIN
         INSERT INTO definiciones_consulta (caracteristica_id, contenido) VALUES (c_tit, 'Detallar que consulta') RETURNING id INTO d_id;
         INSERT INTO finalizaciones (definicion_id, contenido) VALUES (d_id, 'Informado');
 
-
-        -- 6. BAJA PARCIAL
         INSERT INTO tipos_consulta (contenido, descripcion) VALUES ('Baja parcial', 'Gestión de bajas de servicios específicos') RETURNING id INTO t_bpar;
 
-        -- Catv
         INSERT INTO caracteristicas_consulta (tipo_consulta_id, contenido) VALUES (t_bpar, 'Catv') RETURNING id INTO c_bp_catv;
         INSERT INTO definiciones_consulta (caracteristica_id, contenido) VALUES (c_bp_catv, 'Economicos') RETURNING id INTO d_id;
         INSERT INTO finalizaciones (definicion_id, contenido) VALUES (d_id, 'Retenido'), (d_id, 'No retenido'), (d_id, 'Pendiente');
@@ -475,7 +432,6 @@ BEGIN
         INSERT INTO definiciones_consulta (caracteristica_id, contenido) VALUES (c_bp_catv, 'personales') RETURNING id INTO d_id;
         INSERT INTO finalizaciones (definicion_id, contenido) VALUES (d_id, 'Retenido'), (d_id, 'No retenido'), (d_id, 'Pendiente');
 
-        -- Internet
         INSERT INTO caracteristicas_consulta (tipo_consulta_id, contenido) VALUES (t_bpar, 'Internet') RETURNING id INTO c_bp_net;
         INSERT INTO definiciones_consulta (caracteristica_id, contenido) VALUES (c_bp_net, 'Economicos') RETURNING id INTO d_id;
         INSERT INTO finalizaciones (definicion_id, contenido) VALUES (d_id, 'Retenido'), (d_id, 'No retenido'), (d_id, 'Pendiente');
@@ -484,7 +440,6 @@ BEGIN
         INSERT INTO definiciones_consulta (caracteristica_id, contenido) VALUES (c_bp_net, 'personales') RETURNING id INTO d_id;
         INSERT INTO finalizaciones (definicion_id, contenido) VALUES (d_id, 'Retenido'), (d_id, 'No retenido'), (d_id, 'Pendiente');
 
-        -- Deco
         INSERT INTO caracteristicas_consulta (tipo_consulta_id, contenido) VALUES (t_bpar, 'Deco') RETURNING id INTO c_bp_dec;
         INSERT INTO definiciones_consulta (caracteristica_id, contenido) VALUES (c_bp_dec, 'Economicos') RETURNING id INTO d_id;
         INSERT INTO finalizaciones (definicion_id, contenido) VALUES (d_id, 'Retenido'), (d_id, 'No retenido'), (d_id, 'Pendiente');
@@ -493,7 +448,6 @@ BEGIN
         INSERT INTO definiciones_consulta (caracteristica_id, contenido) VALUES (c_bp_dec, 'personales') RETURNING id INTO d_id;
         INSERT INTO finalizaciones (definicion_id, contenido) VALUES (d_id, 'Retenido'), (d_id, 'No retenido'), (d_id, 'Pendiente');
 
-        -- App
         INSERT INTO caracteristicas_consulta (tipo_consulta_id, contenido) VALUES (t_bpar, 'App') RETURNING id INTO c_bp_app;
         INSERT INTO definiciones_consulta (caracteristica_id, contenido) VALUES (c_bp_app, 'Economicos') RETURNING id INTO d_id;
         INSERT INTO finalizaciones (definicion_id, contenido) VALUES (d_id, 'Retenido'), (d_id, 'No retenido'), (d_id, 'Pendiente');

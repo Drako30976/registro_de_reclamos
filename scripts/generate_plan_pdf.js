@@ -12,7 +12,6 @@ function generatePlanPDF() {
   const stream = fs.createWriteStream(outputPath);
   doc.pipe(stream);
 
-  // Colores corporativos
   const PRIMARY = '#1E3A8A';    // Azul marino oscuro
   const SECONDARY = '#2563EB';  // Azul vibrante
   const TEXT = '#1E293B';       // Pizarra oscuro
@@ -20,7 +19,6 @@ function generatePlanPDF() {
   const BG_LIGHT = '#F8FAFC';   // Gris claro
   const LINE_COLOR = '#E2E8F0';
 
-  // --- PORTADA / ENCABEZADO ---
   doc.rect(45, 40, 505, 75).fill(PRIMARY);
   doc.fillColor('#FFFFFF')
      .fontSize(18)
@@ -35,14 +33,12 @@ function generatePlanPDF() {
 
   doc.moveDown(3);
 
-  // --- INTRODUCCIÓN ---
   doc.fillColor(TEXT).fontSize(10).font('Helvetica');
   doc.text(
     'Este documento establece el diseño de arquitectura, el modelo relacional de datos, la matriz de seguridad por roles y el plan de ejecución paso a paso para el reemplazo del registro en planillas por una aplicación web corporativa local y en línea.',
     45, 135, { width: 505, align: 'justify', lineGap: 3 }
   );
 
-  // --- SECCIÓN 1: ARQUITECTURA ---
   let y = 180;
   drawSectionHeader(doc, '1. Visión General de la Arquitectura', y, SECONDARY);
   y += 28;
@@ -57,7 +53,6 @@ function generatePlanPDF() {
     45, y, { width: 505, lineGap: 4 }
   );
 
-  // --- SECCIÓN 2: MODELO DE DATOS ---
   y += 85;
   drawSectionHeader(doc, '2. Modelo de Datos Relacional (PostgreSQL)', y, SECONDARY);
   y += 28;
@@ -89,12 +84,10 @@ function generatePlanPDF() {
     y += 20;
   });
 
-  // --- SECCIÓN 3: MATRIZ DE ROLES Y PERMISOS ---
   y += 15;
   drawSectionHeader(doc, '3. Matriz de Roles y Jerarquías', y, SECONDARY);
   y += 28;
 
-  // Cabecera tabla permisos
   doc.rect(45, y, 505, 18).fill(PRIMARY);
   doc.fillColor('#FFFFFF').font('Helvetica-Bold').fontSize(8);
   doc.text('MÓDULO / PESTAÑA', 50, y + 5, { width: 180 });
@@ -130,7 +123,6 @@ function generatePlanPDF() {
     y += 16;
   });
 
-  // --- NUEVA PÁGINA: HOJA DE RUTA Y DESPLIEGUE ---
   doc.addPage({ size: 'A4', margins: { top: 40, bottom: 40, left: 45, right: 45 } });
   y = 40;
 
@@ -167,7 +159,6 @@ function generatePlanPDF() {
     y += 38;
   });
 
-  // --- SECCIÓN 5: GUÍA DE MIGRACIÓN ENTRE COMPUTADORAS ---
   y += 10;
   drawSectionHeader(doc, '5. Guía de Migración de Docker y Base de Datos (PC Casa a PC Oficina)', y, SECONDARY);
   y += 28;
@@ -201,7 +192,6 @@ function generatePlanPDF() {
     55, y, { width: 495, lineGap: 2 }
   );
 
-  // Pie de página
   doc.fontSize(8).fillColor(TEXT_MUTED).text(
     `Documento generado automáticamente el ${new Date().toLocaleDateString('es-AR')} - Proyecto Registro de Reclamos`,
     45, 785, { align: 'center', width: 505 }

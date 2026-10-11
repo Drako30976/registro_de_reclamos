@@ -32,7 +32,6 @@ function generateFullDocsPDF() {
     doc.fillColor(BLUE).font('Helvetica-Bold').fontSize(10).text(title, 52, y + 5);
   }
 
-  // --- PÁGINA 1: PORTADA, STACK Y ARQUITECTURA ---
   headerBanner('DOCUMENTACIÓN TÉCNICA COMPLETA DEL SISTEMA', 'Arquitectura, Docker, PostgreSQL, Backend REST y Frontend SPA');
 
   let y = 115;
@@ -83,7 +82,6 @@ function generateFullDocsPDF() {
     40, y, { width: 515, lineGap: 2.5, align: 'justify' }
   );
 
-  // --- PÁGINA 2: MODELO RELACIONAL Y ROLES ---
   doc.addPage({ size: 'A4', margins: { top: 35, bottom: 35, left: 40, right: 40 } });
   y = 35;
   section('3. Modelo de Datos Relacional (PostgreSQL)', y);
@@ -170,7 +168,6 @@ function generateFullDocsPDF() {
     40, y, { width: 515, lineGap: 2.5, align: 'justify' }
   );
 
-  // --- PÁGINA 3: BITÁCORA Y COMANDOS DE APRENDIZAJE ---
   doc.addPage({ size: 'A4', margins: { top: 35, bottom: 35, left: 40, right: 40 } });
   y = 35;
   section('6. Cronograma de Desarrollo Realizado (Paso a Paso)', y);

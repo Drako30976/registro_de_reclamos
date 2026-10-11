@@ -12,7 +12,6 @@ function generateMigrationGuidePDF() {
   const stream = fs.createWriteStream(outputPath);
   doc.pipe(stream);
 
-  // Paleta corporativa
   const PRIMARY = '#0F172A';    // Slate oscuro
   const BLUE = '#2563EB';       // Azul acento
   const GREEN = '#059669';      // Verde éxito
@@ -23,7 +22,6 @@ function generateMigrationGuidePDF() {
   const CODE_TEXT = '#38BDF8';  // Texto comandos
   const BORDER = '#CBD5E1';
 
-  // --- ENCABEZADO / HEADER BANNER ---
   doc.rect(40, 35, 515, 70).fill(PRIMARY);
   doc.fillColor('#FFFFFF')
      .fontSize(16)
@@ -38,7 +36,6 @@ function generateMigrationGuidePDF() {
 
   let y = 120;
 
-  // --- INTRODUCCIÓN ---
   doc.fillColor(TEXT).fontSize(9).font('Helvetica');
   doc.text(
     'Al trabajar con Docker y PostgreSQL, los datos se almacenan en un volumen persistente dentro de tu equipo. ' +
@@ -47,9 +44,6 @@ function generateMigrationGuidePDF() {
   );
   y += 35;
 
-  // ==========================================================
-  // OPCIÓN A: INICIALIZACIÓN LIMPIA
-  // ==========================================================
   drawSectionBox(doc, 40, y, 515, 'OPCIÓN A: Inicialización Limpia (Recomendada para iniciar en el trabajo)', GREEN);
   y += 24;
 
@@ -88,9 +82,6 @@ function generateMigrationGuidePDF() {
   ]);
   y += 55;
 
-  // ==========================================================
-  // OPCIÓN B: MIGRACIÓN COMPLETA CON BACKUP
-  // ==========================================================
   drawSectionBox(doc, 40, y, 515, 'OPCIÓN B: Migración Completa con Datos Cargados (Backup & Restore)', BLUE);
   y += 24;
 
@@ -142,9 +133,6 @@ function generateMigrationGuidePDF() {
   );
   y += 28;
 
-  // ==========================================================
-  // CONFIGURACIÓN DE PUERTOS Y COMPROBACIÓN
-  // ==========================================================
   drawSectionBox(doc, 40, y, 515, 'Configuración de Puertos y Verificación', PRIMARY);
   y += 24;
 
@@ -157,7 +145,6 @@ function generateMigrationGuidePDF() {
     40, y, { width: 515, lineGap: 3, align: 'justify' }
   );
 
-  // Pie de página
   doc.fontSize(8).fillColor(TEXT_MUTED).text(
     `Documento de Soporte Operativo - Proyecto Registro de Reclamos - ${new Date().toLocaleDateString('es-AR')}`,
     40, 790, { align: 'center', width: 515 }
