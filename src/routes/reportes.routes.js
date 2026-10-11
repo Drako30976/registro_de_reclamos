@@ -6,6 +6,7 @@ const { verifyToken, checkRole } = require('../middlewares/auth');
 router.use(verifyToken);
 
 router.get('/pdf', checkRole('Admin', 'Supervisor', 'Asesor'), reportesController.emitirReportePDF);
+router.get('/llamadas-pdf', checkRole('Admin', 'Supervisor', 'Asesor'), reportesController.emitirReporteLlamadasPDF);
 router.get('/tareas-pdf', checkRole('Admin', 'Supervisor'), reportesController.emitirReporteTareasPDF);
 router.get('/masivos-pdf', checkRole('Admin', 'Supervisor', 'Asesor'), reportesController.emitirReporteMasivosPDF);
 router.get('/auditorias-pdf', checkRole('Admin', 'Supervisor'), reportesController.emitirReporteAuditoriasPDF);

@@ -13,6 +13,7 @@ const reportesRoutes = require('./routes/reportes.routes');
 const tareasRoutes = require('./routes/tareas.routes');
 const masivosRoutes = require('./routes/masivos.routes');
 const auditoriasRoutes = require('./routes/auditorias.routes');
+const llamadasRoutes = require('./routes/llamadas.routes');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -27,6 +28,7 @@ app.use(express.static(path.join(__dirname, '../')));
 
 app.use('/api/auth', authRoutes);
 app.use('/api/reclamos', reclamosRoutes);
+app.use('/api/llamadas', llamadasRoutes);
 app.use('/api/catalogos', catalogosRoutes);
 app.use('/api/usuarios', usuariosRoutes);
 app.use('/api/auditoria', auditoriaRoutes);

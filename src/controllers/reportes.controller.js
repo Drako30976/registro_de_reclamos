@@ -226,6 +226,230 @@ const emitirReportePDF = async (req, res) => {
   }
 };
 
+const emitirReporteLlamadasPDF = async (req, res) => {
+  try {
+    const {
+      fecha_desde,
+      fecha_hasta,
+      fecha,
+      asesor_id,
+      sucursal_id,
+      tipo_consulta_id,
+      caracteristica_id,
+      definicion_id,
+      finalizacion_id,
+      numero_cliente
+    } = req.query;
+
+    let query = `
+      SELECT 
+        l.id,
+        l.fecha,
+        l.numero_cliente,
+        s.nombre AS sucursal,
+        u.nombre_completo AS asesor,
+        tc.contenido AS tipo_consulta,
+        cc.contenido AS caracteristica,
+        COALESCE(dc.contenido, '-') AS definicion,
+        COALESCE(f.contenido, '-') AS finalizacion,
+        COALESCE(l.comentario, '-') AS comentario
+      FROM llamadas l
+      JOIN sucursales s ON l.sucursal_id = s.id
+      JOIN usuarios u ON l.usuario_id = u.id
+      JOIN tipos_consulta tc ON l.tipo_consulta_id = tc.id
+      JOIN caracteristicas_consulta cc ON l.caracteristica_id = cc.id
+      LEFT JOIN definiciones_consulta dc ON l.definicion_id = dc.id
+      LEFT JOIN finalizaciones f ON l.finalizacion_id = f.id
+      WHERE 1=1
+    `;
+
+    const values = [];
+    let paramIndex = 1;
+
+    if (fecha) {
+      query += ` AND DATE(l.fecha) = $${paramIndex++}`;
+      values.push(fecha);
+    }
+    if (fecha_desde) {
+      query += ` AND DATE(l.fecha) >= $${paramIndex++}`;
+      values.push(fecha_desde);
+    }
+    if (fecha_hasta) {
+      query += ` AND DATE(l.fecha) <= $${paramIndex++}`;
+      values.push(fecha_hasta);
+    }
+    if (asesor_id) {
+      query += ` AND l.usuario_id = $${paramIndex++}`;
+      values.push(asesor_id);
+    }
+    if (sucursal_id) {
+      query += ` AND l.sucursal_id = $${paramIndex++}`;
+      values.push(sucursal_id);
+    }
+    if (tipo_consulta_id) {
+      query += ` AND l.tipo_consulta_id = $${paramIndex++}`;
+      values.push(tipo_consulta_id);
+    }
+    if (caracteristica_id) {
+      query += ` AND l.caracteristica_id = $${paramIndex++}`;
+      values.push(caracteristica_id);
+    }
+    if (definicion_id) {
+      query += ` AND l.definicion_id = $${paramIndex++}`;
+      values.push(definicion_id);
+    }
+    if (finalizacion_id) {
+      if (!isNaN(parseInt(finalizacion_id, 10)) && String(parseInt(finalizacion_id, 10)) === String(finalizacion_id).trim()) {
+        query += ` AND l.finalizacion_id = $${paramIndex++}`;
+        values.push(parseInt(finalizacion_id, 10));
+      } else {
+        query += ` AND f.contenido ILIKE $${paramIndex++}`;
+        values.push(finalizacion_id.trim());
+      }
+    }
+    if (numero_cliente) {
+      query += ` AND l.numero_cliente ILIKE $${paramIndex++}`;
+      values.push(`%${numero_cliente.trim()}%`);
+    }
+
+    query += ` ORDER BY l.fecha DESC, l.id DESC`;
+
+    const result = await pool.query(query, values);
+    const llamadas = result.rows;
+
+    const doc = new PDFDocument({
+      size: 'A4',
+      layout: 'landscape',
+      margin: 30
+    });
+
+    const filename = `Reporte_Llamadas_${Date.now()}.pdf`;
+
+    res.setHeader('Content-Type', 'application/pdf');
+    res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
+
+    doc.pipe(res);
+
+    doc.rect(30, 25, 782, 50).fill('#0F766E');
+    doc.fillColor('#FFFFFF').fontSize(16).font('Helvetica-Bold').text('REPORTE DE REGISTRO DE LLAMADAS (0810)', 45, 38);
+    doc.fontSize(9).font('Helvetica').text(`Generado por: ${req.user.nombre_completo} (${req.user.rol}) | Fecha: ${new Date().toLocaleString()}`, 45, 56);
+
+    let filtrosTexto = [];
+    if (fecha) filtrosTexto.push(`Fecha: ${fecha}`);
+    if (fecha_desde) filtrosTexto.push(`Desde: ${fecha_desde}`);
+    if (fecha_hasta) filtrosTexto.push(`Hasta: ${fecha_hasta}`);
+    if (numero_cliente) filtrosTexto.push(`Abonado: ${numero_cliente}`);
+    if (sucursal_id) {
+      const s = await pool.query('SELECT nombre FROM sucursales WHERE id = $1', [sucursal_id]);
+      if (s.rows.length > 0) filtrosTexto.push(`Sucursal: ${s.rows[0].nombre}`);
+    }
+    if (asesor_id) {
+      const u = await pool.query('SELECT nombre_completo FROM usuarios WHERE id = $1', [asesor_id]);
+      if (u.rows.length > 0) filtrosTexto.push(`Asesor: ${u.rows[0].nombre_completo}`);
+    }
+    if (tipo_consulta_id) {
+      const tc = await pool.query('SELECT contenido FROM tipos_consulta WHERE id = $1', [tipo_consulta_id]);
+      if (tc.rows.length > 0) filtrosTexto.push(`Tipo: ${tc.rows[0].contenido}`);
+    }
+    if (caracteristica_id) {
+      const cc = await pool.query('SELECT contenido FROM caracteristicas_consulta WHERE id = $1', [caracteristica_id]);
+      if (cc.rows.length > 0) filtrosTexto.push(`Caract.: ${cc.rows[0].contenido}`);
+    }
+    if (definicion_id) {
+      const dc = await pool.query('SELECT contenido FROM definiciones_consulta WHERE id = $1', [definicion_id]);
+      if (dc.rows.length > 0) filtrosTexto.push(`Def.: ${dc.rows[0].contenido}`);
+    }
+    if (finalizacion_id) {
+      if (!isNaN(parseInt(finalizacion_id, 10)) && String(parseInt(finalizacion_id, 10)) === String(finalizacion_id).trim()) {
+        const fin = await pool.query('SELECT contenido FROM finalizaciones WHERE id = $1', [finalizacion_id]);
+        if (fin.rows.length > 0) filtrosTexto.push(`Fin.: ${fin.rows[0].contenido}`);
+      } else {
+        filtrosTexto.push(`Fin.: ${finalizacion_id.trim()}`);
+      }
+    }
+    const filtrosResumen = filtrosTexto.length > 0 ? filtrosTexto.join(' | ') : 'Todos los registros (Sin filtros específicos)';
+
+    doc.fillColor('#334155').fontSize(9).font('Helvetica-Bold').text(`Filtros aplicados: `, 30, 85, { continued: true });
+    doc.font('Helvetica').text(`${filtrosResumen}  —  Total de llamadas: ${llamadas.length}`);
+
+    const tableTop = 105;
+    const rowHeight = 22;
+    const colX = [30, 95, 175, 255, 325, 435, 555, 680];
+    const colW = [65, 80, 80, 70, 110, 120, 125, 100];
+
+    doc.rect(30, tableTop, 782, rowHeight).fill('#0D9488');
+    doc.fillColor('#FFFFFF').fontSize(8.5).font('Helvetica-Bold');
+
+    doc.text('FECHA', colX[0] + 4, tableTop + 6, { width: colW[0] });
+    doc.text('SUCURSAL', colX[1] + 4, tableTop + 6, { width: colW[1] });
+    doc.text('ASESOR', colX[2] + 4, tableTop + 6, { width: colW[2] });
+    doc.text('CLIENTE', colX[3] + 4, tableTop + 6, { width: colW[3] });
+    doc.text('TIPO CONSULTA', colX[4] + 4, tableTop + 6, { width: colW[4] });
+    doc.text('CARACTERÍSTICA', colX[5] + 4, tableTop + 6, { width: colW[5] });
+    doc.text('DEFINICIÓN', colX[6] + 4, tableTop + 6, { width: colW[6] });
+    doc.text('FINALIZACIÓN', colX[7] + 4, tableTop + 6, { width: colW[7] });
+
+    let currentY = tableTop + rowHeight;
+    let zebra = false;
+
+    if (llamadas.length === 0) {
+      doc.rect(30, currentY, 782, rowHeight).fill('#F8FAFC');
+      doc.fillColor('#64748B').fontSize(9).font('Helvetica-Oblique').text('No se encontraron llamadas con los filtros seleccionados.', 30, currentY + 6, {
+        align: 'center',
+        width: 782
+      });
+    } else {
+      llamadas.forEach((r) => {
+        if (currentY + rowHeight > 540) {
+          doc.addPage({ size: 'A4', layout: 'landscape', margin: 30 });
+          currentY = 40;
+
+          doc.rect(30, currentY, 782, rowHeight).fill('#0D9488');
+          doc.fillColor('#FFFFFF').fontSize(8.5).font('Helvetica-Bold');
+          doc.text('FECHA', colX[0] + 4, currentY + 6, { width: colW[0] });
+          doc.text('SUCURSAL', colX[1] + 4, currentY + 6, { width: colW[1] });
+          doc.text('ASESOR', colX[2] + 4, currentY + 6, { width: colW[2] });
+          doc.text('CLIENTE', colX[3] + 4, currentY + 6, { width: colW[3] });
+          doc.text('TIPO CONSULTA', colX[4] + 4, currentY + 6, { width: colW[4] });
+          doc.text('CARACTERÍSTICA', colX[5] + 4, currentY + 6, { width: colW[5] });
+          doc.text('DEFINICIÓN', colX[6] + 4, currentY + 6, { width: colW[6] });
+          doc.text('FINALIZACIÓN', colX[7] + 4, currentY + 6, { width: colW[7] });
+          currentY += rowHeight;
+        }
+
+        const bg = zebra ? '#F1F5F9' : '#FFFFFF';
+        doc.rect(30, currentY, 782, rowHeight).fill(bg);
+        doc.rect(30, currentY, 782, rowHeight).stroke('#CBD5E1');
+
+        doc.fillColor('#1E293B').fontSize(8).font('Helvetica');
+
+        const fechaStr = new Date(r.fecha).toLocaleDateString('es-AR', {
+          day: '2-digit',
+          month: '2-digit',
+          year: 'numeric'
+        });
+
+        doc.text(fechaStr, colX[0] + 4, currentY + 6, { width: colW[0] });
+        doc.text(r.sucursal, colX[1] + 4, currentY + 6, { width: colW[1], lineBreak: false });
+        doc.text(r.asesor, colX[2] + 4, currentY + 6, { width: colW[2], lineBreak: false });
+        doc.text(r.numero_cliente, colX[3] + 4, currentY + 6, { width: colW[3] });
+        doc.text(r.tipo_consulta, colX[4] + 4, currentY + 6, { width: colW[4], lineBreak: false });
+        doc.text(r.caracteristica, colX[5] + 4, currentY + 6, { width: colW[5], lineBreak: false });
+        doc.text(r.definicion, colX[6] + 4, currentY + 6, { width: colW[6], lineBreak: false });
+        doc.text(r.finalizacion, colX[7] + 4, currentY + 6, { width: colW[7], lineBreak: false });
+
+        currentY += rowHeight;
+        zebra = !zebra;
+      });
+    }
+
+    doc.end();
+  } catch (error) {
+    console.error('Error al generar reporte de llamadas en PDF:', error);
+    res.status(500).json({ error: 'Error al generar el reporte en PDF.' });
+  }
+};
+
 const emitirReporteTareasPDF = async (req, res) => {
   try {
     const {
@@ -1062,6 +1286,7 @@ const emitirReporteAuditoriaIndividualPDF = async (req, res) => {
 
 module.exports = {
   emitirReportePDF,
+  emitirReporteLlamadasPDF,
   emitirReporteTareasPDF,
   emitirReporteMasivosPDF,
   emitirReporteAuditoriasPDF,

@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Sistema de Gestión y Registro de Reclamos</title>
+  <title>Zeus - Gestión y Reporte de Red</title>
   <link rel="icon" type="image/svg+xml" href="/favicon.svg">
   <link rel="stylesheet" href="/css/style.css">
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -25,13 +25,15 @@
       <div class="auth-header">
         <div class="flex-row justify-between align-center mb-2">
           <div style="width: 36px;"></div>
-          <div class="auth-logo-badge" style="margin: 0;">⚡</div>
+          <div class="auth-logo-badge" style="margin: 0; background: transparent; padding: 0;">
+            <img src="/assets/logo_zeus_escudo.jpg" alt="Zeus Escudo" style="width: 54px; height: 54px; object-fit: contain; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.15);">
+          </div>
           <button type="button" id="btn-theme-toggle-login" class="btn-theme-toggle" title="Cambiar tema claro / oscuro" aria-label="Cambiar tema">
             <span class="theme-toggle-icon">🌙</span>
           </button>
         </div>
-        <h2>Registro de Reclamos</h2>
-        <p>Inicie sesión para acceder a su panel de gestión</p>
+        <h2 style="letter-spacing: 0.05em; font-weight: 800;">ZEUS</h2>
+        <p>Gestión y Reporte de Red | Inicie sesión para acceder</p>
       </div>
 
       <div id="login-error" class="form-alert error hidden"></div>
@@ -58,286 +60,584 @@
 
   <div id="app-content" class="app-layout hidden">
 
-    <header class="app-header">
-      <div class="header-brand">
-        <span class="brand-icon">📋</span>
-        <span class="brand-title">Gestión de Reclamos</span>
+    <header class="app-header zeus-header">
+      <div class="zeus-brand">
+        <img src="/assets/logo_zeus_claro.jpg" alt="Zeus - Gestión y Reporte de Red" class="zeus-logo zeus-logo-light">
+        <img src="/assets/logo_zeus_oscuro.jpg" alt="Zeus - Gestión y Reporte de Red" class="zeus-logo zeus-logo-dark">
       </div>
 
-      <div class="header-user-profile">
-        <button type="button" id="btn-theme-toggle" class="btn-theme-toggle" title="Cambiar a modo oscuro / claro" aria-label="Cambiar tema">
-          <span id="theme-toggle-icon" class="theme-toggle-icon">🌙</span>
+      <div class="zeus-menu-container">
+        <button type="button" id="btn-zeus-menu" class="btn-zeus-menu" aria-label="Abrir menú de navegación" aria-expanded="false">
+          <span class="zeus-menu-icon">☰</span>
+          <span class="zeus-menu-text">Menú</span>
+          <span class="zeus-menu-arrow">▾</span>
         </button>
-        <img id="header-user-avatar" src="https://ui-avatars.com/api/?name=User&background=3B82F6&color=fff" alt="Avatar" class="user-avatar">
-        <span id="header-user-name" class="user-name">Cargando...</span>
-        <button id="btn-logout" class="btn btn-sm btn-outline-danger" title="Cerrar sesión">Salir</button>
+
+        <div id="zeus-dropdown" class="zeus-dropdown hidden">
+          <div class="zeus-dropdown-user">
+            <img id="header-user-avatar" src="https://ui-avatars.com/api/?name=User&background=3B82F6&color=fff" alt="Avatar" class="user-avatar">
+            <div class="zeus-user-info">
+              <span id="header-user-name" class="user-name">Cargando...</span>
+              <small id="header-user-role" class="text-muted font-xs">Usuario</small>
+            </div>
+          </div>
+
+          <div class="zeus-dropdown-divider"></div>
+
+          <div class="zeus-dropdown-nav">
+            <button class="nav-tab-btn active zeus-nav-item" data-tab="gestion">
+              <span class="tab-icon">🎧</span> Atención al cliente
+            </button>
+            <button class="nav-tab-btn zeus-nav-item" data-tab="registros">
+              <span class="tab-icon">🔍</span> Registros
+            </button>
+            <button class="nav-tab-btn zeus-nav-item" data-tab="edicion">
+              <span class="tab-icon">⚙️</span> Edición
+            </button>
+            <button class="nav-tab-btn zeus-nav-item" data-tab="tareas">
+              <span class="tab-icon">📋</span> Asignar Tareas
+            </button>
+            <button class="nav-tab-btn zeus-nav-item" data-tab="masivos">
+              <span class="tab-icon">🚨</span> Masivos
+            </button>
+            <button class="nav-tab-btn zeus-nav-item" data-tab="auditorias">
+              <span class="tab-icon">⭐</span> Auditorias de calidad
+            </button>
+            <button class="nav-tab-btn zeus-nav-item" data-tab="perfil">
+              <span class="tab-icon">👤</span> Perfil
+            </button>
+          </div>
+
+          <div class="zeus-dropdown-divider"></div>
+
+          <div class="zeus-dropdown-actions">
+            <button type="button" id="btn-theme-toggle" class="zeus-action-btn" title="Cambiar tema">
+              <span id="theme-toggle-icon" class="theme-toggle-icon">🌙</span>
+              <span id="theme-toggle-label">Modo Oscuro</span>
+            </button>
+
+            <button type="button" id="btn-logout" class="zeus-action-btn zeus-logout-btn" title="Cerrar sesión">
+              <span>🚪</span>
+              <span>Salir</span>
+            </button>
+          </div>
+        </div>
       </div>
     </header>
-
-    <nav class="app-navbar">
-      <div class="nav-container">
-        <button class="nav-tab-btn active" data-tab="gestion">
-          <span class="tab-icon">📝</span> Gestión de Reclamos
-        </button>
-        <button class="nav-tab-btn" data-tab="historial">
-          <span class="tab-icon">📑</span> Historial
-        </button>
-        <button class="nav-tab-btn" data-tab="registros">
-          <span class="tab-icon">🔍</span> Registros
-        </button>
-        <button class="nav-tab-btn" data-tab="edicion">
-          <span class="tab-icon">⚙️</span> Edición
-        </button>
-        <button class="nav-tab-btn" data-tab="tareas">
-          <span class="tab-icon">📋</span> Asignar Tareas
-        </button>
-        <button class="nav-tab-btn" data-tab="masivos">
-          <span class="tab-icon">🚨</span> Masivos
-        </button>
-        <button class="nav-tab-btn" data-tab="auditorias">
-          <span class="tab-icon">⭐</span> Auditorias de calidad
-        </button>
-        <button class="nav-tab-btn" data-tab="perfil">
-          <span class="tab-icon">👤</span> Perfil
-        </button>
-      </div>
-    </nav>
 
     <main class="app-main">
 
       <section id="view-gestion" class="tab-view">
         <div class="view-header">
-          <h2>Nuevo Registro de Reclamo</h2>
-          <p class="text-muted">Complete los datos de la interacción con el cliente.</p>
+          <h2>Atención al Cliente</h2>
+          <p class="text-muted">Registro y seguimiento de reclamos (Chat) y llamadas telefónicas (0810).</p>
         </div>
 
-        <div class="gestion-top-layout">
-          <div class="gestion-col-form">
-            <div class="card card-form">
-              <div id="reclamo-form-alert" class="form-alert hidden"></div>
-
-              <form id="form-gestion-reclamo">
-                <div class="form-grid-2">
-                  <div class="form-group">
-                    <label for="reclamo-sucursal">Sucursal <span class="req">*</span></label>
-                    <select id="reclamo-sucursal" required>
-                      <option value="">-- Seleccione Sucursal --</option>
-                    </select>
-                  </div>
-
-                  <div class="form-group">
-                    <label for="reclamo-cliente">Número de Cliente / Abonado <span class="req">*</span></label>
-                    <input type="text" id="reclamo-cliente" maxlength="15" required>
-                    <small class="text-muted">Hasta 15 caracteres</small>
-                  </div>
-                </div>
-
-                <hr class="form-divider">
-                <h4 class="form-section-title">Clasificación de la Consulta</h4>
-
-                <div class="form-grid-2">
-                  <div class="form-group">
-                    <label for="reclamo-tipo">Tipo de Consulta <span class="req">*</span></label>
-                    <select id="reclamo-tipo" required>
-                      <option value="">-- Seleccione Tipo de Consulta --</option>
-                    </select>
-                  </div>
-
-                  <div class="form-group">
-                    <label for="reclamo-caracteristica">Características <span class="req">*</span></label>
-                    <select id="reclamo-caracteristica" required disabled>
-                      <option value="">-- Seleccione Característica --</option>
-                    </select>
-                  </div>
-                </div>
-
-                <div class="form-grid-2">
-                  <div class="form-group">
-                    <label for="reclamo-definicion">Definición <span class="req">*</span></label>
-                    <select id="reclamo-definicion" required disabled>
-                      <option value="">-- Seleccione Definición --</option>
-                    </select>
-                  </div>
-
-                  <div class="form-group">
-                    <label for="reclamo-finalizacion">Finalización <span class="req">*</span></label>
-                    <select id="reclamo-finalizacion" required disabled>
-                      <option value="">-- Seleccione Finalización --</option>
-                    </select>
-                  </div>
-                </div>
-
-                <div class="form-group mt-2">
-                  <label for="reclamo-comentario">Comentario <span class="text-muted">(Opcional)</span></label>
-                  <textarea id="reclamo-comentario" rows="3" maxlength="500" placeholder="Ingrese un comentario adicional sobre el reclamo (Opcional)"></textarea>
-                  <small id="reclamo-comentario-counter" class="text-muted">Opcional - Hasta 500 caracteres (0 / 500)</small>
-                </div>
-
-                <div class="form-actions mt-3">
-                  <button type="submit" class="btn btn-primary btn-lg">
-                    <span class="btn-icon">💾</span> Guardar Reclamo
-                  </button>
-                </div>
-              </form>
-            </div>
-          </div>
-
-          <div class="gestion-col-lateral">
-            <div id="sec-inconvenientes-masivos" class="card masivos-banner-card">
-              <div class="card-header flex-row justify-between align-center">
-                <div class="d-flex align-center gap-2">
-                  <span style="font-size: 1.15rem;">⚠️</span>
-                  <h3 class="m-0">Inconvenientes Masivos</h3>
-                </div>
-                <span id="masivos-banner-badge" class="badge badge-secondary">Sin inconvenientes activos</span>
-              </div>
-              <div id="masivos-banner-content" class="p-3">
-                <div class="text-center py-2 text-muted">
-                  <span>✓</span> Sin inconvenientes activos
-                </div>
-              </div>
-            </div>
-
-            <div class="gestion-col-tareas">
-              <div class="card card-mis-tareas">
-                <div class="card-header flex-row justify-between align-center">
-                  <h3>📋 Mis Tareas Asignadas</h3>
-                  <span id="mis-tareas-badge" class="badge badge-info">0</span>
-                </div>
-                <div class="card-body" id="mis-tareas-body">
-                  <div class="text-center py-4 text-muted">Cargando tareas asignadas...</div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="card reclamos-preview-card mt-4">
-          <div class="card-header flex-row justify-between align-center">
-            <h3>Vista Previa de Reclamos Recientes</h3>
-            <span id="preview-contador" class="badge badge-primary">0 reclamos</span>
-          </div>
-          <div class="table-container">
-            <table class="data-table">
-              <thead>
-                <tr>
-                  <th>Fecha y Hora</th>
-                  <th>Sucursal</th>
-                  <th>Asesor</th>
-                  <th>Abonado</th>
-                  <th>Tipo de Consulta</th>
-                  <th>Características</th>
-                  <th>Definición</th>
-                  <th>Finalización</th>
-                  <th>Comentario</th>
-                </tr>
-              </thead>
-              <tbody id="tabla-preview-body">
-                <tr>
-                  <td colspan="9" class="text-center py-4 text-muted">Aún no se han cargado reclamos en esta sesión.</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </section>
-
-      <section id="view-historial" class="tab-view hidden">
-        <div class="view-header flex-row justify-between align-center">
-          <div>
-            <h2>Historial de Reclamos</h2>
-            <p class="text-muted">Consulte, filtre y reporte las interacciones registradas.</p>
-          </div>
-          <div>
-            <button id="btn-emitir-reporte" class="btn btn-success">
-              <span class="icon">📄</span> Emitir Reporte PDF
+        <div class="subtabs-bar mb-3">
+          <div class="subtabs-main">
+            <button id="atencion-tab-btn-reclamos" class="btn-tab-main active" type="button">
+              <span>💬</span> Registro de Reclamos
+            </button>
+            <button id="atencion-tab-btn-llamadas" class="btn-tab-main" type="button">
+              <span>📞</span> Registro de Llamadas
             </button>
           </div>
         </div>
 
-        <div class="card filter-card mb-4">
-          <div class="filter-header">
-            <strong>Filtros de Búsqueda</strong>
-            <small class="text-muted">Combine múltiples criterios o busque por uno solo</small>
+        <div id="atencion-sec-reclamos">
+          <div class="subtabs-nested mb-3">
+            <button id="reclamos-subtab-btn-nuevo" class="btn-tab-nested active" type="button">
+              <span>📝</span> Nuevo Reclamo
+            </button>
+            <button id="reclamos-subtab-btn-historial" class="btn-tab-nested" type="button">
+              <span>📑</span> Historial
+            </button>
           </div>
-          <div class="filter-grid">
-            <div class="filter-group">
-              <label>Fecha Desde</label>
-              <input type="date" id="filtro-fecha-desde">
+
+          <div id="reclamos-sec-nuevo">
+            <div class="gestion-top-layout">
+              <div class="gestion-col-form">
+                <div class="card card-form">
+                  <div id="reclamo-form-alert" class="form-alert hidden"></div>
+
+                  <form id="form-gestion-reclamo">
+                    <div class="form-grid-2">
+                      <div class="form-group">
+                        <label for="reclamo-sucursal">Sucursal <span class="req">*</span></label>
+                        <select id="reclamo-sucursal" required>
+                          <option value="">-- Seleccione Sucursal --</option>
+                        </select>
+                      </div>
+
+                      <div class="form-group">
+                        <label for="reclamo-cliente">Número de Cliente / Abonado <span class="req">*</span></label>
+                        <input type="text" id="reclamo-cliente" maxlength="15" required>
+                        <small class="text-muted">Hasta 15 caracteres</small>
+                      </div>
+                    </div>
+
+                    <hr class="form-divider">
+                    <h4 class="form-section-title">Clasificación de la Consulta</h4>
+
+                    <div class="form-grid-2">
+                      <div class="form-group">
+                        <label for="reclamo-tipo">Tipo de Consulta <span class="req">*</span></label>
+                        <select id="reclamo-tipo" required>
+                          <option value="">-- Seleccione Tipo de Consulta --</option>
+                        </select>
+                      </div>
+
+                      <div class="form-group">
+                        <label for="reclamo-caracteristica">Características <span class="req">*</span></label>
+                        <select id="reclamo-caracteristica" required disabled>
+                          <option value="">-- Seleccione Característica --</option>
+                        </select>
+                      </div>
+                    </div>
+
+                    <div class="form-grid-2">
+                      <div class="form-group">
+                        <label for="reclamo-definicion">Definición <span class="req">*</span></label>
+                        <select id="reclamo-definicion" required disabled>
+                          <option value="">-- Seleccione Definición --</option>
+                        </select>
+                      </div>
+
+                      <div class="form-group">
+                        <label for="reclamo-finalizacion">Finalización <span class="req">*</span></label>
+                        <select id="reclamo-finalizacion" required disabled>
+                          <option value="">-- Seleccione Finalización --</option>
+                        </select>
+                      </div>
+                    </div>
+
+                    <div class="form-group mt-2">
+                      <label for="reclamo-comentario">Comentario <span class="text-muted">(Opcional)</span></label>
+                      <textarea id="reclamo-comentario" rows="3" maxlength="500" placeholder="Ingrese un comentario adicional sobre el reclamo (Opcional)"></textarea>
+                      <small id="reclamo-comentario-counter" class="text-muted">Opcional - Hasta 500 caracteres (0 / 500)</small>
+                    </div>
+
+                    <div class="form-actions mt-3">
+                      <button type="submit" class="btn btn-primary btn-lg">
+                        <span class="btn-icon">💾</span> Guardar Reclamo
+                      </button>
+                    </div>
+                  </form>
+                </div>
+              </div>
+
+              <div class="gestion-col-lateral">
+                <div id="sec-inconvenientes-masivos" class="card masivos-banner-card">
+                  <div class="card-header flex-row justify-between align-center">
+                    <div class="d-flex align-center gap-2">
+                      <span style="font-size: 1.15rem;">⚠️</span>
+                      <h3 class="m-0">Inconvenientes Masivos</h3>
+                    </div>
+                    <span id="masivos-banner-badge" class="badge badge-secondary">Sin inconvenientes activos</span>
+                  </div>
+                  <div id="masivos-banner-content" class="p-3">
+                    <div class="text-center py-2 text-muted">
+                      <span>✓</span> Sin inconvenientes activos
+                    </div>
+                  </div>
+                </div>
+
+                <div class="gestion-col-tareas">
+                  <div class="card card-mis-tareas">
+                    <div class="card-header flex-row justify-between align-center">
+                      <h3>📋 Mis Tareas Asignadas</h3>
+                      <span id="mis-tareas-badge" class="badge badge-info">0</span>
+                    </div>
+                    <div class="card-body" id="mis-tareas-body">
+                      <div class="text-center py-4 text-muted">Cargando tareas asignadas...</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
-            <div class="filter-group">
-              <label>Fecha Hasta</label>
-              <input type="date" id="filtro-fecha-hasta">
-            </div>
-            <div class="filter-group">
-              <label>Sucursal</label>
-              <select id="filtro-sucursal">
-                <option value="">Todas</option>
-              </select>
-            </div>
-            <div class="filter-group">
-              <label>Tipo de Consulta</label>
-              <select id="filtro-tipo">
-                <option value="">Todos</option>
-              </select>
-            </div>
-            <div class="filter-group">
-              <label>Características</label>
-              <select id="filtro-caracteristica">
-                <option value="">Todas</option>
-              </select>
-            </div>
-            <div class="filter-group">
-              <label>Definición</label>
-              <select id="filtro-definicion">
-                <option value="">Todas</option>
-              </select>
-            </div>
-            <div class="filter-group">
-              <label>Finalización</label>
-              <select id="filtro-finalizacion">
-                <option value="">Todas</option>
-              </select>
-            </div>
-            <div class="filter-group">
-              <label>Asesor</label>
-              <select id="filtro-asesor">
-                <option value="">Todos</option>
-              </select>
-            </div>
-            <div class="filter-group">
-              <label>Abonado / Cliente</label>
-              <input type="text" id="filtro-cliente" placeholder="Buscar cliente...">
+
+            <div class="card reclamos-preview-card mt-4">
+              <div class="card-header flex-row justify-between align-center">
+                <h3>Vista Previa de Reclamos Recientes</h3>
+                <span id="preview-contador" class="badge badge-primary">0 reclamos</span>
+              </div>
+              <div class="table-container">
+                <table class="data-table">
+                  <thead>
+                    <tr>
+                      <th>Fecha y Hora</th>
+                      <th>Sucursal</th>
+                      <th>Asesor</th>
+                      <th>Abonado</th>
+                      <th>Tipo de Consulta</th>
+                      <th>Características</th>
+                      <th>Definición</th>
+                      <th>Finalización</th>
+                      <th>Comentario</th>
+                    </tr>
+                  </thead>
+                  <tbody id="tabla-preview-body">
+                    <tr>
+                      <td colspan="9" class="text-center py-4 text-muted">Aún no se han cargado reclamos en esta sesión.</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
             </div>
           </div>
-          <div class="filter-actions mt-3">
-            <button id="btn-aplicar-filtros" class="btn btn-primary">Buscar / Filtrar</button>
-            <button id="btn-limpiar-filtros" class="btn btn-outline-secondary">Limpiar Filtros</button>
+
+          <div id="reclamos-sec-historial" class="hidden">
+            <div class="view-header flex-row justify-between align-center">
+              <div>
+                <h3>Historial de Reclamos (Chat)</h3>
+                <p class="text-muted font-sm">Consulte, filtre y reporte los reclamos registrados.</p>
+              </div>
+              <div>
+                <button id="btn-emitir-reporte" class="btn btn-success">
+                  <span class="icon">📄</span> Emitir Reporte PDF
+                </button>
+              </div>
+            </div>
+
+            <div class="card filter-card mb-4">
+              <div class="filter-header">
+                <strong>Filtros de Búsqueda</strong>
+                <small class="text-muted">Combine múltiples criterios o busque por uno solo</small>
+              </div>
+              <div class="filter-grid">
+                <div class="filter-group">
+                  <label>Fecha Desde</label>
+                  <input type="date" id="filtro-fecha-desde">
+                </div>
+                <div class="filter-group">
+                  <label>Fecha Hasta</label>
+                  <input type="date" id="filtro-fecha-hasta">
+                </div>
+                <div class="filter-group">
+                  <label>Sucursal</label>
+                  <select id="filtro-sucursal">
+                    <option value="">Todas</option>
+                  </select>
+                </div>
+                <div class="filter-group">
+                  <label>Tipo de Consulta</label>
+                  <select id="filtro-tipo">
+                    <option value="">Todos</option>
+                  </select>
+                </div>
+                <div class="filter-group">
+                  <label>Características</label>
+                  <select id="filtro-caracteristica">
+                    <option value="">Todas</option>
+                  </select>
+                </div>
+                <div class="filter-group">
+                  <label>Definición</label>
+                  <select id="filtro-definicion">
+                    <option value="">Todas</option>
+                  </select>
+                </div>
+                <div class="filter-group">
+                  <label>Finalización</label>
+                  <select id="filtro-finalizacion">
+                    <option value="">Todas</option>
+                  </select>
+                </div>
+                <div class="filter-group">
+                  <label>Asesor</label>
+                  <select id="filtro-asesor">
+                    <option value="">Todos</option>
+                  </select>
+                </div>
+                <div class="filter-group">
+                  <label>Abonado / Cliente</label>
+                  <input type="text" id="filtro-cliente" placeholder="Buscar cliente...">
+                </div>
+              </div>
+              <div class="filter-actions mt-3">
+                <button id="btn-aplicar-filtros" class="btn btn-primary">Buscar / Filtrar</button>
+                <button id="btn-limpiar-filtros" class="btn btn-outline-secondary">Limpiar Filtros</button>
+              </div>
+            </div>
+
+            <div id="historial-empty-state" class="card p-5 text-center text-muted mb-4">
+              <span style="font-size: 2.25rem; display: block; margin-bottom: 0.5rem;">🔍</span>
+              <h4 class="font-bold text-main mb-1">Aplique un filtro para consultar el historial</h4>
+              <p class="font-sm text-muted m-0">Seleccione los criterios de búsqueda deseados y presione "Buscar / Filtrar" para visualizar los reclamos.</p>
+            </div>
+
+            <div id="contenedor-tabla-historial" class="card table-container hidden">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Fecha</th>
+                    <th>Sucursal</th>
+                    <th>Asesor</th>
+                    <th>N° Cliente</th>
+                    <th>Tipo de Consulta</th>
+                    <th>Características</th>
+                    <th>Definición</th>
+                    <th>Finalización</th>
+                    <th>Comentario</th>
+                    <th>Acciones</th>
+                  </tr>
+                </thead>
+                <tbody id="tabla-historial-body">
+                  <tr>
+                    <td colspan="10" class="text-center py-4">Cargando reclamos...</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
           </div>
         </div>
 
-        <div class="card table-container">
-          <table class="data-table">
-            <thead>
-              <tr>
-                <th>Fecha</th>
-                <th>Sucursal</th>
-                <th>Asesor</th>
-                <th>N° Cliente</th>
-                <th>Tipo de Consulta</th>
-                <th>Características</th>
-                <th>Definición</th>
-                <th>Finalización</th>
-                <th>Comentario</th>
-                <th>Acciones</th>
-              </tr>
-            </thead>
-            <tbody id="tabla-historial-body">
-              <tr>
-                <td colspan="10" class="text-center py-4">Cargando reclamos...</td>
-              </tr>
-            </tbody>
-          </table>
+        <div id="atencion-sec-llamadas" class="hidden">
+          <div class="subtabs-nested mb-3">
+            <button id="llamadas-subtab-btn-nueva" class="btn-tab-nested btn-tab-nested-teal active" type="button">
+              <span>📞</span> Nueva Llamada
+            </button>
+            <button id="llamadas-subtab-btn-historial" class="btn-tab-nested btn-tab-nested-teal" type="button">
+              <span>📋</span> Historial
+            </button>
+          </div>
+
+          <div id="llamadas-sec-nueva">
+            <div class="gestion-top-layout">
+              <div class="gestion-col-form">
+                <div class="card card-form">
+                  <div id="llamada-form-alert" class="form-alert hidden"></div>
+
+                  <form id="form-gestion-llamada">
+                    <div class="form-grid-2">
+                      <div class="form-group">
+                        <label for="llamada-sucursal">Sucursal <span class="req">*</span></label>
+                        <select id="llamada-sucursal" required>
+                          <option value="">-- Seleccione Sucursal --</option>
+                        </select>
+                      </div>
+
+                      <div class="form-group">
+                        <label for="llamada-cliente">Número de Cliente / Abonado <span class="req">*</span></label>
+                        <input type="text" id="llamada-cliente" maxlength="15" required>
+                        <small class="text-muted">Hasta 15 caracteres</small>
+                      </div>
+                    </div>
+
+                    <hr class="form-divider">
+                    <h4 class="form-section-title">Clasificación de la Consulta Telefónica</h4>
+
+                    <div class="form-grid-2">
+                      <div class="form-group">
+                        <label for="llamada-tipo">Tipo de Consulta <span class="req">*</span></label>
+                        <select id="llamada-tipo" required>
+                          <option value="">-- Seleccione Tipo de Consulta --</option>
+                        </select>
+                      </div>
+
+                      <div class="form-group">
+                        <label for="llamada-caracteristica">Características <span class="req">*</span></label>
+                        <select id="llamada-caracteristica" required disabled>
+                          <option value="">-- Seleccione Característica --</option>
+                        </select>
+                      </div>
+                    </div>
+
+                    <div class="form-grid-2">
+                      <div class="form-group">
+                        <label for="llamada-definicion">Definición <span class="req">*</span></label>
+                        <select id="llamada-definicion" required disabled>
+                          <option value="">-- Seleccione Definición --</option>
+                        </select>
+                      </div>
+
+                      <div class="form-group">
+                        <label for="llamada-finalizacion">Finalización <span class="req">*</span></label>
+                        <select id="llamada-finalizacion" required disabled>
+                          <option value="">-- Seleccione Finalización --</option>
+                        </select>
+                      </div>
+                    </div>
+
+                    <div class="form-group mt-2">
+                      <label for="llamada-comentario">Comentario <span class="text-muted">(Opcional)</span></label>
+                      <textarea id="llamada-comentario" rows="3" maxlength="500" placeholder="Ingrese un comentario adicional sobre la llamada telefónica (Opcional)"></textarea>
+                      <small id="llamada-comentario-counter" class="text-muted">Opcional - Hasta 500 caracteres (0 / 500)</small>
+                    </div>
+
+                    <div class="form-actions mt-3">
+                      <button type="submit" class="btn btn-primary btn-lg" style="background: #0D9488; border-color: #0D9488;">
+                        <span class="btn-icon">💾</span> Guardar Llamada
+                      </button>
+                    </div>
+                  </form>
+                </div>
+              </div>
+
+              <div class="gestion-col-lateral">
+                <div id="sec-inconvenientes-masivos-llamadas" class="card masivos-banner-card">
+                  <div class="card-header flex-row justify-between align-center">
+                    <div class="d-flex align-center gap-2">
+                      <span style="font-size: 1.15rem;">⚠️</span>
+                      <h3 class="m-0">Inconvenientes Masivos</h3>
+                    </div>
+                    <span id="masivos-banner-badge-llamadas" class="badge badge-secondary">Sin inconvenientes activos</span>
+                  </div>
+                  <div id="masivos-banner-content-llamadas" class="p-3">
+                    <div class="text-center py-2 text-muted">
+                      <span>✓</span> Sin inconvenientes activos
+                    </div>
+                  </div>
+                </div>
+
+                <div class="gestion-col-tareas">
+                  <div class="card card-mis-tareas">
+                    <div class="card-header flex-row justify-between align-center">
+                      <h3>📋 Mis Tareas Asignadas</h3>
+                      <span id="mis-tareas-badge-llamadas" class="badge badge-info">0</span>
+                    </div>
+                    <div class="card-body" id="mis-tareas-body-llamadas">
+                      <div class="text-center py-4 text-muted">Cargando tareas asignadas...</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="card reclamos-preview-card mt-4">
+              <div class="card-header flex-row justify-between align-center">
+                <h3>Vista Previa de Llamadas Recientes</h3>
+                <span id="preview-contador-llamadas" class="badge badge-primary" style="background: #0D9488;">0 llamadas</span>
+              </div>
+              <div class="table-container">
+                <table class="data-table">
+                  <thead>
+                    <tr>
+                      <th>Fecha y Hora</th>
+                      <th>Sucursal</th>
+                      <th>Asesor</th>
+                      <th>Abonado</th>
+                      <th>Tipo de Consulta</th>
+                      <th>Características</th>
+                      <th>Definición</th>
+                      <th>Finalización</th>
+                      <th>Comentario</th>
+                    </tr>
+                  </thead>
+                  <tbody id="tabla-preview-body-llamadas">
+                    <tr>
+                      <td colspan="9" class="text-center py-4 text-muted">Aún no se han cargado llamadas en esta sesión.</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <div id="llamadas-sec-historial" class="hidden">
+            <div class="view-header flex-row justify-between align-center">
+              <div>
+                <h3>Historial de Llamadas (0810)</h3>
+                <p class="text-muted font-sm">Consulte, filtre y reporte las llamadas telefónicas registradas.</p>
+              </div>
+              <div>
+                <button id="btn-emitir-reporte-llamadas" class="btn btn-success" style="background: #0D9488; border-color: #0D9488;">
+                  <span class="icon">📄</span> Emitir Reporte PDF
+                </button>
+              </div>
+            </div>
+
+            <div class="card filter-card mb-4">
+              <div class="filter-header">
+                <strong>Filtros de Búsqueda de Llamadas</strong>
+                <small class="text-muted">Combine múltiples criterios o busque por uno solo</small>
+              </div>
+              <div class="filter-grid">
+                <div class="filter-group">
+                  <label>Fecha Desde</label>
+                  <input type="date" id="filtro-llamada-fecha-desde">
+                </div>
+                <div class="filter-group">
+                  <label>Fecha Hasta</label>
+                  <input type="date" id="filtro-llamada-fecha-hasta">
+                </div>
+                <div class="filter-group">
+                  <label>Sucursal</label>
+                  <select id="filtro-llamada-sucursal">
+                    <option value="">Todas</option>
+                  </select>
+                </div>
+                <div class="filter-group">
+                  <label>Tipo de Consulta</label>
+                  <select id="filtro-llamada-tipo">
+                    <option value="">Todos</option>
+                  </select>
+                </div>
+                <div class="filter-group">
+                  <label>Características</label>
+                  <select id="filtro-llamada-caracteristica">
+                    <option value="">Todas</option>
+                  </select>
+                </div>
+                <div class="filter-group">
+                  <label>Definición</label>
+                  <select id="filtro-llamada-definicion">
+                    <option value="">Todas</option>
+                  </select>
+                </div>
+                <div class="filter-group">
+                  <label>Finalización</label>
+                  <select id="filtro-llamada-finalizacion">
+                    <option value="">Todas</option>
+                  </select>
+                </div>
+                <div class="filter-group">
+                  <label>Asesor</label>
+                  <select id="filtro-llamada-asesor">
+                    <option value="">Todos</option>
+                  </select>
+                </div>
+                <div class="filter-group">
+                  <label>Abonado / Cliente</label>
+                  <input type="text" id="filtro-llamada-cliente" placeholder="Buscar cliente...">
+                </div>
+              </div>
+              <div class="filter-actions mt-3">
+                <button id="btn-aplicar-filtros-llamadas" class="btn btn-primary" style="background: #0D9488; border-color: #0D9488;">Buscar / Filtrar</button>
+                <button id="btn-limpiar-filtros-llamadas" class="btn btn-outline-secondary">Limpiar Filtros</button>
+              </div>
+            </div>
+
+            <div id="historial-llamadas-empty-state" class="card p-5 text-center text-muted mb-4">
+              <span style="font-size: 2.25rem; display: block; margin-bottom: 0.5rem; color: #0D9488;">📞</span>
+              <h4 class="font-bold text-main mb-1">Aplique un filtro para consultar el historial de llamadas</h4>
+              <p class="font-sm text-muted m-0">Seleccione los criterios de búsqueda deseados y presione "Buscar / Filtrar" para visualizar las llamadas registradas.</p>
+            </div>
+
+            <div id="contenedor-tabla-historial-llamadas" class="card table-container hidden">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Fecha</th>
+                    <th>Sucursal</th>
+                    <th>Asesor</th>
+                    <th>N° Cliente</th>
+                    <th>Tipo de Consulta</th>
+                    <th>Características</th>
+                    <th>Definición</th>
+                    <th>Finalización</th>
+                    <th>Comentario</th>
+                    <th>Acciones</th>
+                  </tr>
+                </thead>
+                <tbody id="tabla-historial-llamadas-body">
+                  <tr>
+                    <td colspan="10" class="text-center py-4">Cargando llamadas...</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
         </div>
       </section>
 
@@ -1244,6 +1544,51 @@
     </div>
   </div>
 
+  <div id="modal-editar-llamada" class="modal-overlay hidden">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3>Editar Llamada Telefónica</h3>
+        <button class="modal-close" onclick="LlamadasHistorialModule.cerrarModalEditar()">&times;</button>
+      </div>
+      <form id="form-editar-llamada">
+        <div class="modal-body">
+          <div class="form-group">
+            <label>Sucursal</label>
+            <select id="edit-llamada-sucursal" required></select>
+          </div>
+          <div class="form-group">
+            <label>N° Cliente / Abonado</label>
+            <input type="text" id="edit-llamada-cliente" maxlength="15" required>
+          </div>
+          <div class="form-group">
+            <label>Tipo de Consulta</label>
+            <select id="edit-llamada-tipo" required></select>
+          </div>
+          <div class="form-group">
+            <label>Características</label>
+            <select id="edit-llamada-caracteristica" required></select>
+          </div>
+          <div class="form-group">
+            <label>Definición <span class="req">*</span></label>
+            <select id="edit-llamada-definicion" required></select>
+          </div>
+          <div class="form-group">
+            <label>Finalización <span class="req">*</span></label>
+            <select id="edit-llamada-finalizacion" required></select>
+          </div>
+          <div class="form-group">
+            <label for="edit-llamada-comentario">Comentario <span class="text-muted">(Opcional)</span></label>
+            <textarea id="edit-llamada-comentario" rows="3" maxlength="500" placeholder="Comentario opcional"></textarea>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline-secondary" onclick="LlamadasHistorialModule.cerrarModalEditar()">Cancelar</button>
+          <button type="submit" class="btn btn-primary" style="background: #0D9488; border-color: #0D9488;">Guardar Cambios</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
   <div id="modal-crear-sucursal" class="modal-overlay hidden">
     <div class="modal-box modal-sm">
       <div class="modal-header">
@@ -1935,6 +2280,7 @@
   <script src="/js/auth.js"></script>
   <script src="/js/reclamos.js"></script>
   <script src="/js/historial.js"></script>
+  <script src="/js/llamadas.js"></script>
   <script src="/js/registros.js"></script>
   <script src="/js/edicion.js"></script>
   <script src="/js/tareas.js"></script>

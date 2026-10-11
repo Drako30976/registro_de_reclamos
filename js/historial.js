@@ -10,7 +10,6 @@ const HistorialModule = {
   async init() {
     await this.loadFilterOptions();
     this.bindEvents();
-    await this.cargarReclamos();
   },
 
   async loadFilterOptions() {
@@ -267,13 +266,27 @@ const HistorialModule = {
   },
 
   async cargarReclamos() {
+    const tableContainer = document.getElementById('contenedor-tabla-historial');
+    const emptyState = document.getElementById('historial-empty-state');
     const tbody = document.getElementById('tabla-historial-body');
     if (!tbody) return;
 
-    tbody.innerHTML = '<tr><td colspan="10" class="text-center py-4">Cargando registros...</td></tr>';
+    const qs = this.getFilterQueryParams();
+
+    if (!qs || qs.trim().length === 0) {
+      if (tableContainer) tableContainer.classList.add('hidden');
+      if (emptyState) emptyState.classList.remove('hidden');
+      this.reclamos = [];
+      tbody.innerHTML = '';
+      return;
+    }
+
+    if (emptyState) emptyState.classList.add('hidden');
+    if (tableContainer) tableContainer.classList.remove('hidden');
+
+    tbody.innerHTML = '<tr><td colspan="10" class="text-center py-4">Buscando reclamos...</td></tr>';
 
     try {
-      const qs = this.getFilterQueryParams();
       const data = await API.get(`/reclamos?${qs}`);
       this.reclamos = data;
       this.renderTabla();

@@ -79,6 +79,21 @@ CREATE TABLE IF NOT EXISTS reclamos (
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
 
+CREATE TABLE IF NOT EXISTS llamadas (
+    id SERIAL PRIMARY KEY,
+    fecha TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    sucursal_id INT NOT NULL REFERENCES sucursales(id) ON DELETE RESTRICT,
+    usuario_id INT NOT NULL REFERENCES usuarios(id) ON DELETE RESTRICT,
+    numero_cliente VARCHAR(15) NOT NULL,
+    tipo_consulta_id INT NOT NULL REFERENCES tipos_consulta(id) ON DELETE RESTRICT,
+    caracteristica_id INT NOT NULL REFERENCES caracteristicas_consulta(id) ON DELETE RESTRICT,
+    definicion_id INT REFERENCES definiciones_consulta(id) ON DELETE SET NULL,
+    finalizacion_id INT REFERENCES finalizaciones(id) ON DELETE SET NULL,
+    comentario VARCHAR(500),
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
 -- 8. TABLA: Registros de Auditoría
 CREATE TABLE IF NOT EXISTS auditoria_logs (
     id SERIAL PRIMARY KEY,

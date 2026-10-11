@@ -50,10 +50,10 @@ const Auth = {
           this.renderUserHeader();
           this.applyRolePermissions();
 
+          App.switchTab('gestion');
           if (this.currentUser.rol === 'Espectador') {
-            App.switchTab('historial');
-          } else {
-            App.switchTab('gestion');
+            const subHistRec = document.getElementById('reclamos-subtab-btn-historial');
+            if (subHistRec) subHistRec.click();
           }
         } catch (err) {
           errorEl.textContent = err.message || 'Error al iniciar sesión';
@@ -68,9 +68,11 @@ const Auth = {
     if (!u) return;
 
     const nameEl = document.getElementById('header-user-name');
+    const roleEl = document.getElementById('header-user-role');
     const avatarEl = document.getElementById('header-user-avatar');
 
     if (nameEl) nameEl.textContent = u.nombre_completo;
+    if (roleEl) roleEl.textContent = `${u.rol} (${u.usuario})`;
 
     if (avatarEl) {
       if (u.foto_perfil) {
@@ -85,7 +87,6 @@ const Auth = {
     const rol = this.currentUser ? this.currentUser.rol : '';
 
     const tabGestion = document.querySelector('[data-tab="gestion"]');
-    const tabHistorial = document.querySelector('[data-tab="historial"]');
     const tabRegistros = document.querySelector('[data-tab="registros"]');
     const tabEdicion = document.querySelector('[data-tab="edicion"]');
     const tabTareas = document.querySelector('[data-tab="tareas"]');
@@ -97,18 +98,19 @@ const Auth = {
       tabGestion.style.display = 'inline-flex';
     }
 
-    const formColGestion = document.querySelector('.gestion-col-form');
-    if (formColGestion) {
-      formColGestion.style.display = (rol === 'Espectador') ? 'none' : 'block';
-    }
-
-    if (tabHistorial) {
-      tabHistorial.style.display = 'inline-flex';
-    }
+    const formCols = document.querySelectorAll('.gestion-col-form');
+    formCols.forEach(col => {
+      col.style.display = (rol === 'Espectador') ? 'none' : 'block';
+    });
 
     const btnReportePDF = document.getElementById('btn-emitir-reporte');
     if (btnReportePDF) {
       btnReportePDF.style.display = (rol === 'Espectador') ? 'none' : 'inline-flex';
+    }
+
+    const btnReporteLlamadasPDF = document.getElementById('btn-emitir-reporte-llamadas');
+    if (btnReporteLlamadasPDF) {
+      btnReporteLlamadasPDF.style.display = (rol === 'Espectador') ? 'none' : 'inline-flex';
     }
 
     if (tabRegistros) {
