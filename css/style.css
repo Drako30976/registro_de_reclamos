@@ -141,7 +141,7 @@ body {
 }
 
 .zeus-header {
-  min-height: 60px;
+  min-height: 72px;
 }
 
 .zeus-brand {
@@ -150,28 +150,17 @@ body {
 }
 
 .zeus-logo {
-  height: 46px;
+  height: 60px;
   width: auto;
-  max-width: 220px;
+  max-width: 280px;
   object-fit: contain;
   display: block;
-  filter: drop-shadow(0 2px 4px rgba(4, 39, 196, 0.08));
+  filter: drop-shadow(0 2px 6px rgba(4, 39, 196, 0.12));
+  transition: transform 0.2s ease;
 }
 
-.zeus-logo-dark {
-  display: none;
-}
-
-.zeus-logo-light {
-  display: block;
-}
-
-[data-theme="dark"] .zeus-logo-light {
-  display: none;
-}
-
-[data-theme="dark"] .zeus-logo-dark {
-  display: block;
+.zeus-logo:hover {
+  transform: scale(1.02);
 }
 
 .zeus-menu-container {
