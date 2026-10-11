@@ -1,13 +1,14 @@
 :root {
-  --primary: #1E40AF;
-  --primary-hover: #1D4ED8;
-  --primary-light: #EFF6FF;
+  --primary: #0427C4;
+  --primary-hover: #4104C4;
+  --primary-light: #EBF3FC;
+  --primary-cyan: #0487C4;
   --secondary: #334155;
   --success: #059669;
   --danger: #DC2626;
   --warning: #D97706;
-  --info: #0284C7;
-  --bg-main: #F1F5F9;
+  --info: #0487C4;
+  --bg-main: #F1F5F8;
   --bg-card: #FFFFFF;
   --border-color: #CBD5E1;
   --border-subtle: #E2E8F0;
@@ -15,11 +16,11 @@
   --text-muted: #64748B;
   --radius-xs: 4px;
   --radius-sm: 6px;
-  --radius-md: 8px;
-  --radius-lg: 12px;
-  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.07), 0 2px 4px -1px rgba(0, 0, 0, 0.04);
-  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -2px rgba(0, 0, 0, 0.04);
+  --radius-md: 10px;
+  --radius-lg: 14px;
+  --shadow-sm: 0 1px 3px 0 rgba(4, 39, 196, 0.04), 0 1px 2px -1px rgba(0, 0, 0, 0.04);
+  --shadow-md: 0 4px 6px -1px rgba(4, 39, 196, 0.07), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
+  --shadow-lg: 0 12px 20px -3px rgba(4, 39, 196, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.05);
 }
 
 * {
@@ -124,14 +125,16 @@ body {
 }
 
 .app-header {
-  background: #FFFFFF;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
   color: #1E293B;
   padding: 0.5rem 1.75rem;
   display: flex;
   align-items: center;
   justify-content: space-between;
   border-bottom: 1px solid var(--border-color);
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 1px 3px rgba(4, 39, 196, 0.05);
   position: sticky;
   top: 0;
   z-index: 200;
@@ -152,6 +155,7 @@ body {
   max-width: 220px;
   object-fit: contain;
   display: block;
+  filter: drop-shadow(0 2px 4px rgba(4, 39, 196, 0.08));
 }
 
 .zeus-logo-dark {
@@ -178,20 +182,23 @@ body {
   display: inline-flex;
   align-items: center;
   gap: 0.55rem;
-  padding: 0.5rem 1rem;
-  background: #F1F5F9;
+  padding: 0.5rem 1.05rem;
+  background: #FFFFFF;
   border: 1px solid #CBD5E1;
   border-radius: var(--radius-sm);
   color: #1E293B;
-  font-size: 0.9rem;
+  font-size: 0.885rem;
   font-weight: 600;
   cursor: pointer;
-  transition: all 0.15s ease;
+  transition: all 0.18s ease;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);
 }
 
 .btn-zeus-menu:hover {
-  background: #E2E8F0;
-  border-color: #94A3B8;
+  background: var(--bg-main);
+  border-color: var(--primary-cyan);
+  color: var(--primary);
+  box-shadow: 0 2px 6px rgba(4, 135, 196, 0.15);
 }
 
 .zeus-menu-icon {
@@ -2035,23 +2042,24 @@ body {
 }
 
 [data-theme="dark"] {
-  --primary: #3B82F6;
+  --primary: #38BDF8;
   --primary-hover: #60A5FA;
-  --primary-light: rgba(59, 130, 246, 0.15);
+  --primary-light: rgba(4, 135, 196, 0.18);
+  --primary-cyan: #0487C4;
   --secondary: #94A3B8;
   --success: #10B981;
   --danger: #EF4444;
   --warning: #F59E0B;
   --info: #38BDF8;
-  --bg-main: #0B0F19;
-  --bg-card: #1E293B;
-  --border-color: #334155;
-  --border-subtle: #1E293B;
+  --bg-main: #0A0F1D;
+  --bg-card: #131B2E;
+  --border-color: #1E293B;
+  --border-subtle: #192338;
   --text-main: #F1F5F9;
   --text-muted: #94A3B8;
   --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.4);
   --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.5);
-  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.6);
+  --shadow-lg: 0 12px 24px -3px rgba(0, 0, 0, 0.6);
 }
 
 [data-theme="dark"] body {
