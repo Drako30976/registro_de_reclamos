@@ -287,6 +287,13 @@ const LlamadasModule = {
       };
     }
 
+    const inputCliente = document.getElementById('llamada-cliente');
+    if (inputCliente) {
+      inputCliente.addEventListener('input', () => {
+        inputCliente.value = inputCliente.value.replace(/[^0-9]/g, '');
+      });
+    }
+
     const comentarioInput = document.getElementById('llamada-comentario');
     const comentarioCounter = document.getElementById('llamada-comentario-counter');
     if (comentarioInput && comentarioCounter) {

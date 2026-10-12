@@ -257,6 +257,18 @@ body {
   padding: 0.5rem 1rem;
 }
 
+.user-avatar {
+  width: 42px;
+  height: 42px;
+  max-width: 300px;
+  max-height: 300px;
+  border-radius: 50%;
+  object-fit: cover;
+  flex-shrink: 0;
+  border: 2px solid var(--border-color);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+
 .zeus-user-info {
   display: flex;
   flex-direction: column;
@@ -1344,15 +1356,15 @@ body {
 }
 
 .modal-zoom-box {
-  max-width: 440px;
+  max-width: 360px;
   width: 90vw;
 }
 
 .zoom-foto-display {
-  max-width: 100%;
-  max-height: 75vh;
-  width: 360px;
-  height: 360px;
+  max-width: 300px;
+  max-height: 300px;
+  width: 300px;
+  height: 300px;
   object-fit: cover;
   border-radius: var(--radius-md);
   box-shadow: var(--shadow-md);
@@ -2030,6 +2042,33 @@ body {
 
 .btn-theme-toggle:active {
   transform: scale(0.95);
+}
+
+.btn-theme-toggle-login-corner {
+  position: absolute;
+  top: 1.25rem;
+  left: 1.25rem;
+  z-index: 10000;
+  width: 38px;
+  height: 38px;
+  background: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.btn-theme-toggle-login-corner:hover {
+  background: rgba(255, 255, 255, 0.24);
+  border-color: rgba(255, 255, 255, 0.5);
+}
+
+@media (max-width: 768px) {
+  .zeus-dropdown-user .user-avatar,
+  #header-user-avatar {
+    display: none !important;
+  }
+  .modal-zoom-box {
+    display: none !important;
+  }
 }
 
 [data-theme="dark"] {

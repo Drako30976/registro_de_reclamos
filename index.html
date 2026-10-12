@@ -21,16 +21,13 @@
 <body>
 
   <div id="login-modal" class="auth-overlay">
+    <button type="button" id="btn-theme-toggle-login" class="btn-theme-toggle btn-theme-toggle-login-corner" title="Cambiar tema claro / oscuro" aria-label="Cambiar tema">
+      <span class="theme-toggle-icon">🌙</span>
+    </button>
     <div class="auth-card">
       <div class="auth-header">
-        <div class="flex-row justify-between align-center mb-2">
-          <div style="width: 36px;"></div>
-          <div class="auth-logo-badge" style="margin: 0; background: transparent; padding: 0;">
-            <img src="/assets/favicon_zeus.png" alt="Zeus Escudo" style="width: 60px; height: 60px; object-fit: contain; filter: drop-shadow(0 4px 12px rgba(4, 39, 196, 0.25));">
-          </div>
-          <button type="button" id="btn-theme-toggle-login" class="btn-theme-toggle" title="Cambiar tema claro / oscuro" aria-label="Cambiar tema">
-            <span class="theme-toggle-icon">🌙</span>
-          </button>
+        <div class="auth-logo-badge" style="margin: 0 auto 0.85rem auto; background: transparent; padding: 0;">
+          <img src="/assets/favicon_zeus.png" alt="Zeus Escudo" style="width: 60px; height: 60px; object-fit: contain; filter: drop-shadow(0 4px 12px rgba(4, 39, 196, 0.25));">
         </div>
         <h2 style="letter-spacing: 0.05em; font-weight: 800;">ZEUS</h2>
         <p>Gestión y Reporte de Red | Inicie sesión para acceder</p>
@@ -170,8 +167,8 @@
 
                       <div class="form-group">
                         <label for="reclamo-cliente">Número de Cliente / Abonado <span class="req">*</span></label>
-                        <input type="text" id="reclamo-cliente" maxlength="15" required>
-                        <small class="text-muted">Hasta 15 caracteres</small>
+                        <input type="text" id="reclamo-cliente" maxlength="15" pattern="[0-9]*" inputmode="numeric" placeholder="Solo números" required>
+                        <small class="text-muted">Hasta 15 dígitos numéricos</small>
                       </div>
                     </div>
 
@@ -418,8 +415,8 @@
 
                       <div class="form-group">
                         <label for="llamada-cliente">Número de Cliente / Abonado <span class="req">*</span></label>
-                        <input type="text" id="llamada-cliente" maxlength="15" required>
-                        <small class="text-muted">Hasta 15 caracteres</small>
+                        <input type="text" id="llamada-cliente" maxlength="15" pattern="[0-9]*" inputmode="numeric" placeholder="Solo números" required>
+                        <small class="text-muted">Hasta 15 dígitos numéricos</small>
                       </div>
                     </div>
 

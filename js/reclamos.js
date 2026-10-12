@@ -286,6 +286,13 @@ const ReclamosModule = {
       };
     }
 
+    const inputCliente = document.getElementById('reclamo-cliente');
+    if (inputCliente) {
+      inputCliente.addEventListener('input', () => {
+        inputCliente.value = inputCliente.value.replace(/[^0-9]/g, '');
+      });
+    }
+
     const inputComentario = document.getElementById('reclamo-comentario');
     const comentarioCounter = document.getElementById('reclamo-comentario-counter');
     if (inputComentario && comentarioCounter) {
