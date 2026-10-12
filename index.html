@@ -747,6 +747,12 @@
                 <option value="">Todas las Sucursales</option>
               </select>
             </div>
+            <div class="filter-group">
+              <label for="filtro-dinamica-asesor">Asesor</label>
+              <select id="filtro-dinamica-asesor">
+                <option value="">Todos los Asesores</option>
+              </select>
+            </div>
             <div class="filter-actions flex-row align-end gap-2">
               <button type="submit" class="btn btn-primary">
                 <span>🔍</span> Filtrar
@@ -813,6 +819,32 @@
               <tbody id="dinamica-tabla-sucursales">
                 <tr>
                   <td colspan="8" class="text-center p-3 text-muted">Cargando dinámica de sucursales...</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="card mb-4">
+          <div class="card-header flex-row justify-between align-center">
+            <h3>Actividad y Finalizaciones por Asesor</h3>
+            <span class="text-muted font-xs">Volumen registrado y distribución de cierre por operador</span>
+          </div>
+          <div class="table-container p-0">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Asesor</th>
+                  <th>Sucursal</th>
+                  <th class="text-center">Reclamos</th>
+                  <th class="text-center">Llamadas</th>
+                  <th class="text-center">Total</th>
+                  <th>Finalizaciones de Consulta</th>
+                </tr>
+              </thead>
+              <tbody id="dinamica-tabla-asesores">
+                <tr>
+                  <td colspan="6" class="text-center p-3 text-muted">Cargando actividad por asesor...</td>
                 </tr>
               </tbody>
             </table>

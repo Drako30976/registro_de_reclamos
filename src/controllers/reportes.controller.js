@@ -1284,7 +1284,7 @@ const emitirReporteAuditoriaIndividualPDF = async (req, res) => {
   }
 };
 
-const buildDinamicaData = async (fecha_desde, fecha_hasta, canal, sucursal_id) => {
+const buildDinamicaData = async (fecha_desde, fecha_hasta, canal, sucursal_id, asesor_id) => {
   let whereR = 'WHERE 1=1';
   let whereL = 'WHERE 1=1';
   const paramsR = [];
@@ -1310,6 +1310,12 @@ const buildDinamicaData = async (fecha_desde, fecha_hasta, canal, sucursal_id) =
     whereL += ` AND l.sucursal_id = $${pIdxL++}`;
     paramsL.push(sucursal_id);
   }
+  if (asesor_id) {
+    whereR += ` AND r.usuario_id = $${pIdxR++}`;
+    paramsR.push(asesor_id);
+    whereL += ` AND l.usuario_id = $${pIdxL++}`;
+    paramsL.push(asesor_id);
+  }
 
   const sucursalesResult = await pool.query('SELECT id, nombre FROM sucursales ORDER BY nombre ASC');
   const sucursales = sucursalesResult.rows;
@@ -1325,11 +1331,14 @@ const buildDinamicaData = async (fecha_desde, fecha_hasta, canal, sucursal_id) =
         r.fecha,
         r.sucursal_id,
         s.nombre AS sucursal_nombre,
+        r.usuario_id AS asesor_id,
+        u.nombre_completo AS asesor_nombre,
         tc.contenido AS tipo_nombre,
         cc.contenido AS caracteristica_nombre,
-        COALESCE(f.contenido, '-') AS finalizacion_nombre
+        COALESCE(f.contenido, 'Sin finalización') AS finalizacion_nombre
       FROM reclamos r
       JOIN sucursales s ON r.sucursal_id = s.id
+      JOIN usuarios u ON r.usuario_id = u.id
       JOIN tipos_consulta tc ON r.tipo_consulta_id = tc.id
       JOIN caracteristicas_consulta cc ON r.caracteristica_id = cc.id
       LEFT JOIN finalizaciones f ON r.finalizacion_id = f.id
@@ -1351,11 +1360,14 @@ const buildDinamicaData = async (fecha_desde, fecha_hasta, canal, sucursal_id) =
         l.fecha,
         l.sucursal_id,
         s.nombre AS sucursal_nombre,
+        l.usuario_id AS asesor_id,
+        u.nombre_completo AS asesor_nombre,
         tc.contenido AS tipo_nombre,
         cc.contenido AS caracteristica_nombre,
-        COALESCE(f.contenido, '-') AS finalizacion_nombre
+        COALESCE(f.contenido, 'Sin finalización') AS finalizacion_nombre
       FROM llamadas l
       JOIN sucursales s ON l.sucursal_id = s.id
+      JOIN usuarios u ON l.usuario_id = u.id
       JOIN tipos_consulta tc ON l.tipo_consulta_id = tc.id
       JOIN caracteristicas_consulta cc ON l.caracteristica_id = cc.id
       LEFT JOIN finalizaciones f ON l.finalizacion_id = f.id
@@ -1393,6 +1405,9 @@ const buildDinamicaData = async (fecha_desde, fecha_hasta, canal, sucursal_id) =
     };
   });
 
+  const porAsesor = {};
+  const finalizacionesGlobal = {};
+
   rows.forEach(r => {
     const sId = r.sucursal_id;
     if (!porSucursal[sId]) {
@@ -1424,15 +1439,54 @@ const buildDinamicaData = async (fecha_desde, fecha_hasta, canal, sucursal_id) =
 
     const tipoKey = r.tipo_nombre || 'Otros';
     item.tipos[tipoKey] = (item.tipos[tipoKey] || 0) + 1;
+
+    const aId = r.asesor_id;
+    if (!porAsesor[aId]) {
+      porAsesor[aId] = {
+        id: aId,
+        nombre: r.asesor_nombre,
+        sucursal: r.sucursal_nombre,
+        total: 0,
+        reclamos: 0,
+        llamadas: 0,
+        finalizaciones: {}
+      };
+    }
+    const aItem = porAsesor[aId];
+    aItem.total++;
+    if (r.origen_canal === 'Reclamo') aItem.reclamos++;
+    if (r.origen_canal === 'Llamada 0810') aItem.llamadas++;
+
+    const finKey = r.finalizacion_nombre || 'Sin finalización';
+    aItem.finalizaciones[finKey] = (aItem.finalizaciones[finKey] || 0) + 1;
+    finalizacionesGlobal[finKey] = (finalizacionesGlobal[finKey] || 0) + 1;
   });
 
   const sucursalesArr = Object.values(porSucursal).sort((a, b) => b.total - a.total);
+  const asesoresArr = Object.values(porAsesor).sort((a, b) => b.total - a.total);
 
   const tiposGlobal = {};
   rows.forEach(r => {
     const k = r.tipo_nombre || 'Otros';
     tiposGlobal[k] = (tiposGlobal[k] || 0) + 1;
   });
+
+  let asesorSeleccionado = null;
+  if (asesor_id && porAsesor[asesor_id]) {
+    asesorSeleccionado = porAsesor[asesor_id];
+  } else if (asesor_id) {
+    const uRes = await pool.query('SELECT id, nombre_completo FROM usuarios WHERE id = $1', [asesor_id]);
+    if (uRes.rows.length > 0) {
+      asesorSeleccionado = {
+        id: uRes.rows[0].id,
+        nombre: uRes.rows[0].nombre_completo,
+        total: 0,
+        reclamos: 0,
+        llamadas: 0,
+        finalizaciones: {}
+      };
+    }
+  }
 
   return {
     kpis: {
@@ -1445,20 +1499,24 @@ const buildDinamicaData = async (fecha_desde, fecha_hasta, canal, sucursal_id) =
       total_tecnicos: totalTecnicos
     },
     por_sucursal: sucursalesArr,
+    por_asesor: asesoresArr,
+    asesor_seleccionado: asesorSeleccionado,
+    finalizaciones_global: finalizacionesGlobal,
     tipos_global: tiposGlobal,
     filtros: {
       fecha_desde: fecha_desde || null,
       fecha_hasta: fecha_hasta || null,
       canal: canal || 'todos',
-      sucursal_id: sucursal_id || null
+      sucursal_id: sucursal_id || null,
+      asesor_id: asesor_id || null
     }
   };
 };
 
 const obtenerDinamicaSucursales = async (req, res) => {
   try {
-    const { fecha_desde, fecha_hasta, canal, sucursal_id } = req.query;
-    const data = await buildDinamicaData(fecha_desde, fecha_hasta, canal, sucursal_id);
+    const { fecha_desde, fecha_hasta, canal, sucursal_id, asesor_id } = req.query;
+    const data = await buildDinamicaData(fecha_desde, fecha_hasta, canal, sucursal_id, asesor_id);
     res.json(data);
   } catch (error) {
     console.error('Error al obtener dinámica de sucursales:', error);
@@ -1468,8 +1526,8 @@ const obtenerDinamicaSucursales = async (req, res) => {
 
 const emitirDinamicaSucursalesPDF = async (req, res) => {
   try {
-    const { fecha_desde, fecha_hasta, canal, sucursal_id } = req.query;
-    const data = await buildDinamicaData(fecha_desde, fecha_hasta, canal, sucursal_id);
+    const { fecha_desde, fecha_hasta, canal, sucursal_id, asesor_id } = req.query;
+    const data = await buildDinamicaData(fecha_desde, fecha_hasta, canal, sucursal_id, asesor_id);
 
     const doc = new PDFDocument({
       size: 'A4',
@@ -1485,7 +1543,7 @@ const emitirDinamicaSucursalesPDF = async (req, res) => {
     doc.rect(30, 82, 535, 3).fill('#0487C4');
 
     doc.fillColor('#FFFFFF').fontSize(14).font('Helvetica-Bold').text('ZEUS: REPORTE & DINÁMICA DE SUCURSALES', 45, 42);
-    doc.fillColor('#38BDF8').fontSize(8.5).font('Helvetica').text('Consolidado de Reclamos, Llamadas, Bajas, Pagos y Disponibilidad de Red', 45, 60);
+    doc.fillColor('#38BDF8').fontSize(8.5).font('Helvetica').text('Consolidado de Reclamos, Llamadas, Rendimiento de Asesores y Finalizaciones', 45, 60);
 
     const fechaGen = new Date().toLocaleString('es-AR', { dateStyle: 'short', timeStyle: 'short' });
     doc.fillColor('#94A3B8').fontSize(7.5).font('Helvetica').text(`Generado: ${fechaGen} | Por: ${req.usuario?.nombre_completo || 'Supervisor'}`, 45, 72);
@@ -1499,7 +1557,8 @@ const emitirDinamicaSucursalesPDF = async (req, res) => {
     const fDesdeStr = fecha_desde || 'Inicio histórico';
     const fHastaStr = fecha_hasta || 'Al día';
     const fCanalStr = canal === 'reclamos' ? 'Solo Reclamos (Chat)' : canal === 'llamadas' ? 'Solo Llamadas (0810)' : 'Todos los canales';
-    doc.text(`Período: ${fDesdeStr} hasta ${fHastaStr}   |   Canal: ${fCanalStr}`, 40, currentY + 9);
+    const fAsesorStr = data.asesor_seleccionado ? ` | Asesor: ${data.asesor_seleccionado.nombre}` : '';
+    doc.text(`Período: ${fDesdeStr} hasta ${fHastaStr}   |   Canal: ${fCanalStr}${fAsesorStr}`, 40, currentY + 9);
     currentY += 36;
 
     doc.fillColor('#0427C4').fontSize(10).font('Helvetica-Bold').text('MÉTRICAS CLAVE CONSOLIDADAS (KPIs)', 30, currentY);
@@ -1577,6 +1636,54 @@ const emitirDinamicaSucursalesPDF = async (req, res) => {
       currentY = 40;
     }
 
+    doc.fillColor('#0427C4').fontSize(10).font('Helvetica-Bold').text('ACTIVIDAD Y FINALIZACIONES POR ASESOR', 30, currentY);
+    currentY += 16;
+
+    const thAsesorH = 20;
+    doc.rect(30, currentY, 535, thAsesorH).fill('#1E293B');
+    doc.fillColor('#FFFFFF').fontSize(7.5).font('Helvetica-Bold');
+    doc.text('Asesor', 36, currentY + 6, { width: 150 });
+    doc.text('Reclamos', 190, currentY + 6, { width: 55, align: 'center' });
+    doc.text('Llamadas', 250, currentY + 6, { width: 55, align: 'center' });
+    doc.text('Total', 310, currentY + 6, { width: 50, align: 'center' });
+    doc.text('Finalizaciones Registradas', 365, currentY + 6, { width: 195 });
+
+    currentY += thAsesorH;
+
+    const listaAsesores = data.asesor_seleccionado ? [data.asesor_seleccionado] : data.por_asesor.slice(0, 15);
+    listaAsesores.forEach((a, idx) => {
+      if (currentY + 22 > 770) {
+        doc.addPage({ size: 'A4', layout: 'portrait', margin: 30 });
+        currentY = 40;
+      }
+
+      const bg = idx % 2 === 0 ? '#FFFFFF' : '#F8FAFC';
+      doc.rect(30, currentY, 535, 20).fill(bg);
+      doc.rect(30, currentY, 535, 20).stroke('#E2E8F0');
+
+      doc.fillColor('#0F172A').fontSize(7.3).font('Helvetica-Bold');
+      doc.text(a.nombre, 36, currentY + 5, { width: 150, lineBreak: false });
+
+      doc.font('Helvetica');
+      doc.text(String(a.reclamos), 190, currentY + 5, { width: 55, align: 'center' });
+      doc.text(String(a.llamadas), 250, currentY + 5, { width: 55, align: 'center' });
+      doc.font('Helvetica-Bold').fillColor('#0427C4').text(String(a.total), 310, currentY + 5, { width: 50, align: 'center' });
+
+      const finResumen = Object.entries(a.finalizaciones || {})
+        .map(([k, v]) => `${k}: ${v}`)
+        .join(' | ') || 'Sin finalización';
+
+      doc.font('Helvetica').fontSize(6.8).fillColor('#64748B').text(finResumen, 365, currentY + 5, { width: 195, lineBreak: false, ellipsis: true });
+
+      currentY += 20;
+    });
+
+    currentY += 18;
+    if (currentY + 120 > 770) {
+      doc.addPage({ size: 'A4', layout: 'portrait', margin: 30 });
+      currentY = 40;
+    }
+
     doc.fillColor('#0427C4').fontSize(10).font('Helvetica-Bold').text('VOLUMEN GLOBAL POR TIPO DE CONSULTA', 30, currentY);
     currentY += 16;
 
@@ -1596,7 +1703,7 @@ const emitirDinamicaSucursalesPDF = async (req, res) => {
     });
 
     doc.fontSize(7).fillColor('#94A3B8').text(
-      'Documento confidencial emitido por la plataforma Zeus - Reporte y Dinámica de Sucursales.',
+      'Documento confidencial emitido por la plataforma Zeus - Reporte y Dinámica de Sucursales y Asesores.',
       30, 800, { align: 'center', width: 535 }
     );
 

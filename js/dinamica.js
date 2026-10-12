@@ -1,9 +1,13 @@
 const DinamicaModule = {
   datos: null,
   sucursales: [],
+  asesores: [],
 
   async init() {
-    await this.cargarSucursales();
+    await Promise.all([
+      this.cargarSucursales(),
+      this.cargarAsesores()
+    ]);
     this.bindEvents();
     await this.cargarDinamica();
   },
@@ -27,6 +31,25 @@ const DinamicaModule = {
     }
   },
 
+  async cargarAsesores() {
+    try {
+      const users = await API.get('/usuarios');
+      this.asesores = users || [];
+      const sel = document.getElementById('filtro-dinamica-asesor');
+      if (sel) {
+        sel.innerHTML = '<option value="">Todos los Asesores</option>';
+        this.asesores.forEach(u => {
+          const opt = document.createElement('option');
+          opt.value = u.id;
+          opt.textContent = `${u.nombre_completo} (${u.usuario})`;
+          sel.appendChild(opt);
+        });
+      }
+    } catch (e) {
+      console.error('Error al cargar asesores en dinámica:', e);
+    }
+  },
+
   bindEvents() {
     const form = document.getElementById('form-filtro-dinamica');
     if (form) {
@@ -43,6 +66,7 @@ const DinamicaModule = {
         document.getElementById('filtro-dinamica-hasta').value = '';
         document.getElementById('filtro-dinamica-canal').value = 'todos';
         document.getElementById('filtro-dinamica-sucursal').value = '';
+        document.getElementById('filtro-dinamica-asesor').value = '';
         await this.cargarDinamica();
       };
     }
@@ -60,12 +84,14 @@ const DinamicaModule = {
     const hasta = document.getElementById('filtro-dinamica-hasta')?.value || '';
     const canal = document.getElementById('filtro-dinamica-canal')?.value || 'todos';
     const sucursal_id = document.getElementById('filtro-dinamica-sucursal')?.value || '';
+    const asesor_id = document.getElementById('filtro-dinamica-asesor')?.value || '';
 
     const params = new URLSearchParams();
     if (desde) params.append('fecha_desde', desde);
     if (hasta) params.append('fecha_hasta', hasta);
     if (canal && canal !== 'todos') params.append('canal', canal);
     if (sucursal_id) params.append('sucursal_id', sucursal_id);
+    if (asesor_id) params.append('asesor_id', asesor_id);
 
     try {
       const url = `/reportes/dinamica${params.toString() ? '?' + params.toString() : ''}`;
@@ -73,6 +99,7 @@ const DinamicaModule = {
       this.datos = res;
       this.renderKPIs(res.kpis);
       this.renderTablaSucursales(res.por_sucursal);
+      this.renderTablaAsesores(res.por_asesor, res.asesor_seleccionado);
       this.renderTipos(res.tipos_global, res.kpis.total_interacciones);
     } catch (err) {
       console.error('Error al cargar dinámica:', err);
@@ -124,6 +151,52 @@ const DinamicaModule = {
     tbody.innerHTML = html;
   },
 
+  renderTablaAsesores(asesores, asesorSeleccionado) {
+    const tbody = document.getElementById('dinamica-tabla-asesores');
+    if (!tbody) return;
+
+    const lista = asesorSeleccionado ? [asesorSeleccionado] : (asesores || []);
+
+    if (lista.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="6" class="text-center p-3 text-muted">No se registraron actividades por asesor en el período.</td></tr>';
+      return;
+    }
+
+    let html = '';
+    lista.forEach(a => {
+      const fins = a.finalizaciones || {};
+      const finEntries = Object.entries(fins);
+      let finBadges = '';
+
+      if (finEntries.length === 0) {
+        finBadges = '<span class="text-muted font-xs">Sin registros</span>';
+      } else {
+        finBadges = '<div class="dinamica-finalizaciones-list">';
+        finEntries.forEach(([nombreFin, cant]) => {
+          finBadges += `
+            <span class="badge badge-secondary font-xs" style="margin: 2px;">
+              <strong>${nombreFin}:</strong> ${cant}
+            </span>
+          `;
+        });
+        finBadges += '</div>';
+      }
+
+      html += `
+        <tr>
+          <td><strong>${a.nombre}</strong></td>
+          <td><span class="text-muted">${a.sucursal || '-'}</span></td>
+          <td class="text-center">${a.reclamos}</td>
+          <td class="text-center">${a.llamadas}</td>
+          <td class="text-center"><span class="badge badge-primary font-bold">${a.total}</span></td>
+          <td>${finBadges}</td>
+        </tr>
+      `;
+    });
+
+    tbody.innerHTML = html;
+  },
+
   renderTipos(tiposGlobal, total) {
     const container = document.getElementById('dinamica-tipos-list');
     if (!container) return;
@@ -159,12 +232,14 @@ const DinamicaModule = {
     const hasta = document.getElementById('filtro-dinamica-hasta')?.value || '';
     const canal = document.getElementById('filtro-dinamica-canal')?.value || 'todos';
     const sucursal_id = document.getElementById('filtro-dinamica-sucursal')?.value || '';
+    const asesor_id = document.getElementById('filtro-dinamica-asesor')?.value || '';
 
     const params = new URLSearchParams();
     if (desde) params.append('fecha_desde', desde);
     if (hasta) params.append('fecha_hasta', hasta);
     if (canal && canal !== 'todos') params.append('canal', canal);
     if (sucursal_id) params.append('sucursal_id', sucursal_id);
+    if (asesor_id) params.append('asesor_id', asesor_id);
 
     const token = API.getToken();
     const url = `/api/reportes/dinamica-pdf?${params.toString()}`;
