@@ -76,6 +76,7 @@ const CanalesModule = {
       if (!e.target.closest('.canales-nav-menu')) {
         document.querySelectorAll('.canales-submenu-grillas').forEach(m => m.style.display = 'none');
         document.querySelectorAll('.btn-canales-sucursal').forEach(b => b.classList.remove('active'));
+        document.querySelectorAll('.canales-nav-item').forEach(item => item.classList.remove('active'));
         if (this.sucursalActual) {
           const btnActive = document.getElementById(`btn-suc-${this.sucursalActual.id}`);
           if (btnActive) btnActive.classList.add('active');
@@ -164,6 +165,7 @@ const CanalesModule = {
           btnGrilla.addEventListener('click', (e) => {
             e.stopPropagation();
             subMenu.style.display = 'none';
+            li.classList.remove('active');
             this.seleccionarGrilla(sucursal.id, grilla.id);
           });
 
@@ -179,10 +181,14 @@ const CanalesModule = {
         document.querySelectorAll('.btn-canales-sucursal').forEach(btn => {
           if (btn !== btnSucursal) btn.classList.remove('active');
         });
+        document.querySelectorAll('.canales-nav-item').forEach(item => {
+          if (item !== li) item.classList.remove('active');
+        });
 
         const isVisible = subMenu.style.display === 'block';
         subMenu.style.display = isVisible ? 'none' : 'block';
         btnSucursal.classList.toggle('active', !isVisible);
+        li.classList.toggle('active', !isVisible);
       });
 
       li.appendChild(btnSucursal);

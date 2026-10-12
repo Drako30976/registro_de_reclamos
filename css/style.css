@@ -2530,7 +2530,9 @@ body {
   padding: 0.45rem 0.75rem;
   margin-bottom: 1rem;
   box-shadow: var(--shadow-sm);
-  overflow-x: auto;
+  position: relative;
+  z-index: 40;
+  overflow: visible;
 }
 
 .canales-nav-menu {
@@ -2539,10 +2541,17 @@ body {
   flex-wrap: wrap;
   gap: 0.35rem;
   align-items: center;
+  overflow: visible;
 }
 
 .canales-nav-item {
   position: relative;
+}
+
+.canales-nav-item:hover,
+.canales-nav-item:focus-within,
+.canales-nav-item.active {
+  z-index: 1000;
 }
 
 .btn-canales-sucursal {
@@ -2587,7 +2596,7 @@ body {
   top: 100%;
   left: 0;
   min-width: 125px;
-  z-index: 250;
+  z-index: 1000;
 }
 
 .btn-canales-grilla {
