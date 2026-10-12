@@ -140,7 +140,7 @@ const CanalesModule = {
       btnSucursal.type = 'button';
       btnSucursal.id = `btn-suc-${sucursal.id}`;
       btnSucursal.className = 'btn-canales-sucursal';
-      btnSucursal.innerHTML = `<span>🏢</span> <span>${sucursal.nombre}</span> <span style="font-size: 0.7rem;">▾</span>`;
+      btnSucursal.innerHTML = `<span style="font-size: 0.8rem;">🏢</span> <span>${sucursal.nombre}</span> <span style="font-size: 0.6rem;">▾</span>`;
 
       const subMenu = document.createElement('div');
       subMenu.className = 'canales-submenu-grillas';
@@ -159,7 +159,7 @@ const CanalesModule = {
           const btnGrilla = document.createElement('button');
           btnGrilla.type = 'button';
           btnGrilla.className = `btn-canales-grilla btn-grilla-${grilla.tipo}`;
-          btnGrilla.innerHTML = `<span>📺</span> ${grilla.nombre}`;
+          btnGrilla.innerHTML = `<span style="font-size: 0.72rem;">📺</span> ${grilla.nombre}`;
 
           btnGrilla.addEventListener('click', (e) => {
             e.stopPropagation();
@@ -242,20 +242,6 @@ const CanalesModule = {
 
     if (sucursalSubtitulo) {
       sucursalSubtitulo.innerHTML = `📍 ${locInfo || 'Argentina'} &bull; 📺 <span class="badge badge-info">${this.canalesActuales.length} canales disponibles</span>`;
-    }
-
-    const btnDescargarOficial = document.getElementById('btn-descargar-imagen-canales');
-    if (btnDescargarOficial) {
-      if (this.grillaActual.imagen_url && this.grillaActual.imagen_url.trim() !== '') {
-        const urlFinal = this.grillaActual.imagen_url.startsWith('http') || this.grillaActual.imagen_url.startsWith('/')
-          ? this.grillaActual.imagen_url
-          : `/${this.grillaActual.imagen_url}`;
-        btnDescargarOficial.href = urlFinal;
-        btnDescargarOficial.download = `Grilla_${this.sucursalActual.codigo || this.sucursalActual.nombre}_${this.grillaActual.tipo}.jpg`;
-        btnDescargarOficial.style.display = 'inline-flex';
-      } else {
-        btnDescargarOficial.style.display = 'none';
-      }
     }
 
     const searchInput = document.getElementById('canales-busqueda');
@@ -613,7 +599,6 @@ const CanalesModule = {
           <td><span class="badge badge-info">${g.tipo}</span></td>
           <td>${g.nombre}</td>
           <td>${g.total_canales || 0}</td>
-          <td><small class="text-muted">${g.imagen_url || 'Sin imagen'}</small></td>
           <td class="text-right">
             <button type="button" class="btn btn-sm btn-outline-primary mr-1" onclick="CanalesModule.cargarEdicionGrilla(${g.id}, ${s.id})">✏️ Editar</button>
             <button type="button" class="btn btn-sm btn-outline-danger" onclick="CanalesModule.eliminarGrilla(${g.id})">🗑️ Borrar</button>
@@ -634,7 +619,6 @@ const CanalesModule = {
     document.getElementById('canal-grilla-sucursal-id').value = sucursalId;
     document.getElementById('canal-grilla-tipo').value = g.tipo;
     document.getElementById('canal-grilla-nombre').value = g.nombre;
-    document.getElementById('canal-grilla-imagen').value = g.imagen_url || '';
 
     const btnSubmit = document.getElementById('btn-guardar-grilla');
     if (btnSubmit) btnSubmit.textContent = 'Actualizar Grilla';
@@ -654,8 +638,7 @@ const CanalesModule = {
     const payload = {
       sucursal_id: parseInt(document.getElementById('canal-grilla-sucursal-id').value, 10),
       tipo: document.getElementById('canal-grilla-tipo').value,
-      nombre: document.getElementById('canal-grilla-nombre').value,
-      imagen_url: document.getElementById('canal-grilla-imagen').value
+      nombre: document.getElementById('canal-grilla-nombre').value
     };
 
     try {

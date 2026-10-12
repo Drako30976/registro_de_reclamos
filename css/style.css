@@ -2527,8 +2527,8 @@ body {
   background-color: var(--bg-card);
   border: 1px solid var(--border-color);
   border-radius: var(--radius-md);
-  padding: 0.75rem 1rem;
-  margin-bottom: 1.25rem;
+  padding: 0.45rem 0.75rem;
+  margin-bottom: 1rem;
   box-shadow: var(--shadow-sm);
   overflow-x: auto;
 }
@@ -2537,7 +2537,7 @@ body {
   list-style: none;
   display: flex;
   flex-wrap: wrap;
-  gap: 0.5rem;
+  gap: 0.35rem;
   align-items: center;
 }
 
@@ -2549,14 +2549,14 @@ body {
   background-color: var(--bg-card);
   color: var(--text-main);
   border: 1.5px solid var(--border-color);
-  border-radius: var(--radius-sm);
-  padding: 0.45rem 0.85rem;
-  font-size: 0.85rem;
+  border-radius: 5px;
+  padding: 0.3rem 0.65rem;
+  font-size: 0.78rem;
   font-weight: 600;
   cursor: pointer;
   display: inline-flex;
   align-items: center;
-  gap: 0.4rem;
+  gap: 0.3rem;
   transition: all 0.2s ease;
 }
 
@@ -2574,19 +2574,19 @@ body {
 }
 
 .canales-submenu-grillas {
-  margin-top: 0.35rem;
+  margin-top: 0.25rem;
   display: flex;
   flex-direction: column;
-  gap: 0.3rem;
+  gap: 0.25rem;
   background-color: var(--bg-card);
   border: 1px solid var(--border-color);
   border-radius: var(--radius-sm);
-  padding: 0.4rem;
+  padding: 0.3rem;
   box-shadow: var(--shadow-lg);
   position: absolute;
   top: 100%;
   left: 0;
-  min-width: 140px;
+  min-width: 125px;
   z-index: 250;
 }
 
@@ -2595,8 +2595,8 @@ body {
   color: var(--text-main);
   border: 1px solid var(--border-subtle);
   border-radius: 4px;
-  padding: 0.45rem 0.65rem;
-  font-size: 0.8rem;
+  padding: 0.35rem 0.55rem;
+  font-size: 0.75rem;
   font-weight: 600;
   text-align: left;
   cursor: pointer;

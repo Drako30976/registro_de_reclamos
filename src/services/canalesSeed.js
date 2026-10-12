@@ -71,16 +71,11 @@ async function seedFromGuiaProviders() {
       if (tipo === 'analogica') nombreTipo = 'Analógica';
       else if (tipo === 'aire-digital') nombreTipo = 'Aire Digital';
 
-      let imagenUrl = '';
-      if (s.imagen_grilla && s.imagen_grilla[tipo]) {
-        imagenUrl = s.imagen_grilla[tipo];
-      }
-
       const grillaRes = await pool.query(`
         INSERT INTO canales_grillas (sucursal_id, tipo, nombre, imagen_url)
         VALUES ($1, $2, $3, $4)
         RETURNING id
-      `, [sucursalId, tipo, nombreTipo, imagenUrl]);
+      `, [sucursalId, tipo, nombreTipo, '']);
 
       const grillaId = grillaRes.rows[0].id;
       const channels = s[tipo] || [];

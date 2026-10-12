@@ -895,10 +895,7 @@
                 <p id="canales-subtitulo-header">-</p>
               </div>
               <div class="canales-actions-group">
-                <a id="btn-descargar-imagen-canales" class="btn btn-success" href="#" download target="_blank" style="display: none;">
-                  <span>🖼️</span> Descargar Imagen de Grilla
-                </a>
-                <button type="button" id="btn-capturar-grilla-canales" class="btn btn-outline-secondary">
+                <button type="button" id="btn-capturar-grilla-canales" class="btn btn-primary">
                   <span>📸</span> Capturar Grilla (PNG)
                 </button>
               </div>
@@ -2565,10 +2562,6 @@
                 <label for="canal-grilla-nombre">Nombre Visible <span class="req">*</span></label>
                 <input type="text" id="canal-grilla-nombre" required placeholder="Ej: Digital">
               </div>
-              <div class="filter-group">
-                <label for="canal-grilla-imagen">Ruta Imagen Oficial</label>
-                <input type="text" id="canal-grilla-imagen" placeholder="grillas_images/grilla_providers_digital.jpg">
-              </div>
               <div class="filter-group" style="align-self: flex-end; display: flex; gap: 0.5rem;">
                 <button type="submit" id="btn-guardar-grilla" class="btn btn-primary">Crear Grilla</button>
                 <button type="button" class="btn btn-outline-secondary" onclick="CanalesModule.limpiarFormGrilla()">Limpiar</button>
@@ -2591,7 +2584,6 @@
                   <th>Tipo</th>
                   <th>Nombre Visible</th>
                   <th>Total Canales</th>
-                  <th>Imagen Oficial</th>
                   <th class="text-right">Acciones</th>
                 </tr>
               </thead>
