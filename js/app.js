@@ -237,6 +237,9 @@ const App = {
       case 'auditorias':
         AuditoriasModule.init();
         break;
+      case 'dinamica':
+        if (typeof DinamicaModule !== 'undefined') DinamicaModule.init();
+        break;
       case 'perfil':
         PerfilModule.init();
         break;

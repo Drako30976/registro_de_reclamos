@@ -10,6 +10,7 @@ router.get('/llamadas-pdf', checkRole('Admin', 'Supervisor', 'Asesor'), reportes
 router.get('/tareas-pdf', checkRole('Admin', 'Supervisor'), reportesController.emitirReporteTareasPDF);
 router.get('/masivos-pdf', checkRole('Admin', 'Supervisor', 'Asesor'), reportesController.emitirReporteMasivosPDF);
 router.get('/auditorias-pdf', checkRole('Admin', 'Supervisor'), reportesController.emitirReporteAuditoriasPDF);
-router.get('/auditoria-individual-pdf', checkRole('Admin', 'Supervisor'), reportesController.emitirReporteAuditoriaIndividualPDF);
+router.get('/dinamica', checkRole('Admin', 'Supervisor'), reportesController.obtenerDinamicaSucursales);
+router.get('/dinamica-pdf', checkRole('Admin', 'Supervisor'), reportesController.emitirDinamicaSucursalesPDF);
 
 module.exports = router;

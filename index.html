@@ -99,6 +99,9 @@
             <button class="nav-tab-btn zeus-nav-item" data-tab="auditorias">
               <span class="tab-icon">⭐</span> Auditorias de calidad
             </button>
+            <button class="nav-tab-btn zeus-nav-item" data-tab="dinamica" id="nav-btn-dinamica">
+              <span class="tab-icon">📊</span> Reportes/Dinámica
+            </button>
             <button class="nav-tab-btn zeus-nav-item" data-tab="perfil">
               <span class="tab-icon">👤</span> Perfil
             </button>
@@ -705,6 +708,124 @@
             <div id="arbol-estructura-edicion" class="p-3 tree-container">
               Cargando estructura...
             </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="view-dinamica" class="tab-view hidden">
+        <div class="view-header flex-row justify-between align-center flex-wrap gap-2">
+          <div>
+            <h2>Reportes y Dinámica de Sucursales</h2>
+            <p class="text-muted">Análisis integral y métricas dinámicas consolidadas de reclamos y llamadas por sucursal.</p>
+          </div>
+          <button type="button" id="btn-exportar-dinamica-pdf" class="btn btn-primary">
+            <span>📄</span> Exportar Reporte en PDF
+          </button>
+        </div>
+
+        <div class="card p-3 mb-4">
+          <form id="form-filtro-dinamica" class="filter-bar-grid">
+            <div class="filter-group">
+              <label for="filtro-dinamica-desde">Fecha Desde</label>
+              <input type="date" id="filtro-dinamica-desde">
+            </div>
+            <div class="filter-group">
+              <label for="filtro-dinamica-hasta">Fecha Hasta</label>
+              <input type="date" id="filtro-dinamica-hasta">
+            </div>
+            <div class="filter-group">
+              <label for="filtro-dinamica-canal">Canal de Atención</label>
+              <select id="filtro-dinamica-canal">
+                <option value="todos">Todos los Canales</option>
+                <option value="reclamos">Solo Reclamos (Chat)</option>
+                <option value="llamadas">Solo Llamadas (0810)</option>
+              </select>
+            </div>
+            <div class="filter-group">
+              <label for="filtro-dinamica-sucursal">Sucursal</label>
+              <select id="filtro-dinamica-sucursal">
+                <option value="">Todas las Sucursales</option>
+              </select>
+            </div>
+            <div class="filter-actions flex-row align-end gap-2">
+              <button type="submit" class="btn btn-primary">
+                <span>🔍</span> Filtrar
+              </button>
+              <button type="button" id="btn-limpiar-dinamica" class="btn btn-outline-secondary">
+                Limpiar
+              </button>
+            </div>
+          </form>
+        </div>
+
+        <div id="dinamica-kpi-container" class="dashboard-kpis-grid mb-4">
+          <div class="kpi-card kpi-card-blue">
+            <div class="kpi-label">Actividades Totales</div>
+            <div class="kpi-value" id="kpi-dinamica-total">0</div>
+            <div class="kpi-sub" id="kpi-dinamica-total-sub">Reclamos y Llamadas</div>
+          </div>
+          <div class="kpi-card kpi-card-cyan">
+            <div class="kpi-label">Reclamos (Chat)</div>
+            <div class="kpi-value" id="kpi-dinamica-reclamos">0</div>
+            <div class="kpi-sub">Canal de mensajería</div>
+          </div>
+          <div class="kpi-card kpi-card-teal">
+            <div class="kpi-label">Llamadas (0810)</div>
+            <div class="kpi-value" id="kpi-dinamica-llamadas">0</div>
+            <div class="kpi-sub">Canal telefónico</div>
+          </div>
+          <div class="kpi-card kpi-card-red">
+            <div class="kpi-label">Bajas Totales</div>
+            <div class="kpi-value" id="kpi-dinamica-bajas">0</div>
+            <div class="kpi-sub">Retenidas y No retenidas</div>
+          </div>
+          <div class="kpi-card kpi-card-amber">
+            <div class="kpi-label">Consultas Disponibilidad</div>
+            <div class="kpi-value" id="kpi-dinamica-disp">0</div>
+            <div class="kpi-sub">Cobertura de red</div>
+          </div>
+          <div class="kpi-card kpi-card-emerald">
+            <div class="kpi-label">Consultas y Pagos</div>
+            <div class="kpi-value" id="kpi-dinamica-pagos">0</div>
+            <div class="kpi-sub">Facturación y cobros</div>
+          </div>
+        </div>
+
+        <div class="card mb-4">
+          <div class="card-header flex-row justify-between align-center">
+            <h3>Dinámica de Actividad por Sucursal</h3>
+            <span class="text-muted font-xs">Distribución desagregada por sede operativa</span>
+          </div>
+          <div class="table-container p-0">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Sucursal</th>
+                  <th class="text-center">Reclamos</th>
+                  <th class="text-center">Llamadas</th>
+                  <th class="text-center">Total</th>
+                  <th class="text-center">Bajas</th>
+                  <th class="text-center">Disponibilidad</th>
+                  <th class="text-center">Pagos</th>
+                  <th class="text-center">Técnicos</th>
+                </tr>
+              </thead>
+              <tbody id="dinamica-tabla-sucursales">
+                <tr>
+                  <td colspan="8" class="text-center p-3 text-muted">Cargando dinámica de sucursales...</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="card mb-4">
+          <div class="card-header flex-row justify-between align-center">
+            <h3>Distribución Global por Tipo de Consulta</h3>
+            <span class="text-muted font-xs">Participación porcentual y volumen</span>
+          </div>
+          <div id="dinamica-tipos-list" class="p-3">
+            <p class="text-muted">Cargando tipos...</p>
           </div>
         </div>
       </section>
@@ -2282,6 +2403,7 @@
   <script src="/js/tareas.js"></script>
   <script src="/js/masivos.js"></script>
   <script src="/js/auditorias.js"></script>
+  <script src="/js/dinamica.js"></script>
   <script src="/js/perfil.js"></script>
   <script src="/js/app.js"></script>
 </body>

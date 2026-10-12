@@ -1284,11 +1284,336 @@ const emitirReporteAuditoriaIndividualPDF = async (req, res) => {
   }
 };
 
+const buildDinamicaData = async (fecha_desde, fecha_hasta, canal, sucursal_id) => {
+  let whereR = 'WHERE 1=1';
+  let whereL = 'WHERE 1=1';
+  const paramsR = [];
+  const paramsL = [];
+  let pIdxR = 1;
+  let pIdxL = 1;
+
+  if (fecha_desde) {
+    whereR += ` AND DATE(r.fecha) >= $${pIdxR++}`;
+    paramsR.push(fecha_desde);
+    whereL += ` AND DATE(l.fecha) >= $${pIdxL++}`;
+    paramsL.push(fecha_desde);
+  }
+  if (fecha_hasta) {
+    whereR += ` AND DATE(r.fecha) <= $${pIdxR++}`;
+    paramsR.push(fecha_hasta);
+    whereL += ` AND DATE(l.fecha) <= $${pIdxL++}`;
+    paramsL.push(fecha_hasta);
+  }
+  if (sucursal_id) {
+    whereR += ` AND r.sucursal_id = $${pIdxR++}`;
+    paramsR.push(sucursal_id);
+    whereL += ` AND l.sucursal_id = $${pIdxL++}`;
+    paramsL.push(sucursal_id);
+  }
+
+  const sucursalesResult = await pool.query('SELECT id, nombre FROM sucursales ORDER BY nombre ASC');
+  const sucursales = sucursalesResult.rows;
+
+  let unionParts = [];
+  let unionParams = [];
+
+  if (!canal || canal === 'todos' || canal === 'reclamos') {
+    unionParts.push(`
+      SELECT 
+        'Reclamo' AS origen_canal,
+        r.id,
+        r.fecha,
+        r.sucursal_id,
+        s.nombre AS sucursal_nombre,
+        tc.contenido AS tipo_nombre,
+        cc.contenido AS caracteristica_nombre,
+        COALESCE(f.contenido, '-') AS finalizacion_nombre
+      FROM reclamos r
+      JOIN sucursales s ON r.sucursal_id = s.id
+      JOIN tipos_consulta tc ON r.tipo_consulta_id = tc.id
+      JOIN caracteristicas_consulta cc ON r.caracteristica_id = cc.id
+      LEFT JOIN finalizaciones f ON r.finalizacion_id = f.id
+      ${whereR}
+    `);
+    unionParams.push(...paramsR);
+  }
+
+  if (!canal || canal === 'todos' || canal === 'llamadas') {
+    let renumberedWhereL = whereL;
+    let offsetIdx = unionParams.length;
+    paramsL.forEach((val, i) => {
+      renumberedWhereL = renumberedWhereL.replace(`$${i + 1}`, `$${offsetIdx + i + 1}`);
+    });
+    unionParts.push(`
+      SELECT 
+        'Llamada 0810' AS origen_canal,
+        l.id,
+        l.fecha,
+        l.sucursal_id,
+        s.nombre AS sucursal_nombre,
+        tc.contenido AS tipo_nombre,
+        cc.contenido AS caracteristica_nombre,
+        COALESCE(f.contenido, '-') AS finalizacion_nombre
+      FROM llamadas l
+      JOIN sucursales s ON l.sucursal_id = s.id
+      JOIN tipos_consulta tc ON l.tipo_consulta_id = tc.id
+      JOIN caracteristicas_consulta cc ON l.caracteristica_id = cc.id
+      LEFT JOIN finalizaciones f ON l.finalizacion_id = f.id
+      ${renumberedWhereL}
+    `);
+    unionParams.push(...paramsL);
+  }
+
+  const combinedQuery = unionParts.length > 0 ? unionParts.join(' UNION ALL ') : 'SELECT NULL WHERE 1=0';
+  const combinedRes = await pool.query(combinedQuery, unionParams);
+  const rows = combinedRes.rows;
+
+  let totalInteracciones = rows.length;
+  let totalReclamos = rows.filter(r => r.origen_canal === 'Reclamo').length;
+  let totalLlamadas = rows.filter(r => r.origen_canal === 'Llamada 0810').length;
+
+  let totalBajas = rows.filter(r => (r.tipo_nombre || '').toLowerCase().includes('baja')).length;
+  let totalDisponibilidad = rows.filter(r => (r.caracteristica_nombre || '').toLowerCase().includes('disponibilidad') || (r.caracteristica_nombre || '').toLowerCase().includes('cobertura')).length;
+  let totalPagos = rows.filter(r => (r.caracteristica_nombre || '').toLowerCase().includes('pago') || (r.tipo_nombre || '').toLowerCase().includes('facturacion')).length;
+  let totalTecnicos = rows.filter(r => (r.tipo_nombre || '').toLowerCase().includes('tecnico')).length;
+
+  const porSucursal = {};
+  sucursales.forEach(s => {
+    porSucursal[s.id] = {
+      id: s.id,
+      nombre: s.nombre,
+      total: 0,
+      reclamos: 0,
+      llamadas: 0,
+      bajas: 0,
+      disponibilidad: 0,
+      pagos: 0,
+      tecnicos: 0,
+      tipos: {}
+    };
+  });
+
+  rows.forEach(r => {
+    const sId = r.sucursal_id;
+    if (!porSucursal[sId]) {
+      porSucursal[sId] = {
+        id: sId,
+        nombre: r.sucursal_nombre,
+        total: 0,
+        reclamos: 0,
+        llamadas: 0,
+        bajas: 0,
+        disponibilidad: 0,
+        pagos: 0,
+        tecnicos: 0,
+        tipos: {}
+      };
+    }
+    const item = porSucursal[sId];
+    item.total++;
+    if (r.origen_canal === 'Reclamo') item.reclamos++;
+    if (r.origen_canal === 'Llamada 0810') item.llamadas++;
+
+    const tLower = (r.tipo_nombre || '').toLowerCase();
+    const cLower = (r.caracteristica_nombre || '').toLowerCase();
+
+    if (tLower.includes('baja')) item.bajas++;
+    if (cLower.includes('disponibilidad') || cLower.includes('cobertura')) item.disponibilidad++;
+    if (cLower.includes('pago') || tLower.includes('facturacion')) item.pagos++;
+    if (tLower.includes('tecnico')) item.tecnicos++;
+
+    const tipoKey = r.tipo_nombre || 'Otros';
+    item.tipos[tipoKey] = (item.tipos[tipoKey] || 0) + 1;
+  });
+
+  const sucursalesArr = Object.values(porSucursal).sort((a, b) => b.total - a.total);
+
+  const tiposGlobal = {};
+  rows.forEach(r => {
+    const k = r.tipo_nombre || 'Otros';
+    tiposGlobal[k] = (tiposGlobal[k] || 0) + 1;
+  });
+
+  return {
+    kpis: {
+      total_interacciones: totalInteracciones,
+      total_reclamos: totalReclamos,
+      total_llamadas: totalLlamadas,
+      total_bajas: totalBajas,
+      total_disponibilidad: totalDisponibilidad,
+      total_pagos: totalPagos,
+      total_tecnicos: totalTecnicos
+    },
+    por_sucursal: sucursalesArr,
+    tipos_global: tiposGlobal,
+    filtros: {
+      fecha_desde: fecha_desde || null,
+      fecha_hasta: fecha_hasta || null,
+      canal: canal || 'todos',
+      sucursal_id: sucursal_id || null
+    }
+  };
+};
+
+const obtenerDinamicaSucursales = async (req, res) => {
+  try {
+    const { fecha_desde, fecha_hasta, canal, sucursal_id } = req.query;
+    const data = await buildDinamicaData(fecha_desde, fecha_hasta, canal, sucursal_id);
+    res.json(data);
+  } catch (error) {
+    console.error('Error al obtener dinámica de sucursales:', error);
+    res.status(500).json({ error: 'Error al procesar la dinámica de actividades por sucursal.' });
+  }
+};
+
+const emitirDinamicaSucursalesPDF = async (req, res) => {
+  try {
+    const { fecha_desde, fecha_hasta, canal, sucursal_id } = req.query;
+    const data = await buildDinamicaData(fecha_desde, fecha_hasta, canal, sucursal_id);
+
+    const doc = new PDFDocument({
+      size: 'A4',
+      layout: 'portrait',
+      margin: 30
+    });
+
+    res.setHeader('Content-Type', 'application/pdf');
+    res.setHeader('Content-Disposition', 'attachment; filename="Reporte_Dinamica_Sucursales_Zeus.pdf"');
+    doc.pipe(res);
+
+    doc.rect(30, 30, 535, 55).fill('#0A0F1D');
+    doc.rect(30, 82, 535, 3).fill('#0487C4');
+
+    doc.fillColor('#FFFFFF').fontSize(14).font('Helvetica-Bold').text('ZEUS: REPORTE & DINÁMICA DE SUCURSALES', 45, 42);
+    doc.fillColor('#38BDF8').fontSize(8.5).font('Helvetica').text('Consolidado de Reclamos, Llamadas, Bajas, Pagos y Disponibilidad de Red', 45, 60);
+
+    const fechaGen = new Date().toLocaleString('es-AR', { dateStyle: 'short', timeStyle: 'short' });
+    doc.fillColor('#94A3B8').fontSize(7.5).font('Helvetica').text(`Generado: ${fechaGen} | Por: ${req.usuario?.nombre_completo || 'Supervisor'}`, 45, 72);
+
+    let currentY = 100;
+
+    doc.rect(30, currentY, 535, 26).fill('#F1F5F8');
+    doc.rect(30, currentY, 535, 26).stroke('#CBD5E1');
+
+    doc.fillColor('#0F172A').fontSize(7.5).font('Helvetica');
+    const fDesdeStr = fecha_desde || 'Inicio histórico';
+    const fHastaStr = fecha_hasta || 'Al día';
+    const fCanalStr = canal === 'reclamos' ? 'Solo Reclamos (Chat)' : canal === 'llamadas' ? 'Solo Llamadas (0810)' : 'Todos los canales';
+    doc.text(`Período: ${fDesdeStr} hasta ${fHastaStr}   |   Canal: ${fCanalStr}`, 40, currentY + 9);
+    currentY += 36;
+
+    doc.fillColor('#0427C4').fontSize(10).font('Helvetica-Bold').text('MÉTRICAS CLAVE CONSOLIDADAS (KPIs)', 30, currentY);
+    currentY += 16;
+
+    const kpis = [
+      { label: 'Total Actividades', val: data.kpis.total_interacciones, col: '#0427C4' },
+      { label: 'Reclamos (Chat)', val: data.kpis.total_reclamos, col: '#0284C7' },
+      { label: 'Llamadas (0810)', val: data.kpis.total_llamadas, col: '#0D9488' },
+      { label: 'Bajas Registradas', val: data.kpis.total_bajas, col: '#DC2626' },
+      { label: 'Consultas Disp.', val: data.kpis.total_disponibilidad, col: '#D97706' },
+      { label: 'Gestión Pagos', val: data.kpis.total_pagos, col: '#059669' }
+    ];
+
+    const cardW = 84;
+    const cardH = 42;
+    const gap = 6;
+    kpis.forEach((k, i) => {
+      const kX = 30 + i * (cardW + gap);
+      doc.rect(kX, currentY, cardW, cardH).fill('#F8FAFC');
+      doc.rect(kX, currentY, cardW, cardH).stroke('#CBD5E1');
+      doc.rect(kX, currentY, cardW, 3).fill(k.col);
+      doc.fillColor(k.col).fontSize(14).font('Helvetica-Bold').text(String(k.val), kX + 4, currentY + 10, { width: cardW - 8, align: 'center' });
+      doc.fillColor('#64748B').fontSize(6.8).font('Helvetica').text(k.label, kX + 2, currentY + 28, { width: cardW - 4, align: 'center' });
+    });
+
+    currentY += 54;
+
+    doc.fillColor('#0427C4').fontSize(10).font('Helvetica-Bold').text('DISTRIBUCIÓN Y DINÁMICA POR SUCURSAL', 30, currentY);
+    currentY += 16;
+
+    const thH = 20;
+    doc.rect(30, currentY, 535, thH).fill('#0427C4');
+    doc.fillColor('#FFFFFF').fontSize(7.5).font('Helvetica-Bold');
+    doc.text('Sucursal', 36, currentY + 6, { width: 135 });
+    doc.text('Reclamos', 175, currentY + 6, { width: 50, align: 'center' });
+    doc.text('Llamadas', 230, currentY + 6, { width: 50, align: 'center' });
+    doc.text('Total', 285, currentY + 6, { width: 50, align: 'center' });
+    doc.text('Bajas', 340, currentY + 6, { width: 45, align: 'center' });
+    doc.text('Disponib.', 390, currentY + 6, { width: 50, align: 'center' });
+    doc.text('Pagos', 445, currentY + 6, { width: 45, align: 'center' });
+    doc.text('Técnicos', 495, currentY + 6, { width: 65, align: 'center' });
+
+    currentY += thH;
+
+    const rowH = 17;
+    data.por_sucursal.forEach((s, idx) => {
+      if (currentY + rowH > 770) {
+        doc.addPage({ size: 'A4', layout: 'portrait', margin: 30 });
+        currentY = 40;
+      }
+
+      const bg = idx % 2 === 0 ? '#FFFFFF' : '#F8FAFC';
+      doc.rect(30, currentY, 535, rowH).fill(bg);
+      doc.rect(30, currentY, 535, rowH).stroke('#E2E8F0');
+
+      doc.fillColor('#0F172A').fontSize(7.3).font('Helvetica-Bold');
+      doc.text(s.nombre, 36, currentY + 5, { width: 135, lineBreak: false });
+
+      doc.font('Helvetica');
+      doc.text(String(s.reclamos), 175, currentY + 5, { width: 50, align: 'center' });
+      doc.text(String(s.llamadas), 230, currentY + 5, { width: 50, align: 'center' });
+      doc.font('Helvetica-Bold').fillColor('#0427C4').text(String(s.total), 285, currentY + 5, { width: 50, align: 'center' });
+      doc.font('Helvetica').fillColor('#DC2626').text(String(s.bajas), 340, currentY + 5, { width: 45, align: 'center' });
+      doc.fillColor('#D97706').text(String(s.disponibilidad), 390, currentY + 5, { width: 50, align: 'center' });
+      doc.fillColor('#059669').text(String(s.pagos), 445, currentY + 5, { width: 45, align: 'center' });
+      doc.fillColor('#0F172A').text(String(s.tecnicos), 495, currentY + 5, { width: 65, align: 'center' });
+
+      currentY += rowH;
+    });
+
+    currentY += 18;
+    if (currentY + 120 > 770) {
+      doc.addPage({ size: 'A4', layout: 'portrait', margin: 30 });
+      currentY = 40;
+    }
+
+    doc.fillColor('#0427C4').fontSize(10).font('Helvetica-Bold').text('VOLUMEN GLOBAL POR TIPO DE CONSULTA', 30, currentY);
+    currentY += 16;
+
+    const tiposEntries = Object.entries(data.tipos_global);
+    tiposEntries.forEach(([tipo, cant], idx) => {
+      const pct = data.kpis.total_interacciones > 0 ? ((cant / data.kpis.total_interacciones) * 100).toFixed(1) : 0;
+      doc.rect(30, currentY, 535, 16).fill(idx % 2 === 0 ? '#FFFFFF' : '#F8FAFC');
+      doc.rect(30, currentY, 535, 16).stroke('#E2E8F0');
+      doc.fillColor('#0F172A').fontSize(7.5).font('Helvetica').text(tipo, 38, currentY + 4, { width: 220 });
+      doc.fillColor('#0427C4').font('Helvetica-Bold').text(`${cant} registros (${pct}%)`, 260, currentY + 4, { width: 140, align: 'right' });
+
+      const barW = Math.min(110, Math.round((pct / 100) * 110));
+      doc.rect(420, currentY + 5, 110, 6).fill('#E2E8F0');
+      if (barW > 0) doc.rect(420, currentY + 5, barW, 6).fill('#0487C4');
+
+      currentY += 16;
+    });
+
+    doc.fontSize(7).fillColor('#94A3B8').text(
+      'Documento confidencial emitido por la plataforma Zeus - Reporte y Dinámica de Sucursales.',
+      30, 800, { align: 'center', width: 535 }
+    );
+
+    doc.end();
+  } catch (error) {
+    console.error('Error al emitir reporte dinámica en PDF:', error);
+    res.status(500).json({ error: 'Error al generar el documento PDF de dinámica.' });
+  }
+};
+
 module.exports = {
   emitirReportePDF,
   emitirReporteLlamadasPDF,
   emitirReporteTareasPDF,
   emitirReporteMasivosPDF,
   emitirReporteAuditoriasPDF,
-  emitirReporteAuditoriaIndividualPDF
+  emitirReporteAuditoriaIndividualPDF,
+  obtenerDinamicaSucursales,
+  emitirDinamicaSucursalesPDF
 };
