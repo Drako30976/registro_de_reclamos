@@ -93,6 +93,7 @@ const Auth = {
     const tabMasivos = document.querySelector('[data-tab="masivos"]');
     const tabAuditorias = document.querySelector('[data-tab="auditorias"]');
     const tabDinamica = document.querySelector('[data-tab="dinamica"]');
+    const tabCanales = document.querySelector('[data-tab="canales"]');
     const tabPerfil = document.querySelector('[data-tab="perfil"]');
 
     if (tabGestion) {
@@ -136,6 +137,10 @@ const Auth = {
 
     if (tabDinamica) {
       tabDinamica.style.display = (rol === 'Admin' || rol === 'Supervisor') ? 'inline-flex' : 'none';
+    }
+
+    if (tabCanales) {
+      tabCanales.style.display = 'inline-flex';
     }
 
     if (tabPerfil) {

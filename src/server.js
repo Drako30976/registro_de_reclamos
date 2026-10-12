@@ -14,6 +14,8 @@ const tareasRoutes = require('./routes/tareas.routes');
 const masivosRoutes = require('./routes/masivos.routes');
 const auditoriasRoutes = require('./routes/auditorias.routes');
 const llamadasRoutes = require('./routes/llamadas.routes');
+const canalesRoutes = require('./routes/canales.routes');
+const { initCanalesTables } = require('./services/canalesSeed');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -23,6 +25,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
+app.use('/grillas_images', express.static(path.join(__dirname, '../grillas_images')));
 
 app.use(express.static(path.join(__dirname, '../')));
 
@@ -36,6 +39,8 @@ app.use('/api/reportes', reportesRoutes);
 app.use('/api/tareas', tareasRoutes);
 app.use('/api/masivos', masivosRoutes);
 app.use('/api/auditorias', auditoriasRoutes);
+app.use('/api/canales', canalesRoutes);
+
 
 app.get('/api/health', async (req, res) => {
   try {
@@ -67,6 +72,7 @@ app.listen(PORT, async () => {
   try {
     const res = await pool.query('SELECT current_database(), current_user');
     console.log(` Conexión a PostgreSQL confirmada: BD '${res.rows[0].current_database}' con usuario '${res.rows[0].current_user}'`);
+    await initCanalesTables();
   } catch (err) {
     console.error(` Error conectando a PostgreSQL:`, err.message);
   }

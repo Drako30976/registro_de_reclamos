@@ -102,6 +102,9 @@
             <button class="nav-tab-btn zeus-nav-item" data-tab="dinamica" id="nav-btn-dinamica">
               <span class="tab-icon">📊</span> Reportes/Dinámica
             </button>
+            <button class="nav-tab-btn zeus-nav-item" data-tab="canales" id="nav-btn-canales">
+              <span class="tab-icon">📺</span> Grilla de canales
+            </button>
             <button class="nav-tab-btn zeus-nav-item" data-tab="perfil">
               <span class="tab-icon">👤</span> Perfil
             </button>
@@ -860,6 +863,58 @@
             <p class="text-muted">Cargando tipos...</p>
           </div>
         </div>
+      </section>
+
+      <section id="view-canales" class="tab-view hidden">
+        <div class="view-header flex-row justify-between align-center flex-wrap gap-2">
+          <div>
+            <h2>Grilla de canales</h2>
+            <p class="text-muted">Consulta de canales por sucursal, descarga de grilla oficial y emisión de imagen para clientes.</p>
+          </div>
+          <div class="canales-actions-group">
+            <button type="button" id="btn-canales-abrir-edicion" class="btn btn-outline-primary">
+              <span>⚙️</span> Editar
+            </button>
+          </div>
+        </div>
+
+        <nav class="canales-nav-container">
+          <ul id="canales-nav-menu" class="canales-nav-menu">
+          </ul>
+        </nav>
+
+        <div id="canales-estado-inicial" class="canales-empty-box">
+          <p>👆 Selecciona una sucursal y el tipo de grilla (Digital o Analógica) para ver los canales.</p>
+        </div>
+
+        <section id="canales-detalle-sucursal" style="display: none;">
+          <div id="canales-contenedor-captura">
+            <div class="canales-info-header">
+              <div>
+                <h3 id="canales-titulo-header">-</h3>
+                <p id="canales-subtitulo-header">-</p>
+              </div>
+              <div class="canales-actions-group">
+                <a id="btn-descargar-imagen-canales" class="btn btn-success" href="#" download target="_blank" style="display: none;">
+                  <span>🖼️</span> Descargar Imagen de Grilla
+                </a>
+                <button type="button" id="btn-capturar-grilla-canales" class="btn btn-outline-secondary">
+                  <span>📸</span> Capturar Grilla (PNG)
+                </button>
+              </div>
+            </div>
+
+            <div class="canales-toolbar">
+              <div class="canales-search-box">
+                <span class="search-icon">🔍</span>
+                <input type="text" id="canales-busqueda" placeholder="Buscar por número o nombre de canal...">
+              </div>
+            </div>
+
+            <div id="grilla-canales-cards" class="grilla-canales-container">
+            </div>
+          </div>
+        </section>
       </section>
 
       <section id="view-perfil" class="tab-view hidden">
@@ -2425,6 +2480,210 @@
     </div>
   </div>
 
+  <div id="modal-canales-edicion" class="modal-overlay hidden">
+    <div class="modal-box modal-lg" style="max-width: 950px; max-height: 90vh; overflow-y: auto;">
+      <div class="modal-header">
+        <h3>Administración de Grillas y Canales</h3>
+        <button class="modal-close" onclick="CanalesModule.cerrarModalEdicion()">&times;</button>
+      </div>
+      <div class="modal-body p-4">
+        <div class="canales-edicion-nav">
+          <button type="button" class="canales-edicion-tab-btn active" data-tab="sucursales" onclick="CanalesModule.cambiarTabEdicion('sucursales')">
+            🏢 Sucursales
+          </button>
+          <button type="button" class="canales-edicion-tab-btn" data-tab="grillas" onclick="CanalesModule.cambiarTabEdicion('grillas')">
+            📺 Grillas
+          </button>
+          <button type="button" class="canales-edicion-tab-btn" data-tab="canales" onclick="CanalesModule.cambiarTabEdicion('canales')">
+            📡 Canales
+          </button>
+        </div>
+
+        <div id="canales-edicion-sec-sucursales">
+          <div class="card p-3 mb-4">
+            <h4 class="mb-3 font-md">Registrar / Modificar Sucursal</h4>
+            <form id="form-canal-sucursal" class="filter-bar-grid">
+              <input type="hidden" id="canal-sucursal-id">
+              <div class="filter-group">
+                <label for="canal-sucursal-nombre">Nombre <span class="req">*</span></label>
+                <input type="text" id="canal-sucursal-nombre" required placeholder="Ej: Providers">
+              </div>
+              <div class="filter-group">
+                <label for="canal-sucursal-localidad">Localidad</label>
+                <input type="text" id="canal-sucursal-localidad" placeholder="Ej: San Miguel de Tucumán">
+              </div>
+              <div class="filter-group">
+                <label for="canal-sucursal-provincia">Provincia</label>
+                <input type="text" id="canal-sucursal-provincia" placeholder="Ej: Tucumán">
+              </div>
+              <div class="filter-group">
+                <label for="canal-sucursal-codigo">Identificador / Slug</label>
+                <input type="text" id="canal-sucursal-codigo" placeholder="Ej: providers">
+              </div>
+              <div class="filter-group" style="align-self: flex-end; display: flex; gap: 0.5rem;">
+                <button type="submit" id="btn-guardar-sucursal" class="btn btn-primary">Crear Sucursal</button>
+                <button type="button" class="btn btn-outline-secondary" onclick="CanalesModule.limpiarFormSucursal()">Limpiar</button>
+              </div>
+            </form>
+          </div>
+
+          <div class="table-responsive">
+            <table class="table-custom">
+              <thead>
+                <tr>
+                  <th>Nombre</th>
+                  <th>Localidad</th>
+                  <th>Provincia</th>
+                  <th>Grillas</th>
+                  <th class="text-right">Acciones</th>
+                </tr>
+              </thead>
+              <tbody id="tabla-canales-sucursales-body">
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div id="canales-edicion-sec-grillas" class="hidden">
+          <div class="card p-3 mb-4">
+            <h4 class="mb-3 font-md">Registrar / Modificar Grilla</h4>
+            <form id="form-canal-grilla" class="filter-bar-grid">
+              <input type="hidden" id="canal-grilla-id">
+              <div class="filter-group">
+                <label for="canal-grilla-sucursal-id">Sucursal <span class="req">*</span></label>
+                <select id="canal-grilla-sucursal-id" required></select>
+              </div>
+              <div class="filter-group">
+                <label for="canal-grilla-tipo">Tipo <span class="req">*</span></label>
+                <select id="canal-grilla-tipo" required>
+                  <option value="digital">Digital</option>
+                  <option value="analogica">Analógica</option>
+                  <option value="aire-digital">Aire Digital</option>
+                </select>
+              </div>
+              <div class="filter-group">
+                <label for="canal-grilla-nombre">Nombre Visible <span class="req">*</span></label>
+                <input type="text" id="canal-grilla-nombre" required placeholder="Ej: Digital">
+              </div>
+              <div class="filter-group">
+                <label for="canal-grilla-imagen">Ruta Imagen Oficial</label>
+                <input type="text" id="canal-grilla-imagen" placeholder="grillas_images/grilla_providers_digital.jpg">
+              </div>
+              <div class="filter-group" style="align-self: flex-end; display: flex; gap: 0.5rem;">
+                <button type="submit" id="btn-guardar-grilla" class="btn btn-primary">Crear Grilla</button>
+                <button type="button" class="btn btn-outline-secondary" onclick="CanalesModule.limpiarFormGrilla()">Limpiar</button>
+              </div>
+            </form>
+          </div>
+
+          <div class="flex-row justify-between align-center mb-3">
+            <div class="filter-group" style="max-width: 300px;">
+              <label for="edicion-grillas-filtro-sucursal">Filtrar por Sucursal</label>
+              <select id="edicion-grillas-filtro-sucursal"></select>
+            </div>
+          </div>
+
+          <div class="table-responsive">
+            <table class="table-custom">
+              <thead>
+                <tr>
+                  <th>Sucursal</th>
+                  <th>Tipo</th>
+                  <th>Nombre Visible</th>
+                  <th>Total Canales</th>
+                  <th>Imagen Oficial</th>
+                  <th class="text-right">Acciones</th>
+                </tr>
+              </thead>
+              <tbody id="tabla-canales-grillas-body">
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div id="canales-edicion-sec-canales" class="hidden">
+          <div class="card p-3 mb-4">
+            <h4 class="mb-3 font-md">Registrar / Modificar Canal</h4>
+            <form id="form-canal-item">
+              <input type="hidden" id="canal-item-id">
+              <div class="filter-bar-grid mb-3">
+                <div class="filter-group">
+                  <label for="canal-item-grilla-id">Grilla Destino <span class="req">*</span></label>
+                  <select id="canal-item-grilla-id" required></select>
+                </div>
+                <div class="filter-group">
+                  <label for="canal-item-numero">Número de Canal <span class="req">*</span></label>
+                  <input type="number" id="canal-item-numero" required placeholder="Ej: 103" min="1" max="9999">
+                </div>
+                <div class="filter-group">
+                  <label for="canal-item-nombre">Nombre del Canal <span class="req">*</span></label>
+                  <input type="text" id="canal-item-nombre" required placeholder="Ej: TN">
+                </div>
+                <div class="filter-group">
+                  <label for="canal-item-categoria">Categoría</label>
+                  <input type="text" id="canal-item-categoria" placeholder="Ej: Noticias, Deportes, Cine">
+                </div>
+              </div>
+
+              <div class="filter-group mb-2">
+                <label for="canal-item-logo">Ruta o Archivo del Logo</label>
+                <div class="flex-row gap-2">
+                  <input type="text" id="canal-item-logo" placeholder="assets/canales/tn.png" style="flex: 1;">
+                  <label class="btn btn-outline-secondary" style="margin: 0; cursor: pointer;">
+                    📁 Subir Logo
+                    <input type="file" id="canal-logo-file" accept="image/*" style="display: none;">
+                  </label>
+                </div>
+              </div>
+
+              <div class="mb-3">
+                <label class="font-sm text-muted">Seleccionar de logos existentes:</label>
+                <div id="logo-picker-container" class="logo-picker-grid"></div>
+              </div>
+
+              <div class="flex-row gap-2">
+                <button type="submit" id="btn-guardar-canal-item" class="btn btn-primary">Agregar Canal</button>
+                <button type="button" class="btn btn-outline-secondary" onclick="CanalesModule.limpiarFormCanal()">Limpiar</button>
+              </div>
+            </form>
+          </div>
+
+          <div class="filter-bar-grid mb-3">
+            <div class="filter-group">
+              <label for="edicion-canales-filtro-sucursal">Sucursal</label>
+              <select id="edicion-canales-filtro-sucursal"></select>
+            </div>
+            <div class="filter-group">
+              <label for="edicion-canales-filtro-grilla">Grilla</label>
+              <select id="edicion-canales-filtro-grilla"></select>
+            </div>
+          </div>
+
+          <div class="table-responsive">
+            <table class="table-custom">
+              <thead>
+                <tr>
+                  <th>N°</th>
+                  <th>Logo</th>
+                  <th>Nombre</th>
+                  <th>Categoría</th>
+                  <th class="text-right">Acciones</th>
+                </tr>
+              </thead>
+              <tbody id="tabla-canales-items-body">
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-outline-secondary" onclick="CanalesModule.cerrarModalEdicion()">Cerrar</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
   <script src="/js/api.js"></script>
   <script src="/js/auth.js"></script>
   <script src="/js/reclamos.js"></script>
@@ -2436,6 +2695,7 @@
   <script src="/js/masivos.js"></script>
   <script src="/js/auditorias.js"></script>
   <script src="/js/dinamica.js"></script>
+  <script src="/js/canales.js"></script>
   <script src="/js/perfil.js"></script>
   <script src="/js/app.js"></script>
 </body>

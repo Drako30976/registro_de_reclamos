@@ -513,3 +513,37 @@ INSERT INTO auditoria_subcriterios (criterio_id, nombre, puntaje_maximo, orden) 
     (6, 'Respeta la decisión sin presionar ni obstaculizar', 4, 5),
     (6, 'Registra correctamente la gestión y su resultado', 4, 6)
 ON CONFLICT DO NOTHING;
+
+CREATE TABLE IF NOT EXISTS canales_sucursales (
+    id SERIAL PRIMARY KEY,
+    codigo VARCHAR(100) UNIQUE NOT NULL,
+    nombre VARCHAR(150) NOT NULL,
+    localidad VARCHAR(150) DEFAULT '',
+    provincia VARCHAR(150) DEFAULT '',
+    orden INT DEFAULT 0,
+    activo BOOLEAN DEFAULT TRUE,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS canales_grillas (
+    id SERIAL PRIMARY KEY,
+    sucursal_id INT NOT NULL REFERENCES canales_sucursales(id) ON DELETE CASCADE,
+    tipo VARCHAR(50) NOT NULL,
+    nombre VARCHAR(100) NOT NULL,
+    imagen_url TEXT DEFAULT '',
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE(sucursal_id, tipo)
+);
+
+CREATE TABLE IF NOT EXISTS canales_items (
+    id SERIAL PRIMARY KEY,
+    grilla_id INT NOT NULL REFERENCES canales_grillas(id) ON DELETE CASCADE,
+    numero INT NOT NULL,
+    nombre VARCHAR(150) NOT NULL,
+    logo TEXT DEFAULT '',
+    categoria VARCHAR(100) DEFAULT '',
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE INDEX IF NOT EXISTS idx_canales_items_grilla ON canales_items(grilla_id);
+

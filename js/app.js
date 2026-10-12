@@ -240,6 +240,9 @@ const App = {
       case 'dinamica':
         if (typeof DinamicaModule !== 'undefined') DinamicaModule.init();
         break;
+      case 'canales':
+        if (typeof CanalesModule !== 'undefined') CanalesModule.init();
+        break;
       case 'perfil':
         PerfilModule.init();
         break;

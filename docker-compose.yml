@@ -8,8 +8,6 @@ services:
       POSTGRES_USER: ${DB_USER:-postgres}
       POSTGRES_PASSWORD: ${DB_PASSWORD:-postgres_password_2026}
     ports:
-      # Mapeo del puerto 5433 en tu PC al 5432 del contenedor
-      # para evitar conflictos con otras bases de datos locales
       - "${DB_PORT:-5433}:5432"
     volumes:
       - reclamos_pgdata:/var/lib/postgresql/data
@@ -34,6 +32,8 @@ services:
       NODE_ENV: production
     volumes:
       - ./uploads:/app/uploads
+      - ./grillas_images:/app/grillas_images
+      - ./assets/canales:/app/assets/canales
     depends_on:
       - postgres
     networks:
