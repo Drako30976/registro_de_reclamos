@@ -83,8 +83,8 @@ const ReclamosModule = {
           <details class="masivo-accordion-item ${esActivo ? 'masivo-activo' : 'masivo-finalizado'}">
             <summary class="masivo-accordion-header">
               <div class="masivo-accordion-left">
-                <span class="badge badge-secondary masivo-sucursal-badge">${m.sucursal_nombre}</span>
-                <strong class="masivo-servicio-title">${m.servicio_afectado}</strong>
+                <span class="badge badge-secondary masivo-sucursal-badge">${API.escapeHTML(m.sucursal_nombre)}</span>
+                <strong class="masivo-servicio-title">${API.escapeHTML(m.servicio_afectado)}</strong>
               </div>
               <div class="masivo-accordion-right">
                 ${badgeEstado}
@@ -95,26 +95,26 @@ const ReclamosModule = {
               <div class="masivo-detail-grid">
                 <div class="masivo-detail-item">
                   <span class="detail-label">Fecha Inicio:</span>
-                  <span><strong>${m.fecha_inicio_fmt}</strong> hs</span>
+                  <span><strong>${API.escapeHTML(m.fecha_inicio_fmt)}</strong> hs</span>
                 </div>
                 <div class="masivo-detail-item">
                   <span class="detail-label">Zona Afectada:</span>
-                  <span class="masivo-zona-val">${m.zona_afectada}</span>
+                  <span class="masivo-zona-val">${API.escapeHTML(m.zona_afectada)}</span>
                 </div>
                 <div class="masivo-detail-item">
                   <span class="detail-label">Tiempo Estimado:</span>
-                  <span>${m.tiempo_resolucion}</span>
+                  <span>${API.escapeHTML(m.tiempo_resolucion)}</span>
                 </div>
                 <div class="masivo-detail-item">
                   <span class="detail-label">Informado por:</span>
-                  <span>${m.creado_por_nombre || '-'}</span>
+                  <span>${API.escapeHTML(m.creado_por_nombre || '-')}</span>
                 </div>
               </div>
 
               ${m.caracteristicas_dano && m.caracteristicas_dano !== '-' ? `
                 <div class="masivo-detail-box masivo-dano-box">
                   <strong>Características del Daño:</strong>
-                  <div>${m.caracteristicas_dano}</div>
+                  <div>${API.escapeHTML(m.caracteristicas_dano)}</div>
                 </div>
               ` : ''}
 
@@ -123,19 +123,19 @@ const ReclamosModule = {
                   <div class="masivo-detail-grid">
                     <div class="masivo-detail-item">
                       <span class="detail-label">Finalizado:</span>
-                      <span><strong>${m.fecha_fin_fmt || '-'}</strong> hs</span>
+                      <span><strong>${API.escapeHTML(m.fecha_fin_fmt || '-')}</strong> hs</span>
                     </div>
                     <div class="masivo-detail-item">
                       <span class="detail-label">Finalizado por:</span>
-                      <span>${m.finalizado_por_nombre || '-'}</span>
+                      <span>${API.escapeHTML(m.finalizado_por_nombre || '-')}</span>
                     </div>
                     <div class="masivo-detail-item">
                       <span class="detail-label">Responsable:</span>
-                      <span>${m.responsable_solucion}</span>
+                      <span>${API.escapeHTML(m.responsable_solucion)}</span>
                     </div>
                     <div class="masivo-detail-item">
                       <span class="detail-label">Arreglo:</span>
-                      <span>${m.arreglo}</span>
+                      <span>${API.escapeHTML(m.arreglo)}</span>
                     </div>
                   </div>
                 </div>

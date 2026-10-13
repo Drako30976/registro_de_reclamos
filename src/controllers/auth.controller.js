@@ -30,6 +30,11 @@ const login = async (req, res) => {
       return res.status(401).json({ error: 'Usuario o contraseña incorrectos.' });
     }
 
+    const jwtSecret = process.env.JWT_SECRET;
+    if (!jwtSecret && process.env.NODE_ENV === 'production') {
+      return res.status(500).json({ error: 'Configuración de seguridad del servidor inválida.' });
+    }
+
     const token = jwt.sign(
       {
         id: user.id,
@@ -37,7 +42,7 @@ const login = async (req, res) => {
         rol: user.rol,
         nombre_completo: user.nombre_completo
       },
-      process.env.JWT_SECRET || 'reclamos_jwt_super_secret_key_2026',
+      jwtSecret || 'reclamos_jwt_super_secret_key_2026',
       { expiresIn: '12h' }
     );
 

@@ -3,7 +3,7 @@ const router = express.Router();
 const path = require('path');
 const multer = require('multer');
 const canalesController = require('../controllers/canales.controller');
-const { verifyToken } = require('../middlewares/auth');
+const { verifyToken, checkRole } = require('../middlewares/auth');
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
@@ -38,6 +38,9 @@ router.get('/', canalesController.getEstructuraCompleta);
 router.get('/sucursales', canalesController.getSucursales);
 router.get('/grilla/:id', canalesController.getCanalesPorGrilla);
 router.get('/logos', canalesController.getLogosDisponibles);
+
+router.use(checkRole('Admin', 'Supervisor'));
+
 router.post('/upload', upload.single('imagen'), canalesController.uploadLogo);
 
 router.post('/sucursales', canalesController.crearSucursal);

@@ -306,6 +306,11 @@ const actualizarReclamo = async (req, res) => {
       return res.status(404).json({ error: 'Reclamo no encontrado.' });
     }
     const registroOriginal = originalRes.rows[0];
+
+    if (req.user.rol === 'Asesor' && registroOriginal.usuario_id !== req.user.id) {
+      return res.status(403).json({ error: 'No tiene autorización para modificar reclamos registrados por otro asesor.' });
+    }
+
     const clienteAValidar = numero_cliente ? numero_cliente.trim() : registroOriginal.numero_cliente;
     const sucursalAValidar = sucursal_id ? parseInt(sucursal_id, 10) : registroOriginal.sucursal_id;
     const checkExistente = await pool.query(`

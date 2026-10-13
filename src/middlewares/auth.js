@@ -9,7 +9,11 @@ const verifyToken = async (req, res, next) => {
     }
 
     const token = authHeader.startsWith('Bearer ') ? authHeader.slice(7) : authHeader;
-    const decoded = jwt.verify(token, process.env.JWT_SECRET || 'reclamos_jwt_super_secret_key_2026');
+    const jwtSecret = process.env.JWT_SECRET;
+    if (!jwtSecret && process.env.NODE_ENV === 'production') {
+      return res.status(500).json({ error: 'Configuración de seguridad del servidor inválida.' });
+    }
+    const decoded = jwt.verify(token, jwtSecret || 'reclamos_jwt_super_secret_key_2026');
 
     const result = await pool.query(
       'SELECT id, nombre_completo, documento, usuario, rol, foto_perfil, activo FROM usuarios WHERE id = $1',

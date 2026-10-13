@@ -67,6 +67,7 @@ function generateZeusDocsPDF() {
     { mod: 'Virtualización y Aislamiento', desc: 'Docker Desktop & Docker Compose (servicios app y db desacoplados en red bridge interna).' },
     { mod: 'Servidor y Runtime Backend', desc: 'Node.js v22 LTS y Express v5 modularizado en controladores, servicios y middlewares de seguridad.' },
     { mod: 'Criptografía y Sesiones', desc: 'Bcryptjs (hashing irreversible de 10 rondas) y JSON Web Tokens (JWT) para sesiones con expiración.' },
+    { mod: 'Hardening y Ciberseguridad', desc: 'Protección Helmet (cabeceras HTTP), Rate Limiting (express-rate-limit), RBAC estricto y escape XSS.' },
     { mod: 'Frontend SPA Corporativo', desc: 'Single Page Application pura sin dependencias pesadas: Vanilla JS modular, HTML5 semántico y CSS3.' },
     { mod: 'Reportes y Emisión Gráfica', desc: 'PDFKit para exportación en caliente de auditorías y dinámica; html2canvas para emisión de grillas.' },
     { mod: 'Paleta Visual y Accesibilidad', desc: 'Motor Light / Dark Mode nativo con paleta tech (#0487C4, #0427C4, #4104C4, #F1F5F8).' }
