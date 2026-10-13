@@ -1531,7 +1531,7 @@ const obtenerDinamicaSucursales = async (req, res) => {
     res.json(data);
   } catch (error) {
     console.error('Error al obtener dinámica de sucursales:', error);
-    res.status(500).json({ error: 'Error al procesar la dinámica de actividades por sucursal.' });
+    res.status(500).json({ error: error.message || 'Error al procesar la dinámica de actividades por sucursal.' });
   }
 };
 

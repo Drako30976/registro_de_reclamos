@@ -138,7 +138,7 @@ const crearLlamada = async (req, res) => {
     });
   } catch (error) {
     console.error('Error al crear llamada:', error);
-    res.status(500).json({ error: 'Error al registrar la llamada.' });
+    res.status(500).json({ error: error.message || 'Error al registrar la llamada.' });
   }
 };
 
