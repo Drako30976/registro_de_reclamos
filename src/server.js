@@ -16,6 +16,7 @@ const auditoriasRoutes = require('./routes/auditorias.routes');
 const llamadasRoutes = require('./routes/llamadas.routes');
 const canalesRoutes = require('./routes/canales.routes');
 const { initCanalesTables } = require('./services/canalesSeed');
+const { migrateDatabase } = require('./services/dbMigrations');
 
 const helmet = require('helmet');
 
@@ -86,6 +87,7 @@ app.listen(PORT, async () => {
   try {
     const res = await pool.query('SELECT current_database(), current_user');
     console.log(` Conexión a PostgreSQL confirmada: BD '${res.rows[0].current_database}' con usuario '${res.rows[0].current_user}'`);
+    await migrateDatabase();
     await initCanalesTables();
   } catch (err) {
     console.error(` Error conectando a PostgreSQL:`, err.message);
