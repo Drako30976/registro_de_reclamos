@@ -83,7 +83,8 @@ const canalesController = {
     }
 
     if (!codigo) {
-      codigo = nombre.toLowerCase().trim().replace(/[^a-z0-9]/g, '_');
+      const clean = nombre.toLowerCase().trim().replace(/[^a-z0-9]/g, '_').replace(/_+/g, '_');
+      codigo = `${clean}_${Date.now().toString().slice(-4)}`;
     }
 
     try {
@@ -99,7 +100,7 @@ const canalesController = {
       res.status(201).json(result.rows[0]);
     } catch (error) {
       if (error.code === '23505') {
-        return res.status(400).json({ error: 'Ya existe una sucursal con ese código identificador' });
+        return res.status(400).json({ error: 'Ya existe una sucursal con ese nombre o identificador' });
       }
       res.status(500).json({ error: 'Error al crear sucursal', details: error.message });
     }

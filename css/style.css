@@ -2913,4 +2913,47 @@ body {
   background: #131B2E;
 }
 
+.canales-section-separator {
+  display: flex;
+  align-items: center;
+  margin: 1.5rem 0 1rem 0;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid var(--border-subtle);
+}
+
+.canales-section-separator h4 {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--primary);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.actions-cell-group {
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.5rem;
+}
+
+.action-divider-line {
+  display: inline-block;
+  width: 1px;
+  height: 18px;
+  background-color: var(--border-color);
+  margin: 0 0.15rem;
+}
+
+[data-theme="dark"] .canales-section-separator {
+  border-bottom-color: #1E293B;
+}
+
+[data-theme="dark"] .action-divider-line {
+  background-color: #334155;
+}
+
 

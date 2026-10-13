@@ -2498,7 +2498,7 @@
 
         <div id="canales-edicion-sec-sucursales">
           <div class="card p-3 mb-4">
-            <h4 class="mb-3 font-md">Registrar / Modificar Sucursal</h4>
+            <h4 class="mb-3 font-md">➕ Crear o Modificar Sucursal</h4>
             <form id="form-canal-sucursal" class="filter-bar-grid">
               <input type="hidden" id="canal-sucursal-id">
               <div class="filter-group">
@@ -2513,15 +2513,15 @@
                 <label for="canal-sucursal-provincia">Provincia</label>
                 <input type="text" id="canal-sucursal-provincia" placeholder="Ej: Tucumán">
               </div>
-              <div class="filter-group">
-                <label for="canal-sucursal-codigo">Identificador / Slug</label>
-                <input type="text" id="canal-sucursal-codigo" placeholder="Ej: providers">
-              </div>
               <div class="filter-group" style="align-self: flex-end; display: flex; gap: 0.5rem;">
                 <button type="submit" id="btn-guardar-sucursal" class="btn btn-primary">Crear Sucursal</button>
                 <button type="button" class="btn btn-outline-secondary" onclick="CanalesModule.limpiarFormSucursal()">Limpiar</button>
               </div>
             </form>
+          </div>
+
+          <div class="canales-section-separator">
+            <h4>🏢 Listado de Sucursales Registradas</h4>
           </div>
 
           <div class="table-responsive">
@@ -2543,7 +2543,7 @@
 
         <div id="canales-edicion-sec-grillas" class="hidden">
           <div class="card p-3 mb-4">
-            <h4 class="mb-3 font-md">Registrar / Modificar Grilla</h4>
+            <h4 class="mb-3 font-md">➕ Crear o Modificar Grilla</h4>
             <form id="form-canal-grilla" class="filter-bar-grid">
               <input type="hidden" id="canal-grilla-id">
               <div class="filter-group">
@@ -2567,6 +2567,10 @@
                 <button type="button" class="btn btn-outline-secondary" onclick="CanalesModule.limpiarFormGrilla()">Limpiar</button>
               </div>
             </form>
+          </div>
+
+          <div class="canales-section-separator">
+            <h4>📺 Listado de Grillas Existentes</h4>
           </div>
 
           <div class="flex-row justify-between align-center mb-3">
@@ -2595,7 +2599,7 @@
 
         <div id="canales-edicion-sec-canales" class="hidden">
           <div class="card p-3 mb-4">
-            <h4 class="mb-3 font-md">Registrar / Modificar Canal</h4>
+            <h4 class="mb-3 font-md">➕ Crear o Modificar Canal</h4>
             <form id="form-canal-item">
               <input type="hidden" id="canal-item-id">
               <div class="filter-bar-grid mb-3">
@@ -2638,6 +2642,10 @@
                 <button type="button" class="btn btn-outline-secondary" onclick="CanalesModule.limpiarFormCanal()">Limpiar</button>
               </div>
             </form>
+          </div>
+
+          <div class="canales-section-separator">
+            <h4>📡 Canales Configurados en la Grilla</h4>
           </div>
 
           <div class="filter-bar-grid mb-3">

@@ -522,8 +522,11 @@ const CanalesModule = {
         <td>${s.provincia || '-'}</td>
         <td><span class="badge badge-secondary">${(s.grillas || []).length} grillas</span></td>
         <td class="text-right">
-          <button type="button" class="btn btn-sm btn-outline-primary mr-1" onclick="CanalesModule.cargarEdicionSucursal(${s.id})">✏️ Editar</button>
-          <button type="button" class="btn btn-sm btn-outline-danger" onclick="CanalesModule.eliminarSucursal(${s.id})">🗑️ Borrar</button>
+          <div class="actions-cell-group">
+            <button type="button" class="btn btn-sm btn-outline-primary" onclick="CanalesModule.cargarEdicionSucursal(${s.id})">✏️ Editar</button>
+            <span class="action-divider-line"></span>
+            <button type="button" class="btn btn-sm btn-outline-danger" onclick="CanalesModule.eliminarSucursal(${s.id})">🗑️ Borrar</button>
+          </div>
         </td>
       `;
       tbody.appendChild(tr);
@@ -538,7 +541,6 @@ const CanalesModule = {
     document.getElementById('canal-sucursal-nombre').value = s.nombre;
     document.getElementById('canal-sucursal-localidad').value = s.localidad || '';
     document.getElementById('canal-sucursal-provincia').value = s.provincia || '';
-    document.getElementById('canal-sucursal-codigo').value = s.codigo || '';
 
     const btnSubmit = document.getElementById('btn-guardar-sucursal');
     if (btnSubmit) btnSubmit.textContent = 'Actualizar Sucursal';
@@ -558,8 +560,7 @@ const CanalesModule = {
     const payload = {
       nombre: document.getElementById('canal-sucursal-nombre').value,
       localidad: document.getElementById('canal-sucursal-localidad').value,
-      provincia: document.getElementById('canal-sucursal-provincia').value,
-      codigo: document.getElementById('canal-sucursal-codigo').value
+      provincia: document.getElementById('canal-sucursal-provincia').value
     };
 
     try {
@@ -606,8 +607,11 @@ const CanalesModule = {
           <td>${g.nombre}</td>
           <td>${g.total_canales || 0}</td>
           <td class="text-right">
-            <button type="button" class="btn btn-sm btn-outline-primary mr-1" onclick="CanalesModule.cargarEdicionGrilla(${g.id}, ${s.id})">✏️ Editar</button>
-            <button type="button" class="btn btn-sm btn-outline-danger" onclick="CanalesModule.eliminarGrilla(${g.id})">🗑️ Borrar</button>
+            <div class="actions-cell-group">
+              <button type="button" class="btn btn-sm btn-outline-primary" onclick="CanalesModule.cargarEdicionGrilla(${g.id}, ${s.id})">✏️ Editar</button>
+              <span class="action-divider-line"></span>
+              <button type="button" class="btn btn-sm btn-outline-danger" onclick="CanalesModule.eliminarGrilla(${g.id})">🗑️ Borrar</button>
+            </div>
           </td>
         `;
         tbody.appendChild(tr);
@@ -705,8 +709,11 @@ const CanalesModule = {
           <td>${c.nombre}</td>
           <td><small class="text-muted">${c.categoria || '-'}</small></td>
           <td class="text-right">
-            <button type="button" class="btn btn-sm btn-outline-primary mr-1" onclick="CanalesModule.cargarEdicionCanal(${c.id}, ${c.numero}, '${c.nombre.replace(/'/g, "\\'")}', '${c.logo || ''}', '${c.categoria || ''}', ${grillaId})">✏️ Editar</button>
-            <button type="button" class="btn btn-sm btn-outline-danger" onclick="CanalesModule.eliminarCanal(${c.id})">🗑️ Borrar</button>
+            <div class="actions-cell-group">
+              <button type="button" class="btn btn-sm btn-outline-primary" onclick="CanalesModule.cargarEdicionCanal(${c.id}, ${c.numero}, '${c.nombre.replace(/'/g, "\\'")}', '${c.logo || ''}', '${c.categoria || ''}', ${grillaId})">✏️ Editar</button>
+              <span class="action-divider-line"></span>
+              <button type="button" class="btn btn-sm btn-outline-danger" onclick="CanalesModule.eliminarCanal(${c.id})">🗑️ Borrar</button>
+            </div>
           </td>
         `;
         tbody.appendChild(tr);
