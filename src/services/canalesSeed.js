@@ -46,7 +46,9 @@ async function initCanalesTables() {
 }
 
 async function seedFromGuiaProviders() {
-  const jsonPath = 'C:/Users/Mauro/Desktop/Proyecto/Guia_Providers/data/data.json';
+  const localJsonPath = path.join(__dirname, '../../data_canales_seed.json');
+  const hostJsonPath = 'C:/Users/Mauro/Desktop/Proyecto/Guia_Providers/data/data.json';
+  const jsonPath = fs.existsSync(localJsonPath) ? localJsonPath : hostJsonPath;
   if (!fs.existsSync(jsonPath)) return;
 
   const rawData = fs.readFileSync(jsonPath, 'utf-8');

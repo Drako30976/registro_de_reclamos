@@ -1,6 +1,15 @@
 const pool = require('../config/db');
 const { registrarAuditoria } = require('../middlewares/audit');
 
+const normalizarFecha = (val) => {
+  if (!val || typeof val !== 'string') return val;
+  const match = val.trim().match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
+  if (match) {
+    return `${match[3]}-${match[2].padStart(2, '0')}-${match[1].padStart(2, '0')}`;
+  }
+  return val.trim();
+};
+
 const crearReclamo = async (req, res) => {
   try {
     const {
@@ -184,15 +193,15 @@ const getReclamos = async (req, res) => {
 
     if (fecha) {
       query += ` AND DATE(r.fecha) = $${paramIndex++}`;
-      values.push(fecha);
+      values.push(normalizarFecha(fecha));
     }
     if (fecha_desde) {
       query += ` AND DATE(r.fecha) >= $${paramIndex++}`;
-      values.push(fecha_desde);
+      values.push(normalizarFecha(fecha_desde));
     }
     if (fecha_hasta) {
       query += ` AND DATE(r.fecha) <= $${paramIndex++}`;
-      values.push(fecha_hasta);
+      values.push(normalizarFecha(fecha_hasta));
     }
     if (asesor_id) {
       query += ` AND r.usuario_id = $${paramIndex++}`;

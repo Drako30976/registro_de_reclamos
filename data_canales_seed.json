@@ -1,0 +1,6767 @@
+{
+    "providers": {
+        "id": "providers",
+        "nombre": "Providers",
+        "localidad": "San Miguel de Tucumán",
+        "provincia": "Tucumán",
+        "grillasDisponibles": [
+            "digital",
+            "analogica"
+        ],
+        "totalCanales": {
+            "digital": 92,
+            "analogica": 59
+        },
+        "digital": [
+            {
+                "canal": 103,
+                "nombre": "TN",
+                "logo": "assets/tn.png"
+            },
+            {
+                "canal": 104,
+                "nombre": "A24",
+                "logo": "assets/a24.png"
+            },
+            {
+                "canal": 105,
+                "nombre": "C5N",
+                "logo": "assets/c5n.png"
+            },
+            {
+                "canal": 106,
+                "nombre": "T+",
+                "logo": "assets/t+.png"
+            },
+            {
+                "canal": 107,
+                "nombre": "CRONICA TV",
+                "logo": "assets/cronica.png"
+            },
+            {
+                "canal": 108,
+                "nombre": "26 TV",
+                "logo": "assets/canal26.jpg"
+            },
+            {
+                "canal": 109,
+                "nombre": "LA NACION +",
+                "logo": "assets/ln+.jpg"
+            },
+            {
+                "canal": 110,
+                "nombre": "IP NOTICIAS",
+                "logo": "assets/ipnoticias.jpg"
+            },
+            {
+                "canal": 119,
+                "nombre": "DIPUTADOS TV",
+                "logo": "assets/diputadostv.webp"
+            },
+            {
+                "canal": 120,
+                "nombre": "NET TV",
+                "logo": "assets/nettv.png"
+            },
+            {
+                "canal": 121,
+                "nombre": "AMERICA",
+                "logo": "assets/america.jpg"
+            },
+            {
+                "canal": 122,
+                "nombre": "TV PUBLICA",
+                "logo": "assets/tvpublica.jpg"
+            },
+            {
+                "canal": 123,
+                "nombre": "EL NUEVE",
+                "logo": "assets/elnueve.png"
+            },
+            {
+                "canal": 124,
+                "nombre": "TELEFE",
+                "logo": "assets/telefe.jpeg"
+            },
+            {
+                "canal": 125,
+                "nombre": "CANAL 10 TUC",
+                "logo": "assets/10tucuman.jpg"
+            },
+            {
+                "canal": 126,
+                "nombre": "CANAL 8 TUC",
+                "logo": "assets/canal8.jpg"
+            },
+            {
+                "canal": 128,
+                "nombre": "MIXTV",
+                "logo": "assets/mixtv.png"
+            },
+            {
+                "canal": 129,
+                "nombre": "KZO",
+                "logo": "assets/kzo.jpg"
+            },
+            {
+                "canal": 137,
+                "nombre": "RURAL",
+                "logo": "assets/larural.jpg"
+            },
+            {
+                "canal": 138,
+                "nombre": "CHACRA TV",
+                "logo": "assets/chacratv.jpg"
+            },
+            {
+                "canal": 139,
+                "nombre": "ARGENTINISIMA",
+                "logo": "assets/argentinisima.jpg"
+            },
+            {
+                "canal": 141,
+                "nombre": "AMERICA SPORTS",
+                "logo": "assets/americasports.png"
+            },
+            {
+                "canal": 142,
+                "nombre": "TyC SPORTS",
+                "logo": "assets/tycsport.jpg"
+            },
+            {
+                "canal": 143,
+                "nombre": "ESPN",
+                "logo": "assets/espn.png"
+            },
+            {
+                "canal": 144,
+                "nombre": "ESPN2",
+                "logo": "assets/espn2.png"
+            },
+            {
+                "canal": 145,
+                "nombre": "ESPN3",
+                "logo": "assets/espn3.jpg"
+            },
+            {
+                "canal": 146,
+                "nombre": "FOXSPORTS",
+                "logo": "assets/foxsport.webp"
+            },
+            {
+                "canal": 147,
+                "nombre": "FOXSPORTS2",
+                "logo": "assets/foxsports2.png"
+            },
+            {
+                "canal": 148,
+                "nombre": "FOXSPORTS3",
+                "logo": "assets/foxsports3.png"
+            },
+            {
+                "canal": 150,
+                "nombre": "ESPN PREMIUM",
+                "logo": "assets/espnpremium.webp"
+            },
+            {
+                "canal": 151,
+                "nombre": "TNT SPORTS",
+                "logo": "assets/tntsports.webp"
+            },
+            {
+                "canal": 152,
+                "nombre": "DSPORTS",
+                "logo": "assets/dsports.jpg"
+            },
+            {
+                "canal": 153,
+                "nombre": "DSPORTS2",
+                "logo": "assets/dsports2.png"
+            },
+            {
+                "canal": 160,
+                "nombre": "PAKA PAKA",
+                "logo": "assets/pakapaka.png"
+            },
+            {
+                "canal": 161,
+                "nombre": "DISNEY",
+                "logo": "assets/disney.png"
+            },
+            {
+                "canal": 162,
+                "nombre": "DISNEY JR",
+                "logo": "assets/disneyjr.png"
+            },
+            {
+                "canal": 164,
+                "nombre": "KIDS",
+                "logo": "assets/discoverykids.webp"
+            },
+            {
+                "canal": 165,
+                "nombre": "CTN",
+                "logo": "assets/ctn.jpg"
+            },
+            {
+                "canal": 166,
+                "nombre": "CARTOONITO",
+                "logo": "assets/cartoonito.png"
+            },
+            {
+                "canal": 168,
+                "nombre": "NICK",
+                "logo": "assets/nick.png"
+            },
+            {
+                "canal": 169,
+                "nombre": "NICK JR",
+                "logo": "assets/nickjr.webp"
+            },
+            {
+                "canal": 170,
+                "nombre": "DREAMWORD",
+                "logo": "assets/dreamword.jpg"
+            },
+            {
+                "canal": 181,
+                "nombre": "CINECANAL",
+                "logo": "assets/cinecanal.png"
+            },
+            {
+                "canal": 182,
+                "nombre": "START",
+                "logo": "assets/star.png"
+            },
+            {
+                "canal": 183,
+                "nombre": "FX",
+                "logo": "assets/fx.png"
+            },
+            {
+                "canal": 184,
+                "nombre": "SPACE",
+                "logo": "assets/space.jpg"
+            },
+            {
+                "canal": 185,
+                "nombre": "TNT",
+                "logo": "assets/tnt.webp"
+            },
+            {
+                "canal": 186,
+                "nombre": "WARNER",
+                "logo": "assets/warner.webp"
+            },
+            {
+                "canal": 188,
+                "nombre": "GOLDEN CHANNEL",
+                "logo": "assets/golden.png"
+            },
+            {
+                "canal": 189,
+                "nombre": "SONY MOVIE",
+                "logo": "assets/sonymovie.png"
+            },
+            {
+                "canal": 190,
+                "nombre": "PARAMOUNT",
+                "logo": "assets/paramount.webp"
+            },
+            {
+                "canal": 192,
+                "nombre": "EUROPA_EUROPA",
+                "logo": "assets/europaeuropa.webp"
+            },
+            {
+                "canal": 193,
+                "nombre": "AMC",
+                "logo": "assets/amc.webp"
+            },
+            {
+                "canal": 194,
+                "nombre": "TCM",
+                "logo": "assets/tcm.png"
+            },
+            {
+                "canal": 200,
+                "nombre": "TLC",
+                "logo": "assets/tlc.jpg"
+            },
+            {
+                "canal": 202,
+                "nombre": "TNT NOVELAS",
+                "logo": "assets/tntnovelas.png"
+            },
+            {
+                "canal": 203,
+                "nombre": "UNIVERSAL",
+                "logo": "assets/universal.png"
+            },
+            {
+                "canal": 204,
+                "nombre": "AXN",
+                "logo": "assets/axn.jpg"
+            },
+            {
+                "canal": 205,
+                "nombre": "SONY",
+                "logo": "assets/sony.webp"
+            },
+            {
+                "canal": 206,
+                "nombre": "START TVE",
+                "logo": "assets/startve.webp"
+            },
+            {
+                "canal": 207,
+                "nombre": "TNT SERIES",
+                "logo": "assets/tntseries.jpg"
+            },
+            {
+                "canal": 208,
+                "nombre": "LIFETIME",
+                "logo": "assets/lifetime.png"
+            },
+            {
+                "canal": 210,
+                "nombre": "TELENOVELAS",
+                "logo": "assets/tlnovelas.png"
+            },
+            {
+                "canal": 211,
+                "nombre": "COMEDIA CENTRAL",
+                "logo": "assets/comedycentral.png"
+            },
+            {
+                "canal": 221,
+                "nombre": "DISCOVERY CH",
+                "logo": "assets/discovery.png"
+            },
+            {
+                "canal": 222,
+                "nombre": "NATGEO",
+                "logo": "assets/nationalgeographic.png"
+            },
+            {
+                "canal": 223,
+                "nombre": "ANIMAL PLANET",
+                "logo": "assets/animalplanet.png"
+            },
+            {
+                "canal": 224,
+                "nombre": "HISTORY",
+                "logo": "assets/history.png"
+            },
+            {
+                "canal": 225,
+                "nombre": "CGTN DOCUMENTARY",
+                "logo": "assets/cgtnespa.webp"
+            },
+            {
+                "canal": 226,
+                "nombre": "ID",
+                "logo": "assets/discoveryid.png"
+            },
+            {
+                "canal": 227,
+                "nombre": "H&H",
+                "logo": "assets/hyh.webp"
+            },
+            {
+                "canal": 228,
+                "nombre": "WORLD",
+                "logo": "assets/discoveryworld.png"
+            },
+            {
+                "canal": 229,
+                "nombre": "SCIENCE",
+                "logo": "assets/science.webp"
+            },
+            {
+                "canal": 231,
+                "nombre": "HGLA",
+                "logo": "assets/discoveryhgtv.webp"
+            },
+            {
+                "canal": 232,
+                "nombre": "TURBO",
+                "logo": "assets/turbo.png"
+            },
+            {
+                "canal": 240,
+                "nombre": "TV ESPAÑOLA",
+                "logo": "assets/tveahd.webp"
+            },
+            {
+                "canal": 241,
+                "nombre": "CNN",
+                "logo": "assets/cnn.png"
+            },
+            {
+                "canal": 242,
+                "nombre": "ESTRELLAS",
+                "logo": "assets/canaldelasestrellas.png"
+            },
+            {
+                "canal": 244,
+                "nombre": "HISPAN TV",
+                "logo": "assets/hispantv.png"
+            },
+            {
+                "canal": 246,
+                "nombre": "CGTN",
+                "logo": "assets/cgtnespa.webp"
+            },
+            {
+                "canal": 248,
+                "nombre": "RT",
+                "logo": "assets/rt.webp"
+            },
+            {
+                "canal": 250,
+                "nombre": "RAI",
+                "logo": "assets/rai.webp"
+            },
+            {
+                "canal": 260,
+                "nombre": "QUIERO MUSICA",
+                "logo": "assets/quiero.webp"
+            },
+            {
+                "canal": 262,
+                "nombre": "HTV",
+                "logo": "assets/htv.webp"
+            },
+            {
+                "canal": 265,
+                "nombre": "ENCUENTRO",
+                "logo": "assets/encuentro.webp"
+            },
+            {
+                "canal": 267,
+                "nombre": "ADULT SWIM",
+                "logo": "assets/adultswim.webp"
+            },
+            {
+                "canal": 269,
+                "nombre": "VOLVER",
+                "logo": "assets/volver.webp"
+            },
+            {
+                "canal": 271,
+                "nombre": "FOOD",
+                "logo": "assets/food.webp"
+            },
+            {
+                "canal": 272,
+                "nombre": "GOURMET",
+                "logo": "assets/elgourmet.png"
+            },
+            {
+                "canal": 273,
+                "nombre": "GARAGE",
+                "logo": "assets/elgarage.webp"
+            },
+            {
+                "canal": 278,
+                "nombre": "EWTN",
+                "logo": "assets/ewtn.png"
+            },
+            {
+                "canal": 280,
+                "nombre": "CANAL LUZ",
+                "logo": "assets/canalluz.png"
+            }
+        ],
+        "analogica": [
+            {
+                "canal": 3,
+                "nombre": "TN",
+                "logo": "assets/tn.png"
+            },
+            {
+                "canal": 4,
+                "nombre": "A24",
+                "logo": "assets/a24.png"
+            },
+            {
+                "canal": 5,
+                "nombre": "C5N",
+                "logo": "assets/c5n.png"
+            },
+            {
+                "canal": 6,
+                "nombre": "T+",
+                "logo": "assets/t+.png"
+            },
+            {
+                "canal": 7,
+                "nombre": "CRONICA TV",
+                "logo": "assets/cronica.png"
+            },
+            {
+                "canal": 8,
+                "nombre": "CANAL 26",
+                "logo": "assets/canal26.jpg"
+            },
+            {
+                "canal": 9,
+                "nombre": "AMERICA BS AS",
+                "logo": "assets/america.jpg"
+            },
+            {
+                "canal": 10,
+                "nombre": "CANAL 8 TUCUMAN",
+                "logo": "assets/canal8.jpg"
+            },
+            {
+                "canal": 11,
+                "nombre": "TV PUBLICA",
+                "logo": "assets/tvpublica.jpg"
+            },
+            {
+                "canal": 12,
+                "nombre": "CANAL 10 TUCUMAN",
+                "logo": "assets/10tucuman.jpg"
+            },
+            {
+                "canal": 13,
+                "nombre": "EL NUEVE",
+                "logo": "assets/elnueve.png"
+            },
+            {
+                "canal": 14,
+                "nombre": "TyC SPORTS",
+                "logo": "assets/tycsport.jpg"
+            },
+            {
+                "canal": 15,
+                "nombre": "FOX SPORTS",
+                "logo": "assets/foxsport.webp"
+            },
+            {
+                "canal": 16,
+                "nombre": "FOX SPORTS 2",
+                "logo": "assets/foxsports2.png"
+            },
+            {
+                "canal": 17,
+                "nombre": "ESPN",
+                "logo": "assets/espn.png"
+            },
+            {
+                "canal": 18,
+                "nombre": "ESPN2",
+                "logo": "assets/espn2.png"
+            },
+            {
+                "canal": 19,
+                "nombre": "DISCOVERY KIDS",
+                "logo": "assets/discoverykids.webp"
+            },
+            {
+                "canal": 20,
+                "nombre": "DSPORTS",
+                "logo": "assets/dsports.jpg"
+            },
+            {
+                "canal": 21,
+                "nombre": "DSPORTS 2",
+                "logo": "assets/dsports2.png"
+            },
+            {
+                "canal": 22,
+                "nombre": "DISNEY",
+                "logo": "assets/disney.png"
+            },
+            {
+                "canal": 23,
+                "nombre": "CTN",
+                "logo": "assets/ctn.jpg"
+            },
+            {
+                "canal": 24,
+                "nombre": "PAKA PAKA",
+                "logo": "assets/pakapaka.png"
+            },
+            {
+                "canal": 25,
+                "nombre": "DISNEY JUNIOR",
+                "logo": "assets/disneyjr.png"
+            },
+            {
+                "canal": 26,
+                "nombre": "CARTOONITO",
+                "logo": "assets/cartoonito.png"
+            },
+            {
+                "canal": 27,
+                "nombre": "COMEDIA CENTRAL",
+                "logo": "assets/comedycentral.png"
+            },
+            {
+                "canal": 28,
+                "nombre": "FX",
+                "logo": "assets/fx.png"
+            },
+            {
+                "canal": 29,
+                "nombre": "TNT_Series",
+                "logo": "assets/tntseries.jpg"
+            },
+            {
+                "canal": 30,
+                "nombre": "STAR CHANNEL",
+                "logo": "assets/star.png"
+            },
+            {
+                "canal": 31,
+                "nombre": "STAR TVEA (antes FX MOVIE)",
+                "logo": "assets/startve.webp"
+            },
+            {
+                "canal": 32,
+                "nombre": "UNIVERSAL CHANNEL HD",
+                "logo": "assets/universal.png"
+            },
+            {
+                "canal": 33,
+                "nombre": "TNT",
+                "logo": "assets/tnt.webp"
+            },
+            {
+                "canal": 34,
+                "nombre": "CINECANAL",
+                "logo": "assets/cinecanal.png"
+            },
+            {
+                "canal": 35,
+                "nombre": "SPACE HD",
+                "logo": "assets/space.jpg"
+            },
+            {
+                "canal": 36,
+                "nombre": "EUROPA EUROPA",
+                "logo": "assets/europaeuropa.webp"
+            },
+            {
+                "canal": 37,
+                "nombre": "AMC",
+                "logo": "assets/amc.webp"
+            },
+            {
+                "canal": 38,
+                "nombre": "GOLDEN CHANNEL",
+                "logo": "assets/golden.png"
+            },
+            {
+                "canal": 39,
+                "nombre": "TNT NOVELAS",
+                "logo": "assets/tntnovelas.png"
+            },
+            {
+                "canal": 40,
+                "nombre": "FILM&ARTS",
+                "logo": "assets/filmandarts.png"
+            },
+            {
+                "canal": 41,
+                "nombre": "VOLVER",
+                "logo": "assets/volver.webp"
+            },
+            {
+                "canal": 42,
+                "nombre": "TELENOVELAS",
+                "logo": "assets/tlnovelas.png"
+            },
+            {
+                "canal": 43,
+                "nombre": "CANAL DE LAS ESTRELLAS",
+                "logo": "assets/canaldelasestrellas.png"
+            },
+            {
+                "canal": 44,
+                "nombre": "GOURMET",
+                "logo": "assets/elgourmet.png"
+            },
+            {
+                "canal": 45,
+                "nombre": "H&H",
+                "logo": "assets/hyh.webp"
+            },
+            {
+                "canal": 46,
+                "nombre": "MAGAZINE",
+                "logo": "assets/magazine.webp"
+            },
+            {
+                "canal": 47,
+                "nombre": "TLC",
+                "logo": "assets/tlc.jpg"
+            },
+            {
+                "canal": 48,
+                "nombre": "TELESUR",
+                "logo": "assets/telesur.webp"
+            },
+            {
+                "canal": 49,
+                "nombre": "TVE",
+                "logo": "assets/tveahd.webp"
+            },
+            {
+                "canal": 50,
+                "nombre": "CNN",
+                "logo": "assets/cnn.png"
+            },
+            {
+                "canal": 51,
+                "nombre": "QUIERO MUSICA",
+                "logo": "assets/quiero.webp"
+            },
+            {
+                "canal": 52,
+                "nombre": "DISCOVERY",
+                "logo": "assets/discovery.png"
+            },
+            {
+                "canal": 53,
+                "nombre": "NAT GEO",
+                "logo": "assets/nationalgeographic.png"
+            },
+            {
+                "canal": 54,
+                "nombre": "ANIMAL PLANET",
+                "logo": "assets/animalplanet.png"
+            },
+            {
+                "canal": 55,
+                "nombre": "DISCOVERY ID",
+                "logo": "assets/discoveryid.png"
+            },
+            {
+                "canal": 56,
+                "nombre": "HISTORY",
+                "logo": "assets/history.png"
+            },
+            {
+                "canal": 57,
+                "nombre": "TURBO",
+                "logo": "assets/turbo.png"
+            },
+            {
+                "canal": 58,
+                "nombre": "ENCUENTRO",
+                "logo": "assets/encuentro.webp"
+            },
+            {
+                "canal": 59,
+                "nombre": "CGTN",
+                "logo": "assets/cgtnespa.webp"
+            },
+            {
+                "canal": 60,
+                "nombre": "EWTN",
+                "logo": "assets/ewtn.png"
+            },
+            {
+                "canal": 61,
+                "nombre": "ENLACE",
+                "logo": "assets/enlace.png"
+            }
+        ],
+        "pdf": {
+            "digital": "files/Grilla_Dig_PROVIDERS_22-7-26.pdf",
+            "analogica": "files/Grilla Anal Providers-LTC-TCC 27-7-26.pdf"
+        },
+        "imagen_grilla": {
+            "digital": "grillas_images/grilla_providers_digital.jpg",
+            "analogica": "grillas_images/grilla_providers_analogica.jpg"
+        }
+    },
+    "tafi_cable": {
+        "id": "tafi_cable",
+        "nombre": "Tafí Cable",
+        "localidad": "Tafí del Valle",
+        "provincia": "Tucumán",
+        "grillasDisponibles": [
+            "digital",
+            "analogica"
+        ],
+        "totalCanales": {
+            "digital": 92,
+            "analogica": 59
+        },
+        "digital": [
+            {
+                "canal": 101,
+                "nombre": "RADIO LAS TALITAS",
+                "logo": "assets/radiolastalitas.png"
+            },
+            {
+                "canal": 102,
+                "nombre": "CANAL 2 TAFI VIEJO",
+                "logo": "assets/canal2tafiviejo.jpg"
+            },
+            {
+                "canal": 103,
+                "nombre": "TN",
+                "logo": "assets/tn.png"
+            },
+            {
+                "canal": 104,
+                "nombre": "A24",
+                "logo": "assets/a24.png"
+            },
+            {
+                "canal": 105,
+                "nombre": "C5N",
+                "logo": "assets/c5n.png"
+            },
+            {
+                "canal": 106,
+                "nombre": "T+",
+                "logo": "assets/t+.png"
+            },
+            {
+                "canal": 107,
+                "nombre": "CRONICA TV",
+                "logo": "assets/cronica.png"
+            },
+            {
+                "canal": 108,
+                "nombre": "26 TV",
+                "logo": "assets/canal26.jpg"
+            },
+            {
+                "canal": 109,
+                "nombre": "LA NACION +",
+                "logo": "assets/ln+.jpg"
+            },
+            {
+                "canal": 110,
+                "nombre": "IP NOTICIAS",
+                "logo": "assets/ipnoticias.jpg"
+            },
+            {
+                "canal": 111,
+                "nombre": "11CCC",
+                "logo": "assets/11ccc.jpg"
+            },
+            {
+                "canal": 112,
+                "nombre": "12CCC",
+                "logo": "assets/12ccc.jpg"
+            },
+            {
+                "canal": 113,
+                "nombre": "13CCC",
+                "logo": "assets/13ccc.webp"
+            },
+            {
+                "canal": 114,
+                "nombre": "14CCC",
+                "logo": "assets/14ccc.jpg"
+            },
+            {
+                "canal": 119,
+                "nombre": "DIPUTADOS TV",
+                "logo": "assets/diputadostv.webp"
+            },
+            {
+                "canal": 120,
+                "nombre": "NET TV",
+                "logo": "assets/nettv.png"
+            },
+            {
+                "canal": 121,
+                "nombre": "AMERICA",
+                "logo": "assets/america.jpg"
+            },
+            {
+                "canal": 122,
+                "nombre": "TV PUBLICA",
+                "logo": "assets/tvpublica.jpg"
+            },
+            {
+                "canal": 123,
+                "nombre": "EL NUEVE",
+                "logo": "assets/elnueve.png"
+            },
+            {
+                "canal": 124,
+                "nombre": "TELEFE",
+                "logo": "assets/telefe.jpeg"
+            },
+            {
+                "canal": 125,
+                "nombre": "CANAL 10 TUC",
+                "logo": "assets/10tucuman.jpg"
+            },
+            {
+                "canal": 126,
+                "nombre": "CANAL 8 TUC",
+                "logo": "assets/canal8.jpg"
+            },
+            {
+                "canal": 128,
+                "nombre": "MIXTV",
+                "logo": "assets/mixtv.png"
+            },
+            {
+                "canal": 129,
+                "nombre": "KZO",
+                "logo": "assets/kzo.jpg"
+            },
+            {
+                "canal": 137,
+                "nombre": "RURAL",
+                "logo": "assets/larural.jpg"
+            },
+            {
+                "canal": 138,
+                "nombre": "CHACRA TV",
+                "logo": "assets/chacratv.jpg"
+            },
+            {
+                "canal": 139,
+                "nombre": "ARGENTINISIMA",
+                "logo": "assets/argentinisima.jpg"
+            },
+            {
+                "canal": 141,
+                "nombre": "AMERICA SPORTS",
+                "logo": "assets/americasports.png"
+            },
+            {
+                "canal": 142,
+                "nombre": "TyC SPORTS",
+                "logo": "assets/tycsport.jpg"
+            },
+            {
+                "canal": 143,
+                "nombre": "ESPN",
+                "logo": "assets/espn.png"
+            },
+            {
+                "canal": 144,
+                "nombre": "ESPN2",
+                "logo": "assets/espn2.png"
+            },
+            {
+                "canal": 145,
+                "nombre": "ESPN3",
+                "logo": "assets/espn3.jpg"
+            },
+            {
+                "canal": 146,
+                "nombre": "FOXSPORTS",
+                "logo": "assets/foxsport.webp"
+            },
+            {
+                "canal": 147,
+                "nombre": "FOXSPORTS2",
+                "logo": "assets/foxsports2.png"
+            },
+            {
+                "canal": 148,
+                "nombre": "FOXSPORTS3",
+                "logo": "assets/foxsports3.png"
+            },
+            {
+                "canal": 150,
+                "nombre": "ESPN PREMIUM",
+                "logo": "assets/espnpremium.webp"
+            },
+            {
+                "canal": 151,
+                "nombre": "TNT SPORTS",
+                "logo": "assets/tntsports.webp"
+            },
+            {
+                "canal": 152,
+                "nombre": "DSPORTS",
+                "logo": "assets/dsports.jpg"
+            },
+            {
+                "canal": 153,
+                "nombre": "DSPORTS2",
+                "logo": "assets/dsports2.png"
+            },
+            {
+                "canal": 160,
+                "nombre": "PAKA PAKA",
+                "logo": "assets/pakapaka.png"
+            },
+            {
+                "canal": 161,
+                "nombre": "DISNEY",
+                "logo": "assets/disney.png"
+            },
+            {
+                "canal": 162,
+                "nombre": "DISNEY JR",
+                "logo": "assets/disneyjr.png"
+            },
+            {
+                "canal": 164,
+                "nombre": "KIDS",
+                "logo": "assets/discoverykids.webp"
+            },
+            {
+                "canal": 165,
+                "nombre": "CTN",
+                "logo": "assets/ctn.jpg"
+            },
+            {
+                "canal": 166,
+                "nombre": "CARTOONITO",
+                "logo": "assets/cartoonito.png"
+            },
+            {
+                "canal": 168,
+                "nombre": "NICK",
+                "logo": "assets/nick.png"
+            },
+            {
+                "canal": 169,
+                "nombre": "NICK JR",
+                "logo": "assets/nickjr.webp"
+            },
+            {
+                "canal": 170,
+                "nombre": "DREAMWORD",
+                "logo": "assets/dreamword.jpg"
+            },
+            {
+                "canal": 181,
+                "nombre": "CINECANAL",
+                "logo": "assets/cinecanal.png"
+            },
+            {
+                "canal": 182,
+                "nombre": "START",
+                "logo": "assets/star.png"
+            },
+            {
+                "canal": 183,
+                "nombre": "FX",
+                "logo": "assets/fx.png"
+            },
+            {
+                "canal": 184,
+                "nombre": "SPACE",
+                "logo": "assets/space.jpg"
+            },
+            {
+                "canal": 185,
+                "nombre": "TNT",
+                "logo": "assets/tnt.webp"
+            },
+            {
+                "canal": 186,
+                "nombre": "WARNER",
+                "logo": "assets/warner.webp"
+            },
+            {
+                "canal": 188,
+                "nombre": "GOLDEN CHANNEL",
+                "logo": "assets/golden.png"
+            },
+            {
+                "canal": 189,
+                "nombre": "SONY MOVIE",
+                "logo": "assets/sonymovie.png"
+            },
+            {
+                "canal": 190,
+                "nombre": "PARAMOUNT",
+                "logo": "assets/paramount.webp"
+            },
+            {
+                "canal": 192,
+                "nombre": "EUROPA_EUROPA",
+                "logo": "assets/europaeuropa.webp"
+            },
+            {
+                "canal": 193,
+                "nombre": "AMC",
+                "logo": "assets/amc.webp"
+            },
+            {
+                "canal": 194,
+                "nombre": "TCM",
+                "logo": "assets/tcm.png"
+            },
+            {
+                "canal": 200,
+                "nombre": "TLC",
+                "logo": "assets/tlc.jpg"
+            },
+            {
+                "canal": 202,
+                "nombre": "TNT NOVELAS",
+                "logo": "assets/tntnovelas.png"
+            },
+            {
+                "canal": 203,
+                "nombre": "UNIVERSAL",
+                "logo": "assets/universal.png"
+            },
+            {
+                "canal": 204,
+                "nombre": "AXN",
+                "logo": "assets/axn.jpg"
+            },
+            {
+                "canal": 205,
+                "nombre": "SONY",
+                "logo": "assets/sony.webp"
+            },
+            {
+                "canal": 206,
+                "nombre": "START TVE",
+                "logo": "assets/startve.webp"
+            },
+            {
+                "canal": 207,
+                "nombre": "TNT SERIES",
+                "logo": "assets/tntseries.jpg"
+            },
+            {
+                "canal": 210,
+                "nombre": "TELENOVELAS",
+                "logo": "assets/tlnovelas.png"
+            },
+            {
+                "canal": 211,
+                "nombre": "COMEDIA CENTRAL",
+                "logo": "assets/comedycentral.png"
+            },
+            {
+                "canal": 221,
+                "nombre": "DISCOVERY CH",
+                "logo": "assets/discovery.png"
+            },
+            {
+                "canal": 222,
+                "nombre": "NATGEO",
+                "logo": "assets/nationalgeographic.png"
+            },
+            {
+                "canal": 223,
+                "nombre": "ANIMAL PLANET",
+                "logo": "assets/animalplanet.png"
+            },
+            {
+                "canal": 224,
+                "nombre": "HISTORY",
+                "logo": "assets/history.png"
+            },
+            {
+                "canal": 226,
+                "nombre": "ID",
+                "logo": "assets/discoveryid.png"
+            },
+            {
+                "canal": 227,
+                "nombre": "H&H",
+                "logo": "assets/hyh.webp"
+            },
+            {
+                "canal": 228,
+                "nombre": "WORLD",
+                "logo": "assets/discoveryworld.png"
+            },
+            {
+                "canal": 229,
+                "nombre": "SCIENCE",
+                "logo": "assets/science.webp"
+            },
+            {
+                "canal": 231,
+                "nombre": "HGLA",
+                "logo": "assets/discoveryhgtv.webp"
+            },
+            {
+                "canal": 232,
+                "nombre": "TURBO",
+                "logo": "assets/turbo.png"
+            },
+            {
+                "canal": 240,
+                "nombre": "TV ESPAÑOLA",
+                "logo": "assets/tveahd.webp"
+            },
+            {
+                "canal": 242,
+                "nombre": "ESTRELLAS",
+                "logo": "assets/canaldelasestrellas.png"
+            },
+            {
+                "canal": 246,
+                "nombre": "CGTN",
+                "logo": "assets/cgtnespa.webp"
+            },
+            {
+                "canal": 260,
+                "nombre": "QUIERO MUSICA",
+                "logo": "assets/quiero.webp"
+            },
+            {
+                "canal": 262,
+                "nombre": "HTV",
+                "logo": "assets/htv.webp"
+            },
+            {
+                "canal": 265,
+                "nombre": "ENCUENTRO",
+                "logo": "assets/encuentro.webp"
+            },
+            {
+                "canal": 267,
+                "nombre": "ADULT SWIM",
+                "logo": "assets/adultswim.webp"
+            },
+            {
+                "canal": 269,
+                "nombre": "VOLVER",
+                "logo": "assets/volver.webp"
+            },
+            {
+                "canal": 271,
+                "nombre": "FOOD",
+                "logo": "assets/food.webp"
+            },
+            {
+                "canal": 272,
+                "nombre": "GOURMET",
+                "logo": "assets/elgourmet.png"
+            },
+            {
+                "canal": 273,
+                "nombre": "GARAGE",
+                "logo": "assets/elgarage.webp"
+            },
+            {
+                "canal": 278,
+                "nombre": "EWTN",
+                "logo": "assets/ewtn.png"
+            },
+            {
+                "canal": 280,
+                "nombre": "CANAL LUZ",
+                "logo": "assets/canalluz.png"
+            }
+        ],
+        "analogica": [
+            {
+                "canal": 3,
+                "nombre": "TN",
+                "logo": "assets/tn.png"
+            },
+            {
+                "canal": 4,
+                "nombre": "A24",
+                "logo": "assets/a24.png"
+            },
+            {
+                "canal": 5,
+                "nombre": "C5N",
+                "logo": "assets/c5n.png"
+            },
+            {
+                "canal": 6,
+                "nombre": "T+",
+                "logo": "assets/t+.png"
+            },
+            {
+                "canal": 7,
+                "nombre": "CRONICA TV",
+                "logo": "assets/cronica.png"
+            },
+            {
+                "canal": 8,
+                "nombre": "CANAL 26",
+                "logo": "assets/canal26.jpg"
+            },
+            {
+                "canal": 9,
+                "nombre": "AMERICA BS AS",
+                "logo": "assets/america.jpg"
+            },
+            {
+                "canal": 10,
+                "nombre": "CANAL 8 TUCUMAN",
+                "logo": "assets/canal8.jpg"
+            },
+            {
+                "canal": 11,
+                "nombre": "TV PUBLICA",
+                "logo": "assets/tvpublica.jpg"
+            },
+            {
+                "canal": 12,
+                "nombre": "CANAL 10 TUCUMAN",
+                "logo": "assets/10tucuman.jpg"
+            },
+            {
+                "canal": 13,
+                "nombre": "EL NUEVE",
+                "logo": "assets/elnueve.png"
+            },
+            {
+                "canal": 14,
+                "nombre": "TyC SPORTS",
+                "logo": "assets/tycsport.jpg"
+            },
+            {
+                "canal": 15,
+                "nombre": "FOX SPORTS",
+                "logo": "assets/foxsport.webp"
+            },
+            {
+                "canal": 16,
+                "nombre": "FOX SPORTS 2",
+                "logo": "assets/foxsports2.png"
+            },
+            {
+                "canal": 17,
+                "nombre": "ESPN",
+                "logo": "assets/espn.png"
+            },
+            {
+                "canal": 18,
+                "nombre": "ESPN2",
+                "logo": "assets/espn2.png"
+            },
+            {
+                "canal": 19,
+                "nombre": "DISCOVERY KIDS",
+                "logo": "assets/discoverykids.webp"
+            },
+            {
+                "canal": 20,
+                "nombre": "DSPORTS",
+                "logo": "assets/dsports.jpg"
+            },
+            {
+                "canal": 21,
+                "nombre": "DSPORTS 2",
+                "logo": "assets/dsports2.png"
+            },
+            {
+                "canal": 22,
+                "nombre": "DISNEY",
+                "logo": "assets/disney.png"
+            },
+            {
+                "canal": 23,
+                "nombre": "CTN",
+                "logo": "assets/ctn.jpg"
+            },
+            {
+                "canal": 24,
+                "nombre": "PAKA PAKA",
+                "logo": "assets/pakapaka.png"
+            },
+            {
+                "canal": 25,
+                "nombre": "DISNEY JUNIOR",
+                "logo": "assets/disneyjr.png"
+            },
+            {
+                "canal": 26,
+                "nombre": "CARTOONITO",
+                "logo": "assets/cartoonito.png"
+            },
+            {
+                "canal": 27,
+                "nombre": "COMEDIA CENTRAL",
+                "logo": "assets/comedycentral.png"
+            },
+            {
+                "canal": 28,
+                "nombre": "FX",
+                "logo": "assets/fx.png"
+            },
+            {
+                "canal": 29,
+                "nombre": "TNT_Series",
+                "logo": "assets/tntseries.jpg"
+            },
+            {
+                "canal": 30,
+                "nombre": "STAR CHANNEL",
+                "logo": "assets/star.png"
+            },
+            {
+                "canal": 31,
+                "nombre": "STAR TVEA (antes FX MOVIE)",
+                "logo": "assets/startve.webp"
+            },
+            {
+                "canal": 32,
+                "nombre": "UNIVERSAL CHANNEL HD",
+                "logo": "assets/universal.png"
+            },
+            {
+                "canal": 33,
+                "nombre": "TNT",
+                "logo": "assets/tnt.webp"
+            },
+            {
+                "canal": 34,
+                "nombre": "CINECANAL",
+                "logo": "assets/cinecanal.png"
+            },
+            {
+                "canal": 35,
+                "nombre": "SPACE HD",
+                "logo": "assets/space.jpg"
+            },
+            {
+                "canal": 36,
+                "nombre": "EUROPA EUROPA",
+                "logo": "assets/europaeuropa.webp"
+            },
+            {
+                "canal": 37,
+                "nombre": "AMC",
+                "logo": "assets/amc.webp"
+            },
+            {
+                "canal": 38,
+                "nombre": "GOLDEN CHANNEL",
+                "logo": "assets/golden.png"
+            },
+            {
+                "canal": 39,
+                "nombre": "TNT NOVELAS",
+                "logo": "assets/tntnovelas.png"
+            },
+            {
+                "canal": 40,
+                "nombre": "FILM&ARTS",
+                "logo": "assets/filmandarts.png"
+            },
+            {
+                "canal": 41,
+                "nombre": "VOLVER",
+                "logo": "assets/volver.webp"
+            },
+            {
+                "canal": 42,
+                "nombre": "TELENOVELAS",
+                "logo": "assets/tlnovelas.png"
+            },
+            {
+                "canal": 43,
+                "nombre": "CANAL DE LAS ESTRELLAS",
+                "logo": "assets/canaldelasestrellas.png"
+            },
+            {
+                "canal": 44,
+                "nombre": "GOURMET",
+                "logo": "assets/elgourmet.png"
+            },
+            {
+                "canal": 45,
+                "nombre": "H&H",
+                "logo": "assets/hyh.webp"
+            },
+            {
+                "canal": 46,
+                "nombre": "MAGAZINE",
+                "logo": "assets/magazine.webp"
+            },
+            {
+                "canal": 47,
+                "nombre": "TLC",
+                "logo": "assets/tlc.jpg"
+            },
+            {
+                "canal": 48,
+                "nombre": "TELESUR",
+                "logo": "assets/telesur.webp"
+            },
+            {
+                "canal": 49,
+                "nombre": "TVE",
+                "logo": "assets/tveahd.webp"
+            },
+            {
+                "canal": 50,
+                "nombre": "CNN",
+                "logo": "assets/cnn.png"
+            },
+            {
+                "canal": 51,
+                "nombre": "QUIERO MUSICA",
+                "logo": "assets/quiero.webp"
+            },
+            {
+                "canal": 52,
+                "nombre": "DISCOVERY",
+                "logo": "assets/discovery.png"
+            },
+            {
+                "canal": 53,
+                "nombre": "NAT GEO",
+                "logo": "assets/nationalgeographic.png"
+            },
+            {
+                "canal": 54,
+                "nombre": "ANIMAL PLANET",
+                "logo": "assets/animalplanet.png"
+            },
+            {
+                "canal": 55,
+                "nombre": "DISCOVERY ID",
+                "logo": "assets/discoveryid.png"
+            },
+            {
+                "canal": 56,
+                "nombre": "HISTORY",
+                "logo": "assets/history.png"
+            },
+            {
+                "canal": 57,
+                "nombre": "TURBO",
+                "logo": "assets/turbo.png"
+            },
+            {
+                "canal": 58,
+                "nombre": "ENCUENTRO",
+                "logo": "assets/encuentro.webp"
+            },
+            {
+                "canal": 59,
+                "nombre": "CGTN",
+                "logo": "assets/cgtnespa.webp"
+            },
+            {
+                "canal": 60,
+                "nombre": "EWTN",
+                "logo": "assets/ewtn.png"
+            },
+            {
+                "canal": 61,
+                "nombre": "ENLACE",
+                "logo": "assets/enlace.png"
+            }
+        ],
+        "pdf": {
+            "digital": "files/Grilla Dig TCC-LTC.pdf",
+            "analogica": "files/Grilla Anal Providers-LTC-TCC 27-7-26.pdf"
+        },
+        "imagen_grilla": {
+            "digital": "grillas_images/grilla_tafi_cable_digital.jpg",
+            "analogica": "grillas_images/grilla_tafi_cable_analogica.jpg"
+        }
+    },
+    "valle_medios": {
+        "id": "valle_medios",
+        "nombre": "Valle Medios",
+        "localidad": "Tafí del Valle",
+        "provincia": "Tucumán",
+        "grillasDisponibles": [
+            "digital",
+            "analogica"
+        ],
+        "totalCanales": {
+            "digital": 65,
+            "analogica": 46
+        },
+        "digital": [
+            {
+                "canal": 103,
+                "nombre": "TN",
+                "logo": "assets/tn.png"
+            },
+            {
+                "canal": 104,
+                "nombre": "A24",
+                "logo": "assets/a24.png"
+            },
+            {
+                "canal": 105,
+                "nombre": "C5N",
+                "logo": "assets/c5n.png"
+            },
+            {
+                "canal": 106,
+                "nombre": "T+ Tucuman",
+                "logo": "assets/t+.png"
+            },
+            {
+                "canal": 107,
+                "nombre": "Cronica Tv",
+                "logo": "assets/cronica.png"
+            },
+            {
+                "canal": 108,
+                "nombre": "Canal 26",
+                "logo": "assets/canal26.jpg"
+            },
+            {
+                "canal": 109,
+                "nombre": "LN+",
+                "logo": "assets/ln+.jpg"
+            },
+            {
+                "canal": 110,
+                "nombre": "América Tv",
+                "logo": "assets/america.jpg"
+            },
+            {
+                "canal": 111,
+                "nombre": "11CCC",
+                "logo": "assets/11ccc.jpg"
+            },
+            {
+                "canal": 112,
+                "nombre": "12CCC",
+                "logo": "assets/12ccc.jpg"
+            },
+            {
+                "canal": 113,
+                "nombre": "13CCC",
+                "logo": "assets/13ccc.webp"
+            },
+            {
+                "canal": 114,
+                "nombre": "14CCC",
+                "logo": "assets/14ccc.jpg"
+            },
+            {
+                "canal": 115,
+                "nombre": "Tv Publica",
+                "logo": "assets/tvpublica.jpg"
+            },
+            {
+                "canal": 116,
+                "nombre": "El nueve",
+                "logo": "assets/elnueve.png"
+            },
+            {
+                "canal": 117,
+                "nombre": "Telefe",
+                "logo": "assets/telefe.jpeg"
+            },
+            {
+                "canal": 118,
+                "nombre": "El trece",
+                "logo": "assets/eltrece.webp"
+            },
+            {
+                "canal": 119,
+                "nombre": "Canal 10",
+                "logo": "assets/10tucuman.jpg"
+            },
+            {
+                "canal": 120,
+                "nombre": "KZO",
+                "logo": "assets/kzo.jpg"
+            },
+            {
+                "canal": 121,
+                "nombre": "MIX TV",
+                "logo": "assets/mixtv.png"
+            },
+            {
+                "canal": 122,
+                "nombre": "TyC Sports",
+                "logo": "assets/tycsport.jpg"
+            },
+            {
+                "canal": 123,
+                "nombre": "Espn",
+                "logo": "assets/espn.png"
+            },
+            {
+                "canal": 124,
+                "nombre": "Espn2",
+                "logo": "assets/espn2.png"
+            },
+            {
+                "canal": 125,
+                "nombre": "Espn3",
+                "logo": "assets/espn3.jpg"
+            },
+            {
+                "canal": 126,
+                "nombre": "Fox Sports",
+                "logo": "assets/foxsport.webp"
+            },
+            {
+                "canal": 127,
+                "nombre": "Fox Sports 2",
+                "logo": "assets/foxsports2.png"
+            },
+            {
+                "canal": 128,
+                "nombre": "Fox Sports 3",
+                "logo": "assets/foxsports3.png"
+            },
+            {
+                "canal": 129,
+                "nombre": "Espn Premium",
+                "logo": "assets/espnpremium.webp"
+            },
+            {
+                "canal": 130,
+                "nombre": "TNT Sports",
+                "logo": "assets/tntsports.webp"
+            },
+            {
+                "canal": 131,
+                "nombre": "DSPORTS",
+                "logo": "assets/dsports.jpg"
+            },
+            {
+                "canal": 132,
+                "nombre": "DSPORTS2",
+                "logo": "assets/dsports2.png"
+            },
+            {
+                "canal": 141,
+                "nombre": "Disney Junior",
+                "logo": "assets/disneyjr.png"
+            },
+            {
+                "canal": 142,
+                "nombre": "Discovery Kids",
+                "logo": "assets/discoverykids.webp"
+            },
+            {
+                "canal": 143,
+                "nombre": "Catoonito",
+                "logo": "assets/cartoonito.png"
+            },
+            {
+                "canal": 144,
+                "nombre": "Cartoon Networks",
+                "logo": "assets/ctn.jpg"
+            },
+            {
+                "canal": 145,
+                "nombre": "Disney Channel",
+                "logo": "assets/disney.png"
+            },
+            {
+                "canal": 146,
+                "nombre": "Nick",
+                "logo": "assets/nick.png"
+            },
+            {
+                "canal": 151,
+                "nombre": "Discovery Channel",
+                "logo": "assets/discovery.png"
+            },
+            {
+                "canal": 152,
+                "nombre": "Nat Geo",
+                "logo": "assets/nationalgeographic.png"
+            },
+            {
+                "canal": 153,
+                "nombre": "Animal Planet",
+                "logo": "assets/animalplanet.png"
+            },
+            {
+                "canal": 154,
+                "nombre": "History Channel",
+                "logo": "assets/history.png"
+            },
+            {
+                "canal": 161,
+                "nombre": "CineAR",
+                "logo": "assets/cinear.webp"
+            },
+            {
+                "canal": 162,
+                "nombre": "TNT Series",
+                "logo": "assets/tntseries.jpg"
+            },
+            {
+                "canal": 163,
+                "nombre": "A&E",
+                "logo": "assets/aye.webp"
+            },
+            {
+                "canal": 164,
+                "nombre": "Warner Channel",
+                "logo": "assets/warner.webp"
+            },
+            {
+                "canal": 165,
+                "nombre": "AXN",
+                "logo": "assets/axn.jpg"
+            },
+            {
+                "canal": 166,
+                "nombre": "Sony",
+                "logo": "assets/sony.webp"
+            },
+            {
+                "canal": 167,
+                "nombre": "Universal Channel",
+                "logo": "assets/universal.png"
+            },
+            {
+                "canal": 168,
+                "nombre": "Cinecanal",
+                "logo": "assets/cinecanal.png"
+            },
+            {
+                "canal": 169,
+                "nombre": "Star Channel",
+                "logo": "assets/star.png"
+            },
+            {
+                "canal": 170,
+                "nombre": "FX",
+                "logo": "assets/fx.png"
+            },
+            {
+                "canal": 171,
+                "nombre": "TNT",
+                "logo": "assets/tnt.webp"
+            },
+            {
+                "canal": 172,
+                "nombre": "Golden",
+                "logo": "assets/golden.png"
+            },
+            {
+                "canal": 173,
+                "nombre": "Paramount",
+                "logo": "assets/paramount.webp"
+            },
+            {
+                "canal": 174,
+                "nombre": "Amc",
+                "logo": "assets/amc.webp"
+            },
+            {
+                "canal": 181,
+                "nombre": "Encuentro",
+                "logo": "assets/encuentro.webp"
+            },
+            {
+                "canal": 182,
+                "nombre": "Telesur",
+                "logo": "assets/telesur.webp"
+            },
+            {
+                "canal": 183,
+                "nombre": "CNN",
+                "logo": "assets/cnn.png"
+            },
+            {
+                "canal": 191,
+                "nombre": "Canal de las Estrellas",
+                "logo": "assets/canaldelasestrellas.png"
+            },
+            {
+                "canal": 192,
+                "nombre": "Tl Novelas",
+                "logo": "assets/tlnovelas.png"
+            },
+            {
+                "canal": 193,
+                "nombre": "El Gourmet",
+                "logo": "assets/elgourmet.png"
+            },
+            {
+                "canal": 194,
+                "nombre": "E!",
+                "logo": "assets/eentretainment.png"
+            },
+            {
+                "canal": 195,
+                "nombre": "H&H",
+                "logo": "assets/hyh.webp"
+            },
+            {
+                "canal": 196,
+                "nombre": "TLC",
+                "logo": "assets/tlc.jpg"
+            },
+            {
+                "canal": 197,
+                "nombre": "Quiero Musica",
+                "logo": "assets/quiero.webp"
+            },
+            {
+                "canal": 198,
+                "nombre": "HTV",
+                "logo": "assets/htv.webp"
+            }
+        ],
+        "analogica": [
+            {
+                "canal": 3,
+                "nombre": "TN",
+                "logo": "assets/tn.png"
+            },
+            {
+                "canal": 4,
+                "nombre": "A24",
+                "logo": "assets/a24.png"
+            },
+            {
+                "canal": 5,
+                "nombre": "C5N",
+                "logo": "assets/c5n.png"
+            },
+            {
+                "canal": 6,
+                "nombre": "T+ Tucuman",
+                "logo": "assets/t+.png"
+            },
+            {
+                "canal": 7,
+                "nombre": "Cronica Tv",
+                "logo": "assets/cronica.png"
+            },
+            {
+                "canal": 8,
+                "nombre": "Canal 26",
+                "logo": "assets/canal26.jpg"
+            },
+            {
+                "canal": 9,
+                "nombre": "LN+",
+                "logo": "assets/ln+.jpg"
+            },
+            {
+                "canal": 10,
+                "nombre": "América Tv",
+                "logo": "assets/america.jpg"
+            },
+            {
+                "canal": 11,
+                "nombre": "11CCC",
+                "logo": "assets/11ccc.jpg"
+            },
+            {
+                "canal": 12,
+                "nombre": "12CCC",
+                "logo": "assets/12ccc.jpg"
+            },
+            {
+                "canal": 13,
+                "nombre": "13CCC",
+                "logo": "assets/13ccc.webp"
+            },
+            {
+                "canal": 14,
+                "nombre": "14CCC",
+                "logo": "assets/14ccc.jpg"
+            },
+            {
+                "canal": 15,
+                "nombre": "Tv Publica",
+                "logo": "assets/tvpublica.jpg"
+            },
+            {
+                "canal": 16,
+                "nombre": "El nueve",
+                "logo": "assets/elnueve.png"
+            },
+            {
+                "canal": 17,
+                "nombre": "Telefe",
+                "logo": "assets/telefe.jpeg"
+            },
+            {
+                "canal": 18,
+                "nombre": "Canal 10",
+                "logo": "assets/10tucuman.jpg"
+            },
+            {
+                "canal": 19,
+                "nombre": "TyC Sports",
+                "logo": "assets/tycsport.jpg"
+            },
+            {
+                "canal": 20,
+                "nombre": "Espn",
+                "logo": "assets/espn.png"
+            },
+            {
+                "canal": 21,
+                "nombre": "Espn2",
+                "logo": "assets/espn2.png"
+            },
+            {
+                "canal": 22,
+                "nombre": "Espn3",
+                "logo": "assets/espn3.jpg"
+            },
+            {
+                "canal": 23,
+                "nombre": "Fox Sports",
+                "logo": "assets/foxsport.webp"
+            },
+            {
+                "canal": 24,
+                "nombre": "Fox Sports 2",
+                "logo": "assets/foxsports2.png"
+            },
+            {
+                "canal": 25,
+                "nombre": "Fox Sports 3",
+                "logo": "assets/foxsports3.png"
+            },
+            {
+                "canal": 26,
+                "nombre": "Disney Junior",
+                "logo": "assets/disneyjr.png"
+            },
+            {
+                "canal": 27,
+                "nombre": "Discovery Kids",
+                "logo": "assets/discoverykids.webp"
+            },
+            {
+                "canal": 28,
+                "nombre": "Cartoon Networks",
+                "logo": "assets/ctn.jpg"
+            },
+            {
+                "canal": 29,
+                "nombre": "Disney Channel",
+                "logo": "assets/disney.png"
+            },
+            {
+                "canal": 30,
+                "nombre": "Nick",
+                "logo": "assets/nick.png"
+            },
+            {
+                "canal": 31,
+                "nombre": "Discovery Channel",
+                "logo": "assets/discovery.png"
+            },
+            {
+                "canal": 32,
+                "nombre": "Nat Geo",
+                "logo": "assets/nationalgeographic.png"
+            },
+            {
+                "canal": 33,
+                "nombre": "History Channel",
+                "logo": "assets/history.png"
+            },
+            {
+                "canal": 34,
+                "nombre": "CineAR",
+                "logo": "assets/cinear.webp"
+            },
+            {
+                "canal": 35,
+                "nombre": "TNT Series",
+                "logo": "assets/tntseries.jpg"
+            },
+            {
+                "canal": 36,
+                "nombre": "Cinecanal",
+                "logo": "assets/cinecanal.png"
+            },
+            {
+                "canal": 37,
+                "nombre": "start channel",
+                "logo": "assets/star.png"
+            },
+            {
+                "canal": 38,
+                "nombre": "FX",
+                "logo": "assets/fx.png"
+            },
+            {
+                "canal": 39,
+                "nombre": "TNT",
+                "logo": "assets/tnt.webp"
+            },
+            {
+                "canal": 40,
+                "nombre": "Golden",
+                "logo": "assets/golden.png"
+            },
+            {
+                "canal": 41,
+                "nombre": "Paramount",
+                "logo": "assets/paramount.webp"
+            },
+            {
+                "canal": 42,
+                "nombre": "Amc",
+                "logo": "assets/amc.webp"
+            },
+            {
+                "canal": 43,
+                "nombre": "CNN",
+                "logo": "assets/cnn.png"
+            },
+            {
+                "canal": 44,
+                "nombre": "Canal de las Estrellas",
+                "logo": "assets/canaldelasestrellas.png"
+            },
+            {
+                "canal": 45,
+                "nombre": "Tl Novelas",
+                "logo": "assets/tlnovelas.png"
+            },
+            {
+                "canal": 46,
+                "nombre": "Quiero Musica",
+                "logo": "assets/quiero.webp"
+            },
+            {
+                "canal": 47,
+                "nombre": "DSports",
+                "logo": "assets/dsports.jpg"
+            },
+            {
+                "canal": 48,
+                "nombre": "DSports2",
+                "logo": "assets/dsports2.png"
+            }
+        ],
+        "pdf": {
+            "digital": "files/Grilla Vallemedios Dig-Anal 27-7-26.pdf",
+            "analogica": "files/Grilla Vallemedios Dig-Anal 27-7-26.pdf"
+        },
+        "imagen_grilla": {
+            "digital": "grillas_images/grilla_valle_medios_digital.jpg",
+            "analogica": "grillas_images/grilla_valle_medios_analogica.jpg"
+        }
+    },
+    "salta_cable": {
+        "id": "salta_cable",
+        "nombre": "Salta Cable Color",
+        "localidad": "Salta Capital",
+        "provincia": "Salta",
+        "grillasDisponibles": [
+            "digital",
+            "analogica"
+        ],
+        "totalCanales": {
+            "digital": 99,
+            "analogica": 59
+        },
+        "digital": [
+            {
+                "canal": 101,
+                "nombre": "TN",
+                "logo": "assets/tn.png"
+            },
+            {
+                "canal": 102,
+                "nombre": "A24",
+                "logo": "assets/a24.png"
+            },
+            {
+                "canal": 103,
+                "nombre": "C5N HD",
+                "logo": "assets/c5n.png"
+            },
+            {
+                "canal": 104,
+                "nombre": "CRONICA TV",
+                "logo": "assets/cronica.png"
+            },
+            {
+                "canal": 105,
+                "nombre": "26 TV",
+                "logo": "assets/canal26.jpg"
+            },
+            {
+                "canal": 106,
+                "nombre": "CN23",
+                "logo": "assets/cn23.png"
+            },
+            {
+                "canal": 107,
+                "nombre": "T+",
+                "logo": "assets/t+.png"
+            },
+            {
+                "canal": 111,
+                "nombre": "EL ONCE TV (TELEFE SALTA)",
+                "logo": "assets/telefe.jpeg"
+            },
+            {
+                "canal": 112,
+                "nombre": "MULTIVISION",
+                "logo": "assets/multivision.png"
+            },
+            {
+                "canal": 113,
+                "nombre": "MILLENIUM TV",
+                "logo": "assets/milenio.png"
+            },
+            {
+                "canal": 114,
+                "nombre": "TV UNIVERSITARIO (BOLIVIA)",
+                "logo": "assets/tvuniversitario.jpg"
+            },
+            {
+                "canal": 115,
+                "nombre": "UNITEL",
+                "logo": "assets/unitel.webp"
+            },
+            {
+                "canal": 121,
+                "nombre": "LN+",
+                "logo": "assets/ln+.jpg"
+            },
+            {
+                "canal": 122,
+                "nombre": "CNN",
+                "logo": "assets/cnn.png"
+            },
+            {
+                "canal": 127,
+                "nombre": "RAI",
+                "logo": "assets/rai.webp"
+            },
+            {
+                "canal": 128,
+                "nombre": "TELEMAX",
+                "logo": "assets/telemax.jpg"
+            },
+            {
+                "canal": 129,
+                "nombre": "TVA",
+                "logo": "assets/tva.png"
+            },
+            {
+                "canal": 131,
+                "nombre": "AMERICA BS AS",
+                "logo": "assets/america.jpg"
+            },
+            {
+                "canal": 132,
+                "nombre": "KZO",
+                "logo": "assets/kzo.jpg"
+            },
+            {
+                "canal": 133,
+                "nombre": "MIX TV",
+                "logo": "assets/mixtv.png"
+            },
+            {
+                "canal": 134,
+                "nombre": "NEXTV",
+                "logo": "assets/nextv.png"
+            },
+            {
+                "canal": 136,
+                "nombre": "EL NUEVE",
+                "logo": "assets/elnueve.png"
+            },
+            {
+                "canal": 137,
+                "nombre": "EL TRECE",
+                "logo": "assets/eltrece.webp"
+            },
+            {
+                "canal": 141,
+                "nombre": "TV PUBLICA",
+                "logo": "assets/tvpublica.jpg"
+            },
+            {
+                "canal": 202,
+                "nombre": "AMERICA SPORTS",
+                "logo": "assets/americasports.png"
+            },
+            {
+                "canal": 203,
+                "nombre": "TyC SPORTS",
+                "logo": "assets/tycsport.jpg"
+            },
+            {
+                "canal": 204,
+                "nombre": "ESPN",
+                "logo": "assets/espn.png"
+            },
+            {
+                "canal": 205,
+                "nombre": "ESPN2",
+                "logo": "assets/espn2.png"
+            },
+            {
+                "canal": 206,
+                "nombre": "ESPN3",
+                "logo": "assets/espn3.jpg"
+            },
+            {
+                "canal": 207,
+                "nombre": "FOX SPORTS",
+                "logo": "assets/foxsport.webp"
+            },
+            {
+                "canal": 208,
+                "nombre": "FOX SPORTS 2",
+                "logo": "assets/foxsports2.png"
+            },
+            {
+                "canal": 209,
+                "nombre": "FOX SPORTS 3",
+                "logo": "assets/foxsports3.png"
+            },
+            {
+                "canal": 210,
+                "nombre": "ESPN PREMIUM",
+                "logo": "assets/espnpremium.webp"
+            },
+            {
+                "canal": 211,
+                "nombre": "TNT SPORTS",
+                "logo": "assets/tntsports.webp"
+            },
+            {
+                "canal": 212,
+                "nombre": "D SPORTS",
+                "logo": "assets/dsports.jpg"
+            },
+            {
+                "canal": 213,
+                "nombre": "D SPORTS 2",
+                "logo": "assets/dsports2.png"
+            },
+            {
+                "canal": 251,
+                "nombre": "PAKA PAKA",
+                "logo": "assets/pakapaka.png"
+            },
+            {
+                "canal": 252,
+                "nombre": "DISNEY",
+                "logo": "assets/disney.png"
+            },
+            {
+                "canal": 253,
+                "nombre": "DISNEY JUNIOR",
+                "logo": "assets/disneyjr.png"
+            },
+            {
+                "canal": 255,
+                "nombre": "DISCOVERY KIDS",
+                "logo": "assets/discoverykids.webp"
+            },
+            {
+                "canal": 256,
+                "nombre": "BOOMERANG",
+                "logo": "assets/boomerang.png"
+            },
+            {
+                "canal": 257,
+                "nombre": "CTN",
+                "logo": "assets/ctn.jpg"
+            },
+            {
+                "canal": 259,
+                "nombre": "NICK JUNIOR",
+                "logo": "assets/nickjr.webp"
+            },
+            {
+                "canal": 301,
+                "nombre": "COMEDIA CENTRAL",
+                "logo": "assets/comedycentral.png"
+            },
+            {
+                "canal": 302,
+                "nombre": "TNT_Series",
+                "logo": "assets/tntseries.jpg"
+            },
+            {
+                "canal": 349,
+                "nombre": "AXN",
+                "logo": "assets/axn.jpg"
+            },
+            {
+                "canal": 350,
+                "nombre": "SONY",
+                "logo": "assets/sony.webp"
+            },
+            {
+                "canal": 351,
+                "nombre": "CINE.AR",
+                "logo": "assets/cinear.webp"
+            },
+            {
+                "canal": 352,
+                "nombre": "TLC",
+                "logo": "assets/tlc.jpg"
+            },
+            {
+                "canal": 354,
+                "nombre": "Cinecanal",
+                "logo": "assets/cinecanal.png"
+            },
+            {
+                "canal": 355,
+                "nombre": "STAR",
+                "logo": "assets/star.png"
+            },
+            {
+                "canal": 356,
+                "nombre": "E!",
+                "logo": "assets/eentretainment.png"
+            },
+            {
+                "canal": 357,
+                "nombre": "FX",
+                "logo": "assets/fx.png"
+            },
+            {
+                "canal": 358,
+                "nombre": "Golden Channel",
+                "logo": "assets/golden.png"
+            },
+            {
+                "canal": 361,
+                "nombre": "SPACE HD",
+                "logo": "assets/space.jpg"
+            },
+            {
+                "canal": 362,
+                "nombre": "TNT NOVELAS",
+                "logo": "assets/tntnovelas.png"
+            },
+            {
+                "canal": 363,
+                "nombre": "TCM",
+                "logo": "assets/tcm.png"
+            },
+            {
+                "canal": 364,
+                "nombre": "TNT",
+                "logo": "assets/tnt.webp"
+            },
+            {
+                "canal": 365,
+                "nombre": "STUDIO UNIVERSAL",
+                "logo": "assets/studiouniversal.webp"
+            },
+            {
+                "canal": 366,
+                "nombre": "WARNER",
+                "logo": "assets/warner.webp"
+            },
+            {
+                "canal": 367,
+                "nombre": "STAR TVE HD",
+                "logo": "assets/startve.webp"
+            },
+            {
+                "canal": 368,
+                "nombre": "EUROPA_EUROPA",
+                "logo": "assets/europaeuropa.webp"
+            },
+            {
+                "canal": 369,
+                "nombre": "Volver",
+                "logo": "assets/volver.webp"
+            },
+            {
+                "canal": 370,
+                "nombre": "Canal A",
+                "logo": "assets/canala.webp"
+            },
+            {
+                "canal": 371,
+                "nombre": "UNIVERSAL TV",
+                "logo": "assets/universal.png"
+            },
+            {
+                "canal": 372,
+                "nombre": "AMC",
+                "logo": "assets/amc.webp"
+            },
+            {
+                "canal": 401,
+                "nombre": "DISCOVERY",
+                "logo": "assets/discovery.png"
+            },
+            {
+                "canal": 402,
+                "nombre": "NATgeo",
+                "logo": "assets/nationalgeographic.png"
+            },
+            {
+                "canal": 403,
+                "nombre": "ANIMAL PLANET",
+                "logo": "assets/animalplanet.png"
+            },
+            {
+                "canal": 404,
+                "nombre": "HISTORY",
+                "logo": "assets/history.png"
+            },
+            {
+                "canal": 406,
+                "nombre": "ID",
+                "logo": "assets/discoveryid.png"
+            },
+            {
+                "canal": 408,
+                "nombre": "TURBO",
+                "logo": "assets/turbo.png"
+            },
+            {
+                "canal": 409,
+                "nombre": "CGTN Español",
+                "logo": "assets/cgtnespa.webp"
+            },
+            {
+                "canal": 412,
+                "nombre": "A&E",
+                "logo": "assets/aye.webp"
+            },
+            {
+                "canal": 450,
+                "nombre": "RURAL",
+                "logo": "assets/larural.jpg"
+            },
+            {
+                "canal": 451,
+                "nombre": "CHACRA TV",
+                "logo": "assets/chacratv.jpg"
+            },
+            {
+                "canal": 452,
+                "nombre": "ENCUENTRO",
+                "logo": "assets/encuentro.webp"
+            },
+            {
+                "canal": 453,
+                "nombre": "TEC TV",
+                "logo": "assets/tectv.png"
+            },
+            {
+                "canal": 454,
+                "nombre": "Magazine",
+                "logo": "assets/magazine.webp"
+            },
+            {
+                "canal": 455,
+                "nombre": "FILM&ARTS",
+                "logo": "assets/filmandarts.png"
+            },
+            {
+                "canal": 456,
+                "nombre": "Telenovelas",
+                "logo": "assets/tlnovelas.png"
+            },
+            {
+                "canal": 458,
+                "nombre": "AMC-SERIES",
+                "logo": "assets/amcseries.webp"
+            },
+            {
+                "canal": 461,
+                "nombre": "Canal de las Estrellas",
+                "logo": "assets/canaldelasestrellas.png"
+            },
+            {
+                "canal": 462,
+                "nombre": "GOURMET",
+                "logo": "assets/elgourmet.png"
+            },
+            {
+                "canal": 463,
+                "nombre": "ADULT SWIM",
+                "logo": "assets/adultswim.webp"
+            },
+            {
+                "canal": 464,
+                "nombre": "H&H",
+                "logo": "assets/hyh.webp"
+            },
+            {
+                "canal": 465,
+                "nombre": "BOLIVIA TV",
+                "logo": "assets/boliviatv.png"
+            },
+            {
+                "canal": 466,
+                "nombre": "TELESUR",
+                "logo": "assets/telesur.webp"
+            },
+            {
+                "canal": 467,
+                "nombre": "TELEMUNDO",
+                "logo": "assets/telemundo.jpg"
+            },
+            {
+                "canal": 468,
+                "nombre": "UNIFE",
+                "logo": "assets/unife.jpg"
+            },
+            {
+                "canal": 501,
+                "nombre": "Quiero Musica",
+                "logo": "assets/quiero.webp"
+            },
+            {
+                "canal": 502,
+                "nombre": "HTV HD",
+                "logo": "assets/htv.webp"
+            },
+            {
+                "canal": 504,
+                "nombre": "MUSICTOP",
+                "logo": "assets/musictop.jpg"
+            },
+            {
+                "canal": 510,
+                "nombre": "TIERRA MIA",
+                "logo": "assets/tierramiatv.png"
+            },
+            {
+                "canal": 511,
+                "nombre": "MTV",
+                "logo": "assets/mtv.png"
+            },
+            {
+                "canal": 551,
+                "nombre": "EWTN",
+                "logo": "assets/ewtn.png"
+            },
+            {
+                "canal": 552,
+                "nombre": "ENLACE",
+                "logo": "assets/enlace.png"
+            },
+            {
+                "canal": 553,
+                "nombre": "Canal Luz",
+                "logo": "assets/canalluz.png"
+            },
+            {
+                "canal": 601,
+                "nombre": "ARGENTINISIMA",
+                "logo": "assets/argentinisima.jpg"
+            }
+        ],
+        "analogica": [
+            {
+                "canal": 3,
+                "nombre": "26 TV",
+                "logo": "assets/canal26.jpg"
+            },
+            {
+                "canal": 4,
+                "nombre": "TODO NOTICIA",
+                "logo": "assets/tn.png"
+            },
+            {
+                "canal": 5,
+                "nombre": "C5N",
+                "logo": "assets/c5n.png"
+            },
+            {
+                "canal": 6,
+                "nombre": "AMERICA 24",
+                "logo": "assets/a24.png"
+            },
+            {
+                "canal": 7,
+                "nombre": "CRONICA TV",
+                "logo": "assets/cronica.png"
+            },
+            {
+                "canal": 8,
+                "nombre": "T+",
+                "logo": "assets/t+.png"
+            },
+            {
+                "canal": 9,
+                "nombre": "MULTIVISION",
+                "logo": "assets/multivision.png"
+            },
+            {
+                "canal": 10,
+                "nombre": "LN +",
+                "logo": "assets/ln+.jpg"
+            },
+            {
+                "canal": 11,
+                "nombre": "EL ONCE TV",
+                "logo": "assets/telefe.jpeg"
+            },
+            {
+                "canal": 12,
+                "nombre": "MILENIUM",
+                "logo": "assets/milenio.png"
+            },
+            {
+                "canal": 13,
+                "nombre": "CN23",
+                "logo": "assets/cn23.png"
+            },
+            {
+                "canal": 14,
+                "nombre": "ENCUENTRO",
+                "logo": "assets/encuentro.webp"
+            },
+            {
+                "canal": 15,
+                "nombre": "TV PUBLICA",
+                "logo": "assets/tvpublica.jpg"
+            },
+            {
+                "canal": 16,
+                "nombre": "AMERICA",
+                "logo": "assets/america.jpg"
+            },
+            {
+                "canal": 17,
+                "nombre": "EL NUEVE",
+                "logo": "assets/elnueve.png"
+            },
+            {
+                "canal": 18,
+                "nombre": "EL TRECE",
+                "logo": "assets/eltrece.webp"
+            },
+            {
+                "canal": 19,
+                "nombre": "TYC SPORTS",
+                "logo": "assets/tycsport.jpg"
+            },
+            {
+                "canal": 20,
+                "nombre": "ESPN",
+                "logo": "assets/espn.png"
+            },
+            {
+                "canal": 21,
+                "nombre": "ESPN 2",
+                "logo": "assets/espn2.png"
+            },
+            {
+                "canal": 22,
+                "nombre": "FOX SPORTS",
+                "logo": "assets/foxsport.webp"
+            },
+            {
+                "canal": 23,
+                "nombre": "FOX SPORTS 2",
+                "logo": "assets/foxsports2.png"
+            },
+            {
+                "canal": 24,
+                "nombre": "FOX SPORTS 3",
+                "logo": "assets/foxsports3.png"
+            },
+            {
+                "canal": 25,
+                "nombre": "DSPORTS",
+                "logo": "assets/dsports.jpg"
+            },
+            {
+                "canal": 26,
+                "nombre": "DSPORTS 2",
+                "logo": "assets/dsports2.png"
+            },
+            {
+                "canal": 27,
+                "nombre": "HISTORY CHANNEL",
+                "logo": "assets/history.png"
+            },
+            {
+                "canal": 28,
+                "nombre": "DISCOVERY KIDS",
+                "logo": "assets/discoverykids.webp"
+            },
+            {
+                "canal": 29,
+                "nombre": "DISNEY JUNIOR",
+                "logo": "assets/disneyjr.png"
+            },
+            {
+                "canal": 30,
+                "nombre": "CARTOON NETWORK",
+                "logo": "assets/ctn.jpg"
+            },
+            {
+                "canal": 31,
+                "nombre": "CARTOONITO",
+                "logo": "assets/cartoonito.png"
+            },
+            {
+                "canal": 32,
+                "nombre": "PAKA PAKA",
+                "logo": "assets/pakapaka.png"
+            },
+            {
+                "canal": 33,
+                "nombre": "TNT SERIES",
+                "logo": "assets/tntseries.jpg"
+            },
+            {
+                "canal": 34,
+                "nombre": "TNT",
+                "logo": "assets/tnt.webp"
+            },
+            {
+                "canal": 35,
+                "nombre": "VOLVER",
+                "logo": "assets/volver.webp"
+            },
+            {
+                "canal": 36,
+                "nombre": "CINEMA GOLDEN",
+                "logo": "assets/golden.png"
+            },
+            {
+                "canal": 37,
+                "nombre": "STAR CHANNEL",
+                "logo": "assets/star.png"
+            },
+            {
+                "canal": 38,
+                "nombre": "CINECANAL",
+                "logo": "assets/cinecanal.png"
+            },
+            {
+                "canal": 39,
+                "nombre": "SPACE",
+                "logo": "assets/space.jpg"
+            },
+            {
+                "canal": 40,
+                "nombre": "UNIVERSAL CHANNEL",
+                "logo": "assets/universal.png"
+            },
+            {
+                "canal": 41,
+                "nombre": "FX",
+                "logo": "assets/fx.png"
+            },
+            {
+                "canal": 42,
+                "nombre": "TNT NOVELAS",
+                "logo": "assets/tntnovelas.png"
+            },
+            {
+                "canal": 43,
+                "nombre": "STAR TVE",
+                "logo": "assets/startve.webp"
+            },
+            {
+                "canal": 44,
+                "nombre": "E!",
+                "logo": "assets/eentretainment.png"
+            },
+            {
+                "canal": 45,
+                "nombre": "RURAL",
+                "logo": "assets/larural.jpg"
+            },
+            {
+                "canal": 46,
+                "nombre": "MAGAZINE",
+                "logo": "assets/magazine.webp"
+            },
+            {
+                "canal": 47,
+                "nombre": "GOURMET",
+                "logo": "assets/elgourmet.png"
+            },
+            {
+                "canal": 48,
+                "nombre": "DISCOVERY H&H",
+                "logo": "assets/hyh.webp"
+            },
+            {
+                "canal": 49,
+                "nombre": "CANAL DE LAS ESTRELLAS",
+                "logo": "assets/canaldelasestrellas.png"
+            },
+            {
+                "canal": 50,
+                "nombre": "TELEMUNDO",
+                "logo": "assets/telemundo.jpg"
+            },
+            {
+                "canal": 51,
+                "nombre": "TL NOVELAS",
+                "logo": "assets/tlnovelas.png"
+            },
+            {
+                "canal": 52,
+                "nombre": "TV NACIONAL DE BOLIVIA",
+                "logo": "assets/boliviatv.png"
+            },
+            {
+                "canal": 53,
+                "nombre": "TELESUR",
+                "logo": "assets/telesur.webp"
+            },
+            {
+                "canal": 54,
+                "nombre": "CNN EN ESPAÑOL",
+                "logo": "assets/cnn.png"
+            },
+            {
+                "canal": 55,
+                "nombre": "DISCOVERY TURBO",
+                "logo": "assets/turbo.png"
+            },
+            {
+                "canal": 56,
+                "nombre": "ANIMAL PLANET",
+                "logo": "assets/animalplanet.png"
+            },
+            {
+                "canal": 57,
+                "nombre": "DISCOVERY ID",
+                "logo": "assets/discoveryid.png"
+            },
+            {
+                "canal": 58,
+                "nombre": "NAT GEO",
+                "logo": "assets/nationalgeographic.png"
+            },
+            {
+                "canal": 59,
+                "nombre": "DISCOVERY CHANNEL",
+                "logo": "assets/discovery.png"
+            },
+            {
+                "canal": 60,
+                "nombre": "HTV HD",
+                "logo": "assets/htv.webp"
+            },
+            {
+                "canal": 61,
+                "nombre": "EWTN",
+                "logo": "assets/ewtn.png"
+            }
+        ],
+        "pdf": {
+            "digital": "files/Grilla Dig SCC 23-7-26.pdf",
+            "analogica": "files/Grilla Anal SCC 27-7-26.pdf"
+        },
+        "imagen_grilla": {
+            "digital": "grillas_images/grilla_salta_cable_digital.jpg",
+            "analogica": "grillas_images/grilla_salta_cable_analogica.jpg"
+        }
+    },
+    "intersas": {
+        "id": "intersas",
+        "nombre": "Intersas (Aguilares)",
+        "localidad": "Aguilares",
+        "provincia": "Tucumán",
+        "grillasDisponibles": [
+            "digital",
+            "analogica"
+        ],
+        "totalCanales": {
+            "digital": 98,
+            "analogica": 60
+        },
+        "digital": [
+            {
+                "canal": 103,
+                "nombre": "TN",
+                "logo": "assets/tn.png"
+            },
+            {
+                "canal": 104,
+                "nombre": "A24 Interior",
+                "logo": "assets/a24.png"
+            },
+            {
+                "canal": 105,
+                "nombre": "C5N",
+                "logo": "assets/c5n.png"
+            },
+            {
+                "canal": 106,
+                "nombre": "T+",
+                "logo": "assets/t+.png"
+            },
+            {
+                "canal": 107,
+                "nombre": "Cronica",
+                "logo": "assets/cronica.png"
+            },
+            {
+                "canal": 108,
+                "nombre": "Canal 26",
+                "logo": "assets/canal26.jpg"
+            },
+            {
+                "canal": 109,
+                "nombre": "CN23",
+                "logo": "assets/cn23.png"
+            },
+            {
+                "canal": 110,
+                "nombre": "America",
+                "logo": "assets/america.jpg"
+            },
+            {
+                "canal": 111,
+                "nombre": "11CCC",
+                "logo": "assets/11ccc.jpg"
+            },
+            {
+                "canal": 112,
+                "nombre": "12CCC",
+                "logo": "assets/12ccc.jpg"
+            },
+            {
+                "canal": 113,
+                "nombre": "13CCC",
+                "logo": "assets/13ccc.webp"
+            },
+            {
+                "canal": 114,
+                "nombre": "14CCC",
+                "logo": "assets/14ccc.jpg"
+            },
+            {
+                "canal": 115,
+                "nombre": "Telefe",
+                "logo": "assets/telefe.jpeg"
+            },
+            {
+                "canal": 116,
+                "nombre": "TV Publica",
+                "logo": "assets/tvpublica.jpg"
+            },
+            {
+                "canal": 117,
+                "nombre": "Canal 10 tucuman",
+                "logo": "assets/10tucuman.jpg"
+            },
+            {
+                "canal": 118,
+                "nombre": "Canal 8 Tucuman",
+                "logo": "assets/canal8.jpg"
+            },
+            {
+                "canal": 119,
+                "nombre": "IP Noticias",
+                "logo": "assets/ipnoticias.jpg"
+            },
+            {
+                "canal": 120,
+                "nombre": "LN+",
+                "logo": "assets/ln+.jpg"
+            },
+            {
+                "canal": 121,
+                "nombre": "MULTIVISION",
+                "logo": "assets/multivision.png"
+            },
+            {
+                "canal": 122,
+                "nombre": "Diputados TV",
+                "logo": "assets/diputadostv.webp"
+            },
+            {
+                "canal": 123,
+                "nombre": "El Nueve",
+                "logo": "assets/elnueve.png"
+            },
+            {
+                "canal": 124,
+                "nombre": "KZO",
+                "logo": "assets/kzo.jpg"
+            },
+            {
+                "canal": 125,
+                "nombre": "MIXTV",
+                "logo": "assets/mixtv.png"
+            },
+            {
+                "canal": 130,
+                "nombre": "Chacra TV",
+                "logo": "assets/chacratv.jpg"
+            },
+            {
+                "canal": 139,
+                "nombre": "Argentinisima",
+                "logo": "assets/argentinisima.jpg"
+            },
+            {
+                "canal": 140,
+                "nombre": "Rural",
+                "logo": "assets/larural.jpg"
+            },
+            {
+                "canal": 142,
+                "nombre": "America Sports",
+                "logo": "assets/americasports.png"
+            },
+            {
+                "canal": 143,
+                "nombre": "TyC Sport",
+                "logo": "assets/tycsport.jpg"
+            },
+            {
+                "canal": 144,
+                "nombre": "ESPN",
+                "logo": "assets/espn.png"
+            },
+            {
+                "canal": 145,
+                "nombre": "ESPN2",
+                "logo": "assets/espn2.png"
+            },
+            {
+                "canal": 146,
+                "nombre": "ESPN3",
+                "logo": "assets/espn3.jpg"
+            },
+            {
+                "canal": 147,
+                "nombre": "FoxSports",
+                "logo": "assets/foxsport.webp"
+            },
+            {
+                "canal": 148,
+                "nombre": "FoxSports2",
+                "logo": "assets/foxsports2.png"
+            },
+            {
+                "canal": 149,
+                "nombre": "FoxSports3",
+                "logo": "assets/foxsports3.png"
+            },
+            {
+                "canal": 150,
+                "nombre": "ESPN PREMIUM",
+                "logo": "assets/espnpremium.webp"
+            },
+            {
+                "canal": 151,
+                "nombre": "TNT SPORTS",
+                "logo": "assets/tntsports.webp"
+            },
+            {
+                "canal": 152,
+                "nombre": "DSPORTS",
+                "logo": "assets/dsports.jpg"
+            },
+            {
+                "canal": 153,
+                "nombre": "DSPORTS2",
+                "logo": "assets/dsports2.png"
+            },
+            {
+                "canal": 161,
+                "nombre": "PAKA PAKA",
+                "logo": "assets/pakapaka.png"
+            },
+            {
+                "canal": 162,
+                "nombre": "DISNEY",
+                "logo": "assets/disney.png"
+            },
+            {
+                "canal": 163,
+                "nombre": "DINEY JR",
+                "logo": "assets/disneyjr.png"
+            },
+            {
+                "canal": 164,
+                "nombre": "Clan HD",
+                "logo": "assets/clanhd.webp"
+            },
+            {
+                "canal": 165,
+                "nombre": "Discovery Kinds",
+                "logo": "assets/discoverykids.webp"
+            },
+            {
+                "canal": 166,
+                "nombre": "CARTOONITO",
+                "logo": "assets/cartoonito.png"
+            },
+            {
+                "canal": 167,
+                "nombre": "CTN",
+                "logo": "assets/ctn.jpg"
+            },
+            {
+                "canal": 169,
+                "nombre": "NICK JUNIORS",
+                "logo": "assets/nickjr.webp"
+            },
+            {
+                "canal": 170,
+                "nombre": "NICK",
+                "logo": "assets/nick.png"
+            },
+            {
+                "canal": 182,
+                "nombre": "ENCUENTRO",
+                "logo": "assets/encuentro.webp"
+            },
+            {
+                "canal": 183,
+                "nombre": "TEC TV",
+                "logo": "assets/tectv.png"
+            },
+            {
+                "canal": 184,
+                "nombre": "DISCOVERY",
+                "logo": "assets/discovery.png"
+            },
+            {
+                "canal": 185,
+                "nombre": "NATGEO",
+                "logo": "assets/nationalgeographic.png"
+            },
+            {
+                "canal": 186,
+                "nombre": "ANIMAL PLANET",
+                "logo": "assets/animalplanet.png"
+            },
+            {
+                "canal": 188,
+                "nombre": "HISTORY",
+                "logo": "assets/history.png"
+            },
+            {
+                "canal": 190,
+                "nombre": "DISCOVERY ID",
+                "logo": "assets/discoveryid.png"
+            },
+            {
+                "canal": 191,
+                "nombre": "H&H",
+                "logo": "assets/hyh.webp"
+            },
+            {
+                "canal": 193,
+                "nombre": "TURBO",
+                "logo": "assets/turbo.png"
+            },
+            {
+                "canal": 204,
+                "nombre": "CINE.AR",
+                "logo": "assets/cinear.webp"
+            },
+            {
+                "canal": 205,
+                "nombre": "TLC",
+                "logo": "assets/tlc.jpg"
+            },
+            {
+                "canal": 206,
+                "nombre": "AMC",
+                "logo": "assets/amc.webp"
+            },
+            {
+                "canal": 207,
+                "nombre": "CINCECANAL",
+                "logo": "assets/cinecanal.png"
+            },
+            {
+                "canal": 209,
+                "nombre": "COMEDIA CENTRAL",
+                "logo": "assets/comedycentral.png"
+            },
+            {
+                "canal": 210,
+                "nombre": "START",
+                "logo": "assets/star.png"
+            },
+            {
+                "canal": 211,
+                "nombre": "E!",
+                "logo": "assets/eentretainment.png"
+            },
+            {
+                "canal": 212,
+                "nombre": "FX",
+                "logo": "assets/fx.png"
+            },
+            {
+                "canal": 213,
+                "nombre": "GOLDEN",
+                "logo": "assets/golden.png"
+            },
+            {
+                "canal": 215,
+                "nombre": "PARAMOUNT",
+                "logo": "assets/paramount.webp"
+            },
+            {
+                "canal": 216,
+                "nombre": "SPACE",
+                "logo": "assets/space.jpg"
+            },
+            {
+                "canal": 217,
+                "nombre": "TNT NOVELAS",
+                "logo": "assets/tntnovelas.png"
+            },
+            {
+                "canal": 218,
+                "nombre": "TCM",
+                "logo": "assets/tcm.png"
+            },
+            {
+                "canal": 219,
+                "nombre": "TNT",
+                "logo": "assets/tnt.webp"
+            },
+            {
+                "canal": 220,
+                "nombre": "UNIVERSAL",
+                "logo": "assets/universal.png"
+            },
+            {
+                "canal": 221,
+                "nombre": "WARNER",
+                "logo": "assets/warner.webp"
+            },
+            {
+                "canal": 222,
+                "nombre": "START TVE",
+                "logo": "assets/startve.webp"
+            },
+            {
+                "canal": 223,
+                "nombre": "TNT SERIE",
+                "logo": "assets/tntseries.jpg"
+            },
+            {
+                "canal": 225,
+                "nombre": "EUROPA EUROPA",
+                "logo": "assets/europaeuropa.webp"
+            },
+            {
+                "canal": 227,
+                "nombre": "FLIM&ART",
+                "logo": "assets/filmandarts.png"
+            },
+            {
+                "canal": 228,
+                "nombre": "AXN",
+                "logo": "assets/axn.jpg"
+            },
+            {
+                "canal": 229,
+                "nombre": "SONY",
+                "logo": "assets/sony.webp"
+            },
+            {
+                "canal": 245,
+                "nombre": "TELENOVELAS",
+                "logo": "assets/tlnovelas.png"
+            },
+            {
+                "canal": 247,
+                "nombre": "AMC SERIES",
+                "logo": "assets/amcseries.webp"
+            },
+            {
+                "canal": 256,
+                "nombre": "QUIERO",
+                "logo": "assets/quiero.webp"
+            },
+            {
+                "canal": 257,
+                "nombre": "HTV",
+                "logo": "assets/htv.webp"
+            },
+            {
+                "canal": 270,
+                "nombre": "TVEA HD",
+                "logo": "assets/tveahd.webp"
+            },
+            {
+                "canal": 271,
+                "nombre": "CNN",
+                "logo": "assets/cnn.png"
+            },
+            {
+                "canal": 272,
+                "nombre": "CANAL DE LAS ESTRELLAS",
+                "logo": "assets/canaldelasestrellas.png"
+            },
+            {
+                "canal": 273,
+                "nombre": "TELESUR",
+                "logo": "assets/telesur.webp"
+            },
+            {
+                "canal": 274,
+                "nombre": "RAI",
+                "logo": "assets/rai.webp"
+            },
+            {
+                "canal": 276,
+                "nombre": "HISPAN TV",
+                "logo": "assets/hispantv.png"
+            },
+            {
+                "canal": 277,
+                "nombre": "CGTN ESPA.",
+                "logo": "assets/cgtnespa.webp"
+            },
+            {
+                "canal": 281,
+                "nombre": "C24",
+                "logo": "assets/c24.jpg"
+            },
+            {
+                "canal": 286,
+                "nombre": "FRANCE 24",
+                "logo": "assets/france24.png"
+            },
+            {
+                "canal": 287,
+                "nombre": "EWTN",
+                "logo": "assets/ewtn.png"
+            },
+            {
+                "canal": 288,
+                "nombre": "ENLACE",
+                "logo": "assets/enlace.png"
+            },
+            {
+                "canal": 289,
+                "nombre": "CANAL LUZ",
+                "logo": "assets/canalluz.png"
+            },
+            {
+                "canal": 297,
+                "nombre": "GOURMET",
+                "logo": "assets/elgourmet.png"
+            },
+            {
+                "canal": 329,
+                "nombre": "MAGAZINE",
+                "logo": "assets/magazine.webp"
+            },
+            {
+                "canal": 330,
+                "nombre": "VOLVER",
+                "logo": "assets/volver.webp"
+            },
+            {
+                "canal": 333,
+                "nombre": "EL GARAGE",
+                "logo": "assets/elgarage.webp"
+            }
+        ],
+        "analogica": [
+            {
+                "canal": 3,
+                "nombre": "TN",
+                "logo": "assets/tn.png"
+            },
+            {
+                "canal": 4,
+                "nombre": "A24",
+                "logo": "assets/a24.png"
+            },
+            {
+                "canal": 5,
+                "nombre": "C5N",
+                "logo": "assets/c5n.png"
+            },
+            {
+                "canal": 6,
+                "nombre": "T+",
+                "logo": "assets/t+.png"
+            },
+            {
+                "canal": 7,
+                "nombre": "Cronica",
+                "logo": "assets/cronica.png"
+            },
+            {
+                "canal": 8,
+                "nombre": "Canal 26",
+                "logo": "assets/canal26.jpg"
+            },
+            {
+                "canal": 9,
+                "nombre": "America",
+                "logo": "assets/america.jpg"
+            },
+            {
+                "canal": 10,
+                "nombre": "Canal 8 Tucuman",
+                "logo": "assets/canal8.jpg"
+            },
+            {
+                "canal": 11,
+                "nombre": "11CCC",
+                "logo": "assets/11ccc.jpg"
+            },
+            {
+                "canal": 12,
+                "nombre": "12CCC",
+                "logo": "assets/12ccc.jpg"
+            },
+            {
+                "canal": 13,
+                "nombre": "13CCC",
+                "logo": "assets/13ccc.webp"
+            },
+            {
+                "canal": 14,
+                "nombre": "14CCC",
+                "logo": "assets/14ccc.jpg"
+            },
+            {
+                "canal": 15,
+                "nombre": "TV Publica",
+                "logo": "assets/tvpublica.jpg"
+            },
+            {
+                "canal": 16,
+                "nombre": "Canal 10 Tucuman",
+                "logo": "assets/10tucuman.jpg"
+            },
+            {
+                "canal": 17,
+                "nombre": "El Nueve",
+                "logo": "assets/elnueve.png"
+            },
+            {
+                "canal": 18,
+                "nombre": "TyC Sport",
+                "logo": "assets/tycsport.jpg"
+            },
+            {
+                "canal": 19,
+                "nombre": "Fox Sport",
+                "logo": "assets/foxsport.webp"
+            },
+            {
+                "canal": 20,
+                "nombre": "Fox Sport 2",
+                "logo": "assets/foxsports2.png"
+            },
+            {
+                "canal": 21,
+                "nombre": "ESPN",
+                "logo": "assets/espn.png"
+            },
+            {
+                "canal": 22,
+                "nombre": "ESPN2",
+                "logo": "assets/espn2.png"
+            },
+            {
+                "canal": 23,
+                "nombre": "DSPORTS",
+                "logo": "assets/dsports.jpg"
+            },
+            {
+                "canal": 24,
+                "nombre": "DSPORTS 2",
+                "logo": "assets/dsports2.png"
+            },
+            {
+                "canal": 25,
+                "nombre": "Discovery Kids",
+                "logo": "assets/discoverykids.webp"
+            },
+            {
+                "canal": 26,
+                "nombre": "DISNEY",
+                "logo": "assets/disney.png"
+            },
+            {
+                "canal": 27,
+                "nombre": "CTN",
+                "logo": "assets/ctn.jpg"
+            },
+            {
+                "canal": 28,
+                "nombre": "PAKA PAKA",
+                "logo": "assets/pakapaka.png"
+            },
+            {
+                "canal": 29,
+                "nombre": "DISNEY JR",
+                "logo": "assets/disneyjr.png"
+            },
+            {
+                "canal": 30,
+                "nombre": "CARTOONITO",
+                "logo": "assets/cartoonito.png"
+            },
+            {
+                "canal": 31,
+                "nombre": "COMEDIA CENTRAL",
+                "logo": "assets/comedycentral.png"
+            },
+            {
+                "canal": 32,
+                "nombre": "FX",
+                "logo": "assets/fx.png"
+            },
+            {
+                "canal": 33,
+                "nombre": "TNT SERIES",
+                "logo": "assets/tntseries.jpg"
+            },
+            {
+                "canal": 34,
+                "nombre": "START",
+                "logo": "assets/star.png"
+            },
+            {
+                "canal": 35,
+                "nombre": "START TVE",
+                "logo": "assets/startve.webp"
+            },
+            {
+                "canal": 36,
+                "nombre": "UNIVERSAL",
+                "logo": "assets/universal.png"
+            },
+            {
+                "canal": 37,
+                "nombre": "TNT",
+                "logo": "assets/tnt.webp"
+            },
+            {
+                "canal": 38,
+                "nombre": "CINECANAL",
+                "logo": "assets/cinecanal.png"
+            },
+            {
+                "canal": 39,
+                "nombre": "SPACE",
+                "logo": "assets/space.jpg"
+            },
+            {
+                "canal": 40,
+                "nombre": "EUROPA EUROPA",
+                "logo": "assets/europaeuropa.webp"
+            },
+            {
+                "canal": 41,
+                "nombre": "AMC",
+                "logo": "assets/amc.webp"
+            },
+            {
+                "canal": 42,
+                "nombre": "GOLDEN",
+                "logo": "assets/golden.png"
+            },
+            {
+                "canal": 43,
+                "nombre": "TNT NOVELAS",
+                "logo": "assets/tntnovelas.png"
+            },
+            {
+                "canal": 44,
+                "nombre": "FILM & ART",
+                "logo": "assets/filmandarts.png"
+            },
+            {
+                "canal": 45,
+                "nombre": "VOLVER",
+                "logo": "assets/volver.webp"
+            },
+            {
+                "canal": 46,
+                "nombre": "TELENOVELAS",
+                "logo": "assets/tlnovelas.png"
+            },
+            {
+                "canal": 47,
+                "nombre": "CANAL DE LAS ESTRELLAS",
+                "logo": "assets/canaldelasestrellas.png"
+            },
+            {
+                "canal": 48,
+                "nombre": "GOURMET",
+                "logo": "assets/elgourmet.png"
+            },
+            {
+                "canal": 49,
+                "nombre": "H&H",
+                "logo": "assets/hyh.webp"
+            },
+            {
+                "canal": 50,
+                "nombre": "MAGAZINE",
+                "logo": "assets/magazine.webp"
+            },
+            {
+                "canal": 51,
+                "nombre": "TLC",
+                "logo": "assets/tlc.jpg"
+            },
+            {
+                "canal": 52,
+                "nombre": "TVEA HD",
+                "logo": "assets/tveahd.webp"
+            },
+            {
+                "canal": 53,
+                "nombre": "CNN",
+                "logo": "assets/cnn.png"
+            },
+            {
+                "canal": 54,
+                "nombre": "DISCOVERY",
+                "logo": "assets/discovery.png"
+            },
+            {
+                "canal": 55,
+                "nombre": "NATGEO",
+                "logo": "assets/nationalgeographic.png"
+            },
+            {
+                "canal": 56,
+                "nombre": "ANIMAL PLANET",
+                "logo": "assets/animalplanet.png"
+            },
+            {
+                "canal": 57,
+                "nombre": "DISCOVERY ID",
+                "logo": "assets/discoveryid.png"
+            },
+            {
+                "canal": 58,
+                "nombre": "HISTORY",
+                "logo": "assets/history.png"
+            },
+            {
+                "canal": 59,
+                "nombre": "TURBO",
+                "logo": "assets/turbo.png"
+            },
+            {
+                "canal": 60,
+                "nombre": "EWTN",
+                "logo": "assets/ewtn.png"
+            },
+            {
+                "canal": 61,
+                "nombre": "ESPN PREMIUN",
+                "logo": "assets/espnpremium.webp"
+            },
+            {
+                "canal": 62,
+                "nombre": "TNT SPORT",
+                "logo": "assets/tntsports.webp"
+            }
+        ],
+        "pdf": {
+            "digital": "files/Grilla Anal-Dig Inltelsas 22-7-26.pdf",
+            "analogica": "files/Grilla Anal-Dig Inltelsas 22-7-26.pdf"
+        },
+        "imagen_grilla": {
+            "digital": "grillas_images/grilla_intersas_digital.jpg",
+            "analogica": "grillas_images/grilla_intersas_analogica.jpg"
+        }
+    },
+    "tartagal": {
+        "id": "tartagal",
+        "nombre": "Tartagal Cable Color",
+        "localidad": "Tartagal",
+        "provincia": "Salta",
+        "grillasDisponibles": [
+            "digital",
+            "analogica"
+        ],
+        "totalCanales": {
+            "digital": 86,
+            "analogica": 60
+        },
+        "digital": [
+            {
+                "canal": 103,
+                "nombre": "TN",
+                "logo": "assets/tn.png"
+            },
+            {
+                "canal": 104,
+                "nombre": "A24",
+                "logo": "assets/a24.png"
+            },
+            {
+                "canal": 105,
+                "nombre": "C5N",
+                "logo": "assets/c5n.png"
+            },
+            {
+                "canal": 106,
+                "nombre": "T+ TARTAGAL",
+                "logo": "assets/t+.png"
+            },
+            {
+                "canal": 107,
+                "nombre": "CRONICA TV",
+                "logo": "assets/cronica.png"
+            },
+            {
+                "canal": 108,
+                "nombre": "26 TV",
+                "logo": "assets/canal26.jpg"
+            },
+            {
+                "canal": 109,
+                "nombre": "CN23",
+                "logo": "assets/cn23.png"
+            },
+            {
+                "canal": 110,
+                "nombre": "LA NACION +",
+                "logo": "assets/ln+.jpg"
+            },
+            {
+                "canal": 111,
+                "nombre": "IP NOTICIAS",
+                "logo": "assets/ipnoticias.jpg"
+            },
+            {
+                "canal": 151,
+                "nombre": "AMERICA BS AS",
+                "logo": "assets/america.jpg"
+            },
+            {
+                "canal": 152,
+                "nombre": "TV PUBLICA",
+                "logo": "assets/tvpublica.jpg"
+            },
+            {
+                "canal": 153,
+                "nombre": "ELNUEVE",
+                "logo": "assets/elnueve.png"
+            },
+            {
+                "canal": 154,
+                "nombre": "TELEFE",
+                "logo": "assets/telefe.jpeg"
+            },
+            {
+                "canal": 155,
+                "nombre": "EL TRECE",
+                "logo": "assets/eltrece.webp"
+            },
+            {
+                "canal": 161,
+                "nombre": "MULTIVISION",
+                "logo": "assets/multivision.png"
+            },
+            {
+                "canal": 162,
+                "nombre": "CANAL 10 SALTA",
+                "logo": "assets/canaldiezsalta.jpg"
+            },
+            {
+                "canal": 163,
+                "nombre": "CANAL 11 SALTA",
+                "logo": "assets/canaloncesalta.jpeg"
+            },
+            {
+                "canal": 164,
+                "nombre": "CANAL 12 TARTAGAL",
+                "logo": "assets/canaldocesalta.jfif"
+            },
+            {
+                "canal": 165,
+                "nombre": "MILENIUM TV",
+                "logo": "assets/milenio.png"
+            },
+            {
+                "canal": 201,
+                "nombre": "DEPORTV",
+                "logo": "assets/deportv.png"
+            },
+            {
+                "canal": 202,
+                "nombre": "TyC SPORTS",
+                "logo": "assets/tycsport.jpg"
+            },
+            {
+                "canal": 203,
+                "nombre": "ESPN",
+                "logo": "assets/espn.png"
+            },
+            {
+                "canal": 204,
+                "nombre": "ESPN2",
+                "logo": "assets/espn2.png"
+            },
+            {
+                "canal": 205,
+                "nombre": "ESPN3",
+                "logo": "assets/espn3.jpg"
+            },
+            {
+                "canal": 207,
+                "nombre": "FOX SPORTS",
+                "logo": "assets/foxsport.webp"
+            },
+            {
+                "canal": 208,
+                "nombre": "FOX SPORTS 2",
+                "logo": "assets/foxsports2.png"
+            },
+            {
+                "canal": 209,
+                "nombre": "FOX SPORTS 3",
+                "logo": "assets/foxsports3.png"
+            },
+            {
+                "canal": 211,
+                "nombre": "ESPN PREMIUM",
+                "logo": "assets/espnpremium.webp"
+            },
+            {
+                "canal": 212,
+                "nombre": "TNT SPORTS",
+                "logo": "assets/tntsports.webp"
+            },
+            {
+                "canal": 213,
+                "nombre": "DSPORTS",
+                "logo": "assets/dsports.jpg"
+            },
+            {
+                "canal": 214,
+                "nombre": "DSPORTS 2",
+                "logo": "assets/dsports2.png"
+            },
+            {
+                "canal": 251,
+                "nombre": "PAKA PAKA",
+                "logo": "assets/pakapaka.png"
+            },
+            {
+                "canal": 252,
+                "nombre": "DISNEY JUNIOR",
+                "logo": "assets/disneyjr.png"
+            },
+            {
+                "canal": 253,
+                "nombre": "CLAN HD",
+                "logo": "assets/clanhd.webp"
+            },
+            {
+                "canal": 254,
+                "nombre": "DISCOVERY KIDS",
+                "logo": "assets/discoverykids.webp"
+            },
+            {
+                "canal": 255,
+                "nombre": "CARTOONITO",
+                "logo": "assets/cartoonito.png"
+            },
+            {
+                "canal": 256,
+                "nombre": "CTN",
+                "logo": "assets/ctn.jpg"
+            },
+            {
+                "canal": 257,
+                "nombre": "NICK JUNIOR",
+                "logo": "assets/nickjr.webp"
+            },
+            {
+                "canal": 301,
+                "nombre": "CINECANAL",
+                "logo": "assets/cinecanal.png"
+            },
+            {
+                "canal": 302,
+                "nombre": "STAR",
+                "logo": "assets/star.png"
+            },
+            {
+                "canal": 303,
+                "nombre": "FX",
+                "logo": "assets/fx.png"
+            },
+            {
+                "canal": 304,
+                "nombre": "SPACE HD",
+                "logo": "assets/space.jpg"
+            },
+            {
+                "canal": 305,
+                "nombre": "TNT",
+                "logo": "assets/tnt.webp"
+            },
+            {
+                "canal": 306,
+                "nombre": "GOLDEN CHANNEL",
+                "logo": "assets/golden.png"
+            },
+            {
+                "canal": 307,
+                "nombre": "MIX TV",
+                "logo": "assets/mixtv.png"
+            },
+            {
+                "canal": 308,
+                "nombre": "PARAMOUNT",
+                "logo": "assets/paramount.webp"
+            },
+            {
+                "canal": 309,
+                "nombre": "AMC",
+                "logo": "assets/amc.webp"
+            },
+            {
+                "canal": 310,
+                "nombre": "EUROPA EUROPA",
+                "logo": "assets/europaeuropa.webp"
+            },
+            {
+                "canal": 311,
+                "nombre": "FILM&ARTS",
+                "logo": "assets/filmandarts.png"
+            },
+            {
+                "canal": 312,
+                "nombre": "TCM",
+                "logo": "assets/tcm.png"
+            },
+            {
+                "canal": 351,
+                "nombre": "VOLVER",
+                "logo": "assets/volver.webp"
+            },
+            {
+                "canal": 352,
+                "nombre": "COMEDIA CENTRAL",
+                "logo": "assets/comedycentral.png"
+            },
+            {
+                "canal": 353,
+                "nombre": "TNT SERIES",
+                "logo": "assets/tntseries.jpg"
+            },
+            {
+                "canal": 354,
+                "nombre": "E!",
+                "logo": "assets/eentretainment.png"
+            },
+            {
+                "canal": 355,
+                "nombre": "A&E",
+                "logo": "assets/aye.webp"
+            },
+            {
+                "canal": 356,
+                "nombre": "WARNER",
+                "logo": "assets/warner.webp"
+            },
+            {
+                "canal": 357,
+                "nombre": "AXN",
+                "logo": "assets/axn.jpg"
+            },
+            {
+                "canal": 358,
+                "nombre": "SONY",
+                "logo": "assets/sony.webp"
+            },
+            {
+                "canal": 359,
+                "nombre": "UNIVERSAL CHANNEL HD",
+                "logo": "assets/universal.png"
+            },
+            {
+                "canal": 360,
+                "nombre": "TELENOVELAS",
+                "logo": "assets/tlnovelas.png"
+            },
+            {
+                "canal": 361,
+                "nombre": "TNT NOVELAS",
+                "logo": "assets/tntnovelas.png"
+            },
+            {
+                "canal": 401,
+                "nombre": "ENCUENTRO",
+                "logo": "assets/encuentro.webp"
+            },
+            {
+                "canal": 402,
+                "nombre": "DISCOVERY",
+                "logo": "assets/discovery.png"
+            },
+            {
+                "canal": 403,
+                "nombre": "NAT GEO",
+                "logo": "assets/nationalgeographic.png"
+            },
+            {
+                "canal": 404,
+                "nombre": "ANIMAL PLANET",
+                "logo": "assets/animalplanet.png"
+            },
+            {
+                "canal": 405,
+                "nombre": "HISTORY",
+                "logo": "assets/history.png"
+            },
+            {
+                "canal": 406,
+                "nombre": "ID",
+                "logo": "assets/discoveryid.png"
+            },
+            {
+                "canal": 407,
+                "nombre": "H&H",
+                "logo": "assets/hyh.webp"
+            },
+            {
+                "canal": 408,
+                "nombre": "TURBO",
+                "logo": "assets/turbo.png"
+            },
+            {
+                "canal": 451,
+                "nombre": "QUIERO MUSICA",
+                "logo": "assets/quiero.webp"
+            },
+            {
+                "canal": 452,
+                "nombre": "HTV HD",
+                "logo": "assets/htv.webp"
+            },
+            {
+                "canal": 501,
+                "nombre": "TELESUR",
+                "logo": "assets/telesur.webp"
+            },
+            {
+                "canal": 502,
+                "nombre": "TV ESPAÑOLA",
+                "logo": "assets/tveahd.webp"
+            },
+            {
+                "canal": 503,
+                "nombre": "CNN_ESP",
+                "logo": "assets/cnn.png"
+            },
+            {
+                "canal": 504,
+                "nombre": "TELEMUNDO",
+                "logo": "assets/telemundo.jpg"
+            },
+            {
+                "canal": 505,
+                "nombre": "CANAL DE LAS ESTRELLAS",
+                "logo": "assets/canaldelasestrellas.png"
+            },
+            {
+                "canal": 506,
+                "nombre": "BOLIVISION",
+                "logo": "assets/bolivision.jpg"
+            },
+            {
+                "canal": 507,
+                "nombre": "RT",
+                "logo": "assets/rt.webp"
+            },
+            {
+                "canal": 551,
+                "nombre": "RURAL",
+                "logo": "assets/larural.jpg"
+            },
+            {
+                "canal": 552,
+                "nombre": "MAGAZINE",
+                "logo": "assets/magazine.webp"
+            },
+            {
+                "canal": 553,
+                "nombre": "GOURMET",
+                "logo": "assets/elgourmet.png"
+            },
+            {
+                "canal": 554,
+                "nombre": "AMC SERIES",
+                "logo": "assets/amcseries.webp"
+            },
+            {
+                "canal": 555,
+                "nombre": "CANAL A",
+                "logo": "assets/canala.webp"
+            },
+            {
+                "canal": 556,
+                "ELGARAGETV": "elgarage.webp",
+                "nombre": "EL GARAGE TV",
+                "logo": "assets/elgarage.webp"
+            },
+            {
+                "canal": 601,
+                "nombre": "ENLACE",
+                "logo": "assets/enlace.png"
+            },
+            {
+                "canal": 602,
+                "nombre": "CANAL LUZ",
+                "logo": "assets/canalluz.png"
+            }
+        ],
+        "analogica": [
+            {
+                "canal": 2,
+                "nombre": "AMERICA",
+                "logo": "assets/america.jpg"
+            },
+            {
+                "canal": 3,
+                "nombre": "TN",
+                "logo": "assets/tn.png"
+            },
+            {
+                "canal": 4,
+                "nombre": "C5N",
+                "logo": "assets/c5n.png"
+            },
+            {
+                "canal": 5,
+                "nombre": "CANAL 26",
+                "logo": "assets/canal26.jpg"
+            },
+            {
+                "canal": 6,
+                "nombre": "CRONICA",
+                "logo": "assets/cronica.png"
+            },
+            {
+                "canal": 7,
+                "nombre": "A24",
+                "logo": "assets/a24.png"
+            },
+            {
+                "canal": 8,
+                "nombre": "SIN SEÑAL",
+                "logo": "assets/sinseñal.jpg"
+            },
+            {
+                "canal": 9,
+                "nombre": "MULTIVISION",
+                "logo": "assets/multivision.png"
+            },
+            {
+                "canal": 10,
+                "nombre": "CANAL T+ TARTAGAL",
+                "logo": "assets/t+.png"
+            },
+            {
+                "canal": 11,
+                "nombre": "CANAL 11 SALTA",
+                "logo": "assets/canaloncesalta.jpeg"
+            },
+            {
+                "canal": 12,
+                "nombre": "CANAL 12 TARTAGAL",
+                "logo": "assets/canaldocesalta.jfif"
+            },
+            {
+                "canal": 13,
+                "nombre": "EL TRECE",
+                "logo": "assets/eltrece.webp"
+            },
+            {
+                "canal": 14,
+                "nombre": "CANAL 9",
+                "logo": "assets/elnueve.png"
+            },
+            {
+                "canal": 15,
+                "nombre": "TV PUBLICA",
+                "logo": "assets/tvpublica.jpg"
+            },
+            {
+                "canal": 16,
+                "nombre": "TYC SPORTS",
+                "logo": "assets/tycsport.jpg"
+            },
+            {
+                "canal": 17,
+                "nombre": "FOXSPORT",
+                "logo": "assets/foxsport.webp"
+            },
+            {
+                "canal": 18,
+                "nombre": "FOX SPORT 2",
+                "logo": "assets/foxsports2.png"
+            },
+            {
+                "canal": 19,
+                "nombre": "ESPN",
+                "logo": "assets/espn.png"
+            },
+            {
+                "canal": 20,
+                "nombre": "ESPN2",
+                "logo": "assets/espn2.png"
+            },
+            {
+                "canal": 21,
+                "nombre": "DSPORTS",
+                "logo": "assets/dsports.jpg"
+            },
+            {
+                "canal": 22,
+                "nombre": "DSPORTS 2",
+                "logo": "assets/dsports2.png"
+            },
+            {
+                "canal": 23,
+                "nombre": "AMERICA SPORTS",
+                "logo": "assets/americasports.png"
+            },
+            {
+                "canal": 24,
+                "nombre": "PAKA PAKA",
+                "logo": "assets/pakapaka.png"
+            },
+            {
+                "canal": 25,
+                "nombre": "DISNEY",
+                "logo": "assets/disney.png"
+            },
+            {
+                "canal": 26,
+                "nombre": "DISCOVERY KIDS",
+                "logo": "assets/discoverykids.webp"
+            },
+            {
+                "canal": 27,
+                "nombre": "SIN SEÑAL",
+                "logo": "assets/sinseñal.jpg"
+            },
+            {
+                "canal": 28,
+                "nombre": "CARTON NETWORK",
+                "logo": "assets/ctn.jpg"
+            },
+            {
+                "canal": 29,
+                "nombre": "TNT SERIES",
+                "logo": "assets/tntseries.jpg"
+            },
+            {
+                "canal": 30,
+                "nombre": "FX",
+                "logo": "assets/fx.png"
+            },
+            {
+                "canal": 31,
+                "nombre": "GOLDEN",
+                "logo": "assets/golden.png"
+            },
+            {
+                "canal": 32,
+                "nombre": "AMC",
+                "logo": "assets/amc.webp"
+            },
+            {
+                "canal": 33,
+                "nombre": "SONY",
+                "logo": "assets/sony.webp"
+            },
+            {
+                "canal": 34,
+                "nombre": "WARNER",
+                "logo": "assets/warner.webp"
+            },
+            {
+                "canal": 35,
+                "nombre": "STAR CHANEL",
+                "logo": "assets/star.png"
+            },
+            {
+                "canal": 36,
+                "nombre": "TNT",
+                "logo": "assets/tnt.webp"
+            },
+            {
+                "canal": 37,
+                "nombre": "SPACE",
+                "logo": "assets/space.jpg"
+            },
+            {
+                "canal": 38,
+                "nombre": "MIX TV",
+                "logo": "assets/mixtv.png"
+            },
+            {
+                "canal": 39,
+                "nombre": "TCM",
+                "logo": "assets/tcm.png"
+            },
+            {
+                "canal": 40,
+                "nombre": "UNIVERSAL CHANEL",
+                "logo": "assets/universal.png"
+            },
+            {
+                "canal": 41,
+                "nombre": "CINECANAL",
+                "logo": "assets/cinecanal.png"
+            },
+            {
+                "canal": 42,
+                "nombre": "CANAL RURAL",
+                "logo": "assets/larural.jpg"
+            },
+            {
+                "canal": 43,
+                "nombre": "DISCOVERY CHANEL",
+                "logo": "assets/discovery.png"
+            },
+            {
+                "canal": 44,
+                "nombre": "ANIMAL PLANET",
+                "logo": "assets/animalplanet.png"
+            },
+            {
+                "canal": 45,
+                "nombre": "NAT GEO",
+                "logo": "assets/nationalgeographic.png"
+            },
+            {
+                "canal": 46,
+                "nombre": "DISCOVERY H&H",
+                "logo": "assets/hyh.webp"
+            },
+            {
+                "canal": 47,
+                "nombre": "DISCOVERY ID",
+                "logo": "assets/discoveryid.png"
+            },
+            {
+                "canal": 48,
+                "nombre": "DISCOVERY TURBO",
+                "logo": "assets/turbo.png"
+            },
+            {
+                "canal": 49,
+                "nombre": "TLC",
+                "logo": "assets/tlc.jpg"
+            },
+            {
+                "canal": 50,
+                "nombre": "TLN NOVELAS",
+                "logo": "assets/tlnovelas.png"
+            },
+            {
+                "canal": 51,
+                "nombre": "CANAL DE LAS ESTRELLAS",
+                "logo": "assets/canaldelasestrellas.png"
+            },
+            {
+                "canal": 52,
+                "nombre": "SIN SEÑAL",
+                "logo": "assets/sinseñal.jpg"
+            },
+            {
+                "canal": 53,
+                "nombre": "CGTN ESPAÑOL",
+                "logo": "assets/cgtnespa.webp"
+            },
+            {
+                "canal": 54,
+                "nombre": "SIN SEÑAL",
+                "logo": "assets/sinseñal.jpg"
+            },
+            {
+                "canal": 55,
+                "nombre": "HTV",
+                "logo": "assets/htv.webp"
+            },
+            {
+                "canal": 56,
+                "nombre": "ENCUENTRO",
+                "logo": "assets/encuentro.webp"
+            },
+            {
+                "canal": 57,
+                "nombre": "CINE.AR",
+                "logo": "assets/cinear.webp"
+            },
+            {
+                "canal": 58,
+                "nombre": "SIN SEÑAL",
+                "logo": "assets/sinseñal.jpg"
+            },
+            {
+                "canal": 59,
+                "nombre": "SIN SEÑAL",
+                "logo": "assets/sinseñal.jpg"
+            },
+            {
+                "canal": 60,
+                "nombre": "EWTN",
+                "logo": "assets/ewtn.png"
+            },
+            {
+                "canal": 61,
+                "nombre": "SIN SEÑAL",
+                "logo": "assets/sinseñal.jpg"
+            }
+        ],
+        "pdf": {
+            "digital": "files/TARTAGAL_GRILLA_DIGITAL 23-7-26.pdf",
+            "analogica": "files/Grilla Analogico Tartagal.pdf"
+        },
+        "imagen_grilla": {
+            "digital": "grillas_images/grilla_tartagal_digital.jpg",
+            "analogica": "grillas_images/grilla_tartagal_analogica.jpg"
+        }
+    },
+    "talitas_cable": {
+        "id": "talitas_cable",
+        "nombre": "Talitas Cable",
+        "localidad": "Las Talitas",
+        "provincia": "Tucumán",
+        "grillasDisponibles": [
+            "digital",
+            "analogica"
+        ],
+        "totalCanales": {
+            "digital": 92,
+            "analogica": 59
+        },
+        "digital": [
+            {
+                "canal": 101,
+                "nombre": "RADIO LAS TALITAS",
+                "logo": "assets/radiolastalitas.png"
+            },
+            {
+                "canal": 102,
+                "nombre": "CANAL 2 TAFI VIEJO",
+                "logo": "assets/canal2tafiviejo.jpg"
+            },
+            {
+                "canal": 103,
+                "nombre": "TN",
+                "logo": "assets/tn.png"
+            },
+            {
+                "canal": 104,
+                "nombre": "A24",
+                "logo": "assets/a24.png"
+            },
+            {
+                "canal": 105,
+                "nombre": "C5N",
+                "logo": "assets/c5n.png"
+            },
+            {
+                "canal": 106,
+                "nombre": "T+",
+                "logo": "assets/t+.png"
+            },
+            {
+                "canal": 107,
+                "nombre": "CRONICA TV",
+                "logo": "assets/cronica.png"
+            },
+            {
+                "canal": 108,
+                "nombre": "26 TV",
+                "logo": "assets/canal26.jpg"
+            },
+            {
+                "canal": 109,
+                "nombre": "LA NACION +",
+                "logo": "assets/ln+.jpg"
+            },
+            {
+                "canal": 110,
+                "nombre": "IP NOTICIAS",
+                "logo": "assets/ipnoticias.jpg"
+            },
+            {
+                "canal": 111,
+                "nombre": "11CCC",
+                "logo": "assets/11ccc.jpg"
+            },
+            {
+                "canal": 112,
+                "nombre": "12CCC",
+                "logo": "assets/12ccc.jpg"
+            },
+            {
+                "canal": 113,
+                "nombre": "13CCC",
+                "logo": "assets/13ccc.webp"
+            },
+            {
+                "canal": 114,
+                "nombre": "14CCC",
+                "logo": "assets/14ccc.jpg"
+            },
+            {
+                "canal": 119,
+                "nombre": "DIPUTADOS TV",
+                "logo": "assets/diputadostv.webp"
+            },
+            {
+                "canal": 120,
+                "nombre": "NET TV",
+                "logo": "assets/nettv.png"
+            },
+            {
+                "canal": 121,
+                "nombre": "AMERICA",
+                "logo": "assets/america.jpg"
+            },
+            {
+                "canal": 122,
+                "nombre": "TV PUBLICA",
+                "logo": "assets/tvpublica.jpg"
+            },
+            {
+                "canal": 123,
+                "nombre": "EL NUEVE",
+                "logo": "assets/elnueve.png"
+            },
+            {
+                "canal": 124,
+                "nombre": "TELEFE",
+                "logo": "assets/telefe.jpeg"
+            },
+            {
+                "canal": 125,
+                "nombre": "CANAL 10 TUC",
+                "logo": "assets/10tucuman.jpg"
+            },
+            {
+                "canal": 126,
+                "nombre": "CANAL 8 TUC",
+                "logo": "assets/canal8.jpg"
+            },
+            {
+                "canal": 128,
+                "nombre": "MIXTV",
+                "logo": "assets/mixtv.png"
+            },
+            {
+                "canal": 129,
+                "nombre": "KZO",
+                "logo": "assets/kzo.jpg"
+            },
+            {
+                "canal": 137,
+                "nombre": "RURAL",
+                "logo": "assets/larural.jpg"
+            },
+            {
+                "canal": 138,
+                "nombre": "CHACRA TV",
+                "logo": "assets/chacratv.jpg"
+            },
+            {
+                "canal": 139,
+                "nombre": "ARGENTINISIMA",
+                "logo": "assets/argentinisima.jpg"
+            },
+            {
+                "canal": 141,
+                "nombre": "AMERICA SPORTS",
+                "logo": "assets/americasports.png"
+            },
+            {
+                "canal": 142,
+                "nombre": "TyC SPORTS",
+                "logo": "assets/tycsport.jpg"
+            },
+            {
+                "canal": 143,
+                "nombre": "ESPN",
+                "logo": "assets/espn.png"
+            },
+            {
+                "canal": 144,
+                "nombre": "ESPN2",
+                "logo": "assets/espn2.png"
+            },
+            {
+                "canal": 145,
+                "nombre": "ESPN3",
+                "logo": "assets/espn3.jpg"
+            },
+            {
+                "canal": 146,
+                "nombre": "FOXSPORTS",
+                "logo": "assets/foxsport.webp"
+            },
+            {
+                "canal": 147,
+                "nombre": "FOXSPORTS2",
+                "logo": "assets/foxsports2.png"
+            },
+            {
+                "canal": 148,
+                "nombre": "FOXSPORTS3",
+                "logo": "assets/foxsports3.png"
+            },
+            {
+                "canal": 150,
+                "nombre": "ESPN PREMIUM",
+                "logo": "assets/espnpremium.webp"
+            },
+            {
+                "canal": 151,
+                "nombre": "TNT SPORTS",
+                "logo": "assets/tntsports.webp"
+            },
+            {
+                "canal": 152,
+                "nombre": "DSPORTS",
+                "logo": "assets/dsports.jpg"
+            },
+            {
+                "canal": 153,
+                "nombre": "DSPORTS2",
+                "logo": "assets/dsports2.png"
+            },
+            {
+                "canal": 160,
+                "nombre": "PAKA PAKA",
+                "logo": "assets/pakapaka.png"
+            },
+            {
+                "canal": 161,
+                "nombre": "DISNEY",
+                "logo": "assets/disney.png"
+            },
+            {
+                "canal": 162,
+                "nombre": "DISNEY JR",
+                "logo": "assets/disneyjr.png"
+            },
+            {
+                "canal": 164,
+                "nombre": "KIDS",
+                "logo": "assets/discoverykids.webp"
+            },
+            {
+                "canal": 165,
+                "nombre": "CTN",
+                "logo": "assets/ctn.jpg"
+            },
+            {
+                "canal": 166,
+                "nombre": "CARTOONITO",
+                "logo": "assets/cartoonito.png"
+            },
+            {
+                "canal": 168,
+                "nombre": "NICK",
+                "logo": "assets/nick.png"
+            },
+            {
+                "canal": 169,
+                "nombre": "NICK JR",
+                "logo": "assets/nickjr.webp"
+            },
+            {
+                "canal": 170,
+                "nombre": "DREAMWORD",
+                "logo": "assets/dreamword.jpg"
+            },
+            {
+                "canal": 181,
+                "nombre": "CINECANAL",
+                "logo": "assets/cinecanal.png"
+            },
+            {
+                "canal": 182,
+                "nombre": "START",
+                "logo": "assets/star.png"
+            },
+            {
+                "canal": 183,
+                "nombre": "FX",
+                "logo": "assets/fx.png"
+            },
+            {
+                "canal": 184,
+                "nombre": "SPACE",
+                "logo": "assets/space.jpg"
+            },
+            {
+                "canal": 185,
+                "nombre": "TNT",
+                "logo": "assets/tnt.webp"
+            },
+            {
+                "canal": 186,
+                "nombre": "WARNER",
+                "logo": "assets/warner.webp"
+            },
+            {
+                "canal": 188,
+                "nombre": "GOLDEN CHANNEL",
+                "logo": "assets/golden.png"
+            },
+            {
+                "canal": 189,
+                "nombre": "SONY MOVIE",
+                "logo": "assets/sonymovie.png"
+            },
+            {
+                "canal": 190,
+                "nombre": "PARAMOUNT",
+                "logo": "assets/paramount.webp"
+            },
+            {
+                "canal": 192,
+                "nombre": "EUROPA_EUROPA",
+                "logo": "assets/europaeuropa.webp"
+            },
+            {
+                "canal": 193,
+                "nombre": "AMC",
+                "logo": "assets/amc.webp"
+            },
+            {
+                "canal": 194,
+                "nombre": "TCM",
+                "logo": "assets/tcm.png"
+            },
+            {
+                "canal": 200,
+                "nombre": "TLC",
+                "logo": "assets/tlc.jpg"
+            },
+            {
+                "canal": 202,
+                "nombre": "TNT NOVELAS",
+                "logo": "assets/tntnovelas.png"
+            },
+            {
+                "canal": 203,
+                "nombre": "UNIVERSAL",
+                "logo": "assets/universal.png"
+            },
+            {
+                "canal": 204,
+                "nombre": "AXN",
+                "logo": "assets/axn.jpg"
+            },
+            {
+                "canal": 205,
+                "nombre": "SONY",
+                "logo": "assets/sony.webp"
+            },
+            {
+                "canal": 206,
+                "nombre": "START TVE",
+                "logo": "assets/startve.webp"
+            },
+            {
+                "canal": 207,
+                "nombre": "TNT SERIES",
+                "logo": "assets/tntseries.jpg"
+            },
+            {
+                "canal": 210,
+                "nombre": "TELENOVELAS",
+                "logo": "assets/tlnovelas.png"
+            },
+            {
+                "canal": 211,
+                "nombre": "COMEDIA CENTRAL",
+                "logo": "assets/comedycentral.png"
+            },
+            {
+                "canal": 221,
+                "nombre": "DISCOVERY CH",
+                "logo": "assets/discovery.png"
+            },
+            {
+                "canal": 222,
+                "nombre": "NATGEO",
+                "logo": "assets/nationalgeographic.png"
+            },
+            {
+                "canal": 223,
+                "nombre": "ANIMAL PLANET",
+                "logo": "assets/animalplanet.png"
+            },
+            {
+                "canal": 224,
+                "nombre": "HISTORY",
+                "logo": "assets/history.png"
+            },
+            {
+                "canal": 226,
+                "nombre": "ID",
+                "logo": "assets/discoveryid.png"
+            },
+            {
+                "canal": 227,
+                "nombre": "H&H",
+                "logo": "assets/hyh.webp"
+            },
+            {
+                "canal": 228,
+                "nombre": "WORLD",
+                "logo": "assets/discoveryworld.png"
+            },
+            {
+                "canal": 229,
+                "nombre": "SCIENCE",
+                "logo": "assets/science.webp"
+            },
+            {
+                "canal": 231,
+                "nombre": "HGLA",
+                "logo": "assets/discoveryhgtv.webp"
+            },
+            {
+                "canal": 232,
+                "nombre": "TURBO",
+                "logo": "assets/turbo.png"
+            },
+            {
+                "canal": 240,
+                "nombre": "TV ESPAÑOLA",
+                "logo": "assets/tveahd.webp"
+            },
+            {
+                "canal": 242,
+                "nombre": "ESTRELLAS",
+                "logo": "assets/canaldelasestrellas.png"
+            },
+            {
+                "canal": 246,
+                "nombre": "CGTN",
+                "logo": "assets/cgtnespa.webp"
+            },
+            {
+                "canal": 260,
+                "nombre": "QUIERO MUSICA",
+                "logo": "assets/quiero.webp"
+            },
+            {
+                "canal": 262,
+                "nombre": "HTV",
+                "logo": "assets/htv.webp"
+            },
+            {
+                "canal": 265,
+                "nombre": "ENCUENTRO",
+                "logo": "assets/encuentro.webp"
+            },
+            {
+                "canal": 267,
+                "nombre": "ADULT SWIM",
+                "logo": "assets/adultswim.webp"
+            },
+            {
+                "canal": 269,
+                "nombre": "VOLVER",
+                "logo": "assets/volver.webp"
+            },
+            {
+                "canal": 271,
+                "nombre": "FOOD",
+                "logo": "assets/food.webp"
+            },
+            {
+                "canal": 272,
+                "nombre": "GOURMET",
+                "logo": "assets/elgourmet.png"
+            },
+            {
+                "canal": 273,
+                "nombre": "GARAGE",
+                "logo": "assets/elgarage.webp"
+            },
+            {
+                "canal": 278,
+                "nombre": "EWTN",
+                "logo": "assets/ewtn.png"
+            },
+            {
+                "canal": 280,
+                "nombre": "CANAL LUZ",
+                "logo": "assets/canalluz.png"
+            }
+        ],
+        "analogica": [
+            {
+                "canal": 3,
+                "nombre": "TN",
+                "logo": "assets/tn.png"
+            },
+            {
+                "canal": 4,
+                "nombre": "A24",
+                "logo": "assets/a24.png"
+            },
+            {
+                "canal": 5,
+                "nombre": "C5N",
+                "logo": "assets/c5n.png"
+            },
+            {
+                "canal": 6,
+                "nombre": "T+",
+                "logo": "assets/t+.png"
+            },
+            {
+                "canal": 7,
+                "nombre": "CRONICA TV",
+                "logo": "assets/cronica.png"
+            },
+            {
+                "canal": 8,
+                "nombre": "CANAL 26",
+                "logo": "assets/canal26.jpg"
+            },
+            {
+                "canal": 9,
+                "nombre": "AMERICA BS AS",
+                "logo": "assets/america.jpg"
+            },
+            {
+                "canal": 10,
+                "nombre": "CANAL 8 TUCUMAN",
+                "logo": "assets/canal8.jpg"
+            },
+            {
+                "canal": 11,
+                "nombre": "TV PUBLICA",
+                "logo": "assets/tvpublica.jpg"
+            },
+            {
+                "canal": 12,
+                "nombre": "CANAL 10 TUCUMAN",
+                "logo": "assets/10tucuman.jpg"
+            },
+            {
+                "canal": 13,
+                "nombre": "EL NUEVE",
+                "logo": "assets/elnueve.png"
+            },
+            {
+                "canal": 14,
+                "nombre": "TyC SPORTS",
+                "logo": "assets/tycsport.jpg"
+            },
+            {
+                "canal": 15,
+                "nombre": "FOX SPORTS",
+                "logo": "assets/foxsport.webp"
+            },
+            {
+                "canal": 16,
+                "nombre": "FOX SPORTS 2",
+                "logo": "assets/foxsports2.png"
+            },
+            {
+                "canal": 17,
+                "nombre": "ESPN",
+                "logo": "assets/espn.png"
+            },
+            {
+                "canal": 18,
+                "nombre": "ESPN2",
+                "logo": "assets/espn2.png"
+            },
+            {
+                "canal": 19,
+                "nombre": "DISCOVERY KIDS",
+                "logo": "assets/discoverykids.webp"
+            },
+            {
+                "canal": 20,
+                "nombre": "DSPORTS",
+                "logo": "assets/dsports.jpg"
+            },
+            {
+                "canal": 21,
+                "nombre": "DSPORTS 2",
+                "logo": "assets/dsports2.png"
+            },
+            {
+                "canal": 22,
+                "nombre": "DISNEY",
+                "logo": "assets/disney.png"
+            },
+            {
+                "canal": 23,
+                "nombre": "CTN",
+                "logo": "assets/ctn.jpg"
+            },
+            {
+                "canal": 24,
+                "nombre": "PAKA PAKA",
+                "logo": "assets/pakapaka.png"
+            },
+            {
+                "canal": 25,
+                "nombre": "DISNEY JUNIOR",
+                "logo": "assets/disneyjr.png"
+            },
+            {
+                "canal": 26,
+                "nombre": "CARTOONITO",
+                "logo": "assets/cartoonito.png"
+            },
+            {
+                "canal": 27,
+                "nombre": "COMEDIA CENTRAL",
+                "logo": "assets/comedycentral.png"
+            },
+            {
+                "canal": 28,
+                "nombre": "FX",
+                "logo": "assets/fx.png"
+            },
+            {
+                "canal": 29,
+                "nombre": "TNT_Series",
+                "logo": "assets/tntseries.jpg"
+            },
+            {
+                "canal": 30,
+                "nombre": "STAR CHANNEL",
+                "logo": "assets/star.png"
+            },
+            {
+                "canal": 31,
+                "nombre": "STAR TVEA (antes FX MOVIE)",
+                "logo": "assets/startve.webp"
+            },
+            {
+                "canal": 32,
+                "nombre": "UNIVERSAL CHANNEL HD",
+                "logo": "assets/universal.png"
+            },
+            {
+                "canal": 33,
+                "nombre": "TNT",
+                "logo": "assets/tnt.webp"
+            },
+            {
+                "canal": 34,
+                "nombre": "CINECANAL",
+                "logo": "assets/cinecanal.png"
+            },
+            {
+                "canal": 35,
+                "nombre": "SPACE HD",
+                "logo": "assets/space.jpg"
+            },
+            {
+                "canal": 36,
+                "nombre": "EUROPA EUROPA",
+                "logo": "assets/europaeuropa.webp"
+            },
+            {
+                "canal": 37,
+                "nombre": "AMC",
+                "logo": "assets/amc.webp"
+            },
+            {
+                "canal": 38,
+                "nombre": "GOLDEN CHANNEL",
+                "logo": "assets/golden.png"
+            },
+            {
+                "canal": 39,
+                "nombre": "TNT NOVELAS",
+                "logo": "assets/tntnovelas.png"
+            },
+            {
+                "canal": 40,
+                "nombre": "FILM&ARTS",
+                "logo": "assets/filmandarts.png"
+            },
+            {
+                "canal": 41,
+                "nombre": "VOLVER",
+                "logo": "assets/volver.webp"
+            },
+            {
+                "canal": 42,
+                "nombre": "TELENOVELAS",
+                "logo": "assets/tlnovelas.png"
+            },
+            {
+                "canal": 43,
+                "nombre": "CANAL DE LAS ESTRELLAS",
+                "logo": "assets/canaldelasestrellas.png"
+            },
+            {
+                "canal": 44,
+                "nombre": "GOURMET",
+                "logo": "assets/elgourmet.png"
+            },
+            {
+                "canal": 45,
+                "nombre": "H&H",
+                "logo": "assets/hyh.webp"
+            },
+            {
+                "canal": 46,
+                "nombre": "MAGAZINE",
+                "logo": "assets/magazine.webp"
+            },
+            {
+                "canal": 47,
+                "nombre": "TLC",
+                "logo": "assets/tlc.jpg"
+            },
+            {
+                "canal": 48,
+                "nombre": "TELESUR",
+                "logo": "assets/telesur.webp"
+            },
+            {
+                "canal": 49,
+                "nombre": "TVE",
+                "logo": "assets/tveahd.webp"
+            },
+            {
+                "canal": 50,
+                "nombre": "CNN",
+                "logo": "assets/cnn.png"
+            },
+            {
+                "canal": 51,
+                "nombre": "QUIERO MUSICA",
+                "logo": "assets/quiero.webp"
+            },
+            {
+                "canal": 52,
+                "nombre": "DISCOVERY",
+                "logo": "assets/discovery.png"
+            },
+            {
+                "canal": 53,
+                "nombre": "NAT GEO",
+                "logo": "assets/nationalgeographic.png"
+            },
+            {
+                "canal": 54,
+                "nombre": "ANIMAL PLANET",
+                "logo": "assets/animalplanet.png"
+            },
+            {
+                "canal": 55,
+                "nombre": "DISCOVERY ID",
+                "logo": "assets/discoveryid.png"
+            },
+            {
+                "canal": 56,
+                "nombre": "HISTORY",
+                "logo": "assets/history.png"
+            },
+            {
+                "canal": 57,
+                "nombre": "TURBO",
+                "logo": "assets/turbo.png"
+            },
+            {
+                "canal": 58,
+                "nombre": "ENCUENTRO",
+                "logo": "assets/encuentro.webp"
+            },
+            {
+                "canal": 59,
+                "nombre": "CGTN",
+                "logo": "assets/cgtnespa.webp"
+            },
+            {
+                "canal": 60,
+                "nombre": "EWTN",
+                "logo": "assets/ewtn.png"
+            },
+            {
+                "canal": 61,
+                "nombre": "ENLACE",
+                "logo": "assets/enlace.png"
+            }
+        ],
+        "pdf": {
+            "digital": "files/Grilla Dig TCC-LTC.pdf",
+            "analogica": "files/Grilla Anal Providers-LTC-TCC 27-7-26.pdf"
+        },
+        "imagen_grilla": {
+            "digital": "grillas_images/grilla_talitas_cable_digital.jpg",
+            "analogica": "grillas_images/grilla_talitas_cable_analogica.jpg"
+        }
+    },
+    "la_cocha": {
+        "id": "la_cocha",
+        "nombre": "La Cocha",
+        "localidad": "La Cocha",
+        "provincia": "Tucumán",
+        "grillasDisponibles": [
+            "analogica"
+        ],
+        "totalCanales": {
+            "analogica": 31
+        },
+        "analogica": [
+            {
+                "canal": 3,
+                "nombre": "TN",
+                "logo": "assets/tn.png"
+            },
+            {
+                "canal": 4,
+                "nombre": "LA NACION +",
+                "logo": "assets/ln+.jpg"
+            },
+            {
+                "canal": 5,
+                "nombre": "C5N",
+                "logo": "assets/c5n.png"
+            },
+            {
+                "canal": 6,
+                "nombre": "T+",
+                "logo": "assets/t+.png"
+            },
+            {
+                "canal": 7,
+                "nombre": "CRONICA TV",
+                "logo": "assets/cronica.png"
+            },
+            {
+                "canal": 8,
+                "nombre": "26 TV",
+                "logo": "assets/canal26.jpg"
+            },
+            {
+                "canal": 9,
+                "nombre": "A24",
+                "logo": "assets/a24.png"
+            },
+            {
+                "canal": 10,
+                "nombre": "CANAL 8 TUCUMAN",
+                "logo": "assets/canal8.jpg"
+            },
+            {
+                "canal": 11,
+                "nombre": "TV PUBLICA",
+                "logo": "assets/tvpublica.jpg"
+            },
+            {
+                "canal": 12,
+                "nombre": "CANAL 10 TUCUMAN",
+                "logo": "assets/10tucuman.jpg"
+            },
+            {
+                "canal": 13,
+                "nombre": "EL NUEVE",
+                "logo": "assets/elnueve.png"
+            },
+            {
+                "canal": 14,
+                "nombre": "TyC SPORTS",
+                "logo": "assets/tycsport.jpg"
+            },
+            {
+                "canal": 15,
+                "nombre": "FOX SPORTS",
+                "logo": "assets/foxsport.webp"
+            },
+            {
+                "canal": 16,
+                "nombre": "ESPN",
+                "logo": "assets/espn.png"
+            },
+            {
+                "canal": 17,
+                "nombre": "ESPN2",
+                "logo": "assets/espn2.png"
+            },
+            {
+                "canal": 18,
+                "nombre": "FOX SPORTS PREMIUM",
+                "logo": "assets/foxsportpremium.webp"
+            },
+            {
+                "canal": 19,
+                "nombre": "TNT SPORTS",
+                "logo": "assets/tntsports.webp"
+            },
+            {
+                "canal": 20,
+                "nombre": "DSPORTS",
+                "logo": "assets/dsports.jpg"
+            },
+            {
+                "canal": 21,
+                "nombre": "DISCOVERY KIDS",
+                "logo": "assets/discoverykids.webp"
+            },
+            {
+                "canal": 22,
+                "nombre": "DISNEY",
+                "logo": "assets/disney.png"
+            },
+            {
+                "canal": 23,
+                "nombre": "CTN",
+                "logo": "assets/ctn.jpg"
+            },
+            {
+                "canal": 24,
+                "nombre": "DISNEY JUNIOR",
+                "logo": "assets/disneyjr.png"
+            },
+            {
+                "canal": 25,
+                "nombre": "PAKA PAKA",
+                "logo": "assets/pakapaka.png"
+            },
+            {
+                "canal": 26,
+                "nombre": "UNIVERSAL",
+                "logo": "assets/universal.png"
+            },
+            {
+                "canal": 27,
+                "nombre": "SPACE",
+                "logo": "assets/space.jpg"
+            },
+            {
+                "canal": 28,
+                "nombre": "CINECANAL",
+                "logo": "assets/cinecanal.png"
+            },
+            {
+                "canal": 29,
+                "nombre": "TNT",
+                "logo": "assets/tnt.webp"
+            },
+            {
+                "canal": 30,
+                "nombre": "TELENOVELAS",
+                "logo": "assets/tlnovelas.png"
+            },
+            {
+                "canal": 31,
+                "nombre": "CANAL DE LAS ESTRELLAS",
+                "logo": "assets/canaldelasestrellas.png"
+            },
+            {
+                "canal": 32,
+                "nombre": "DISCOVERY",
+                "logo": "assets/discovery.png"
+            },
+            {
+                "canal": 33,
+                "nombre": "HISTORY",
+                "logo": "assets/history.png"
+            }
+        ],
+        "pdf": {
+            "analogica": "files/Grilla_Anal_La_Cocha 27-7-26.pdf"
+        },
+        "imagen_grilla": {
+            "analogica": "grillas_images/grilla_la_cocha_analogica.jpg"
+        }
+    },
+    "ccc": {
+        "id": "ccc",
+        "nombre": "CCC",
+        "localidad": "San Miguel de Tucumán",
+        "provincia": "Tucumán",
+        "grillasDisponibles": [
+            "digital",
+            "analogica",
+            "aire-digital"
+        ],
+        "totalCanales": {
+            "digital": 98,
+            "analogica": 59,
+            "aire-digital": 92
+        },
+        "pdf": {
+            "digital": "files/GRILLA_DIGITAL_CABLE_CCC.pdf",
+            "analogica": "files/GRILLA_ANALOGICA_CCC.pdf",
+            "aire-digital": "files/GRILLA_DIGITAL_AIRE_CCC.pdf"
+        },
+        "digital": [
+            {
+                "canal": 102,
+                "nombre": "TN",
+                "logo": "assets/tn.png"
+            },
+            {
+                "canal": 103,
+                "nombre": "C5N",
+                "logo": "assets/c5n.png"
+            },
+            {
+                "canal": 104,
+                "nombre": "CRONICA TV",
+                "logo": "assets/cronica.png"
+            },
+            {
+                "canal": 105,
+                "nombre": "AMERICA 24",
+                "logo": "assets/a24.png"
+            },
+            {
+                "canal": 106,
+                "nombre": "26 TV",
+                "logo": "assets/canal26.jpg"
+            },
+            {
+                "canal": 107,
+                "nombre": "LA NACION",
+                "logo": "assets/ln+.jpg"
+            },
+            {
+                "canal": 109,
+                "nombre": "KZO ENTERTAINMENT",
+                "logo": "assets/kzo.jpg"
+            },
+            {
+                "canal": 112,
+                "nombre": "MIX TV",
+                "logo": "assets/mixtv.png"
+            },
+            {
+                "canal": 114,
+                "nombre": "TV PUBLICA",
+                "logo": "assets/tvpublica.jpg"
+            },
+            {
+                "canal": 116,
+                "nombre": "CANAL 9",
+                "logo": "assets/elnueve.png"
+            },
+            {
+                "canal": 118,
+                "nombre": "AMERICA 2",
+                "logo": "assets/america.jpg"
+            },
+            {
+                "canal": 121,
+                "nombre": "11 CCC PLAY",
+                "logo": "assets/11ccc.jpg"
+            },
+            {
+                "canal": 122,
+                "nombre": "12 CCC STREAM",
+                "logo": "assets/12ccc.jpg"
+            },
+            {
+                "canal": 133,
+                "nombre": "13 CCC SPORTS",
+                "logo": "assets/13ccc.webp"
+            },
+            {
+                "canal": 144,
+                "nombre": "14 CCC INFO",
+                "logo": "assets/14ccc.jpg"
+            },
+            {
+                "canal": 150,
+                "nombre": "EL OCHO TV",
+                "logo": "assets/canal8.jpg"
+            },
+            {
+                "canal": 155,
+                "nombre": "CANAL 10",
+                "logo": "assets/10tucuman.jpg"
+            },
+            {
+                "canal": 160,
+                "nombre": "MULTIVISIÓN FEDERAL",
+                "logo": "assets/multivision.png"
+            },
+            {
+                "canal": 210,
+                "nombre": "ESPN",
+                "logo": "assets/espn.png"
+            },
+            {
+                "canal": 215,
+                "nombre": "ESPN 2",
+                "logo": "assets/espn2.png"
+            },
+            {
+                "canal": 220,
+                "nombre": "ESPN 3",
+                "logo": "assets/espn3.jpg"
+            },
+            {
+                "canal": 222,
+                "nombre": "ESPN 4",
+                "logo": "assets/espn.png"
+            },
+            {
+                "canal": 225,
+                "nombre": "TyCSPORTS",
+                "logo": "assets/tycsport.jpg"
+            },
+            {
+                "canal": 230,
+                "nombre": "DEPORTV",
+                "logo": "assets/deportv.png"
+            },
+            {
+                "canal": 235,
+                "nombre": "AM.SPORTS",
+                "logo": "assets/americasports.png"
+            },
+            {
+                "canal": 240,
+                "nombre": "TURBO",
+                "logo": "assets/turbo.png"
+            },
+            {
+                "canal": 245,
+                "nombre": "FOXSPORTS 3",
+                "logo": "assets/foxsports3.png"
+            },
+            {
+                "canal": 250,
+                "nombre": "FOXSPORTS 2",
+                "logo": "assets/foxsports2.png"
+            },
+            {
+                "canal": 255,
+                "nombre": "FOXSPORTS",
+                "logo": "assets/foxsport.webp"
+            },
+            {
+                "canal": 260,
+                "nombre": "ESPN PREMIUM",
+                "logo": "assets/espnpremium.webp"
+            },
+            {
+                "canal": 265,
+                "nombre": "TNT SPORTS",
+                "logo": "assets/tntsports.webp"
+            },
+            {
+                "canal": 270,
+                "nombre": "DSPORTS",
+                "logo": "assets/dsports.jpg"
+            },
+            {
+                "canal": 275,
+                "nombre": "DSPORTS 2",
+                "logo": "assets/dsports2.png"
+            },
+            {
+                "canal": 315,
+                "nombre": "HBO",
+                "logo": "assets/hbo.png"
+            },
+            {
+                "canal": 320,
+                "nombre": "HBO PLUS",
+                "logo": "assets/hboplus.png"
+            },
+            {
+                "canal": 325,
+                "nombre": "HBO 2",
+                "logo": "assets/hbo2.webp"
+            },
+            {
+                "canal": 330,
+                "nombre": "HBO FAMILY",
+                "logo": "assets/hbofamily.webp"
+            },
+            {
+                "canal": 332,
+                "nombre": "TNT",
+                "logo": "assets/tnt.webp"
+            },
+            {
+                "canal": 333,
+                "nombre": "SPACE",
+                "logo": "assets/space.jpg"
+            },
+            {
+                "canal": 335,
+                "nombre": "SONY MOVIES",
+                "logo": "assets/sonymovie.png"
+            },
+            {
+                "canal": 340,
+                "nombre": "AMC",
+                "logo": "assets/amc.webp"
+            },
+            {
+                "canal": 350,
+                "nombre": "EUROPA EUROPA",
+                "logo": "assets/europaeuropa.webp"
+            },
+            {
+                "canal": 355,
+                "nombre": "DREAMWORKS",
+                "logo": "assets/dreamword.jpg"
+            },
+            {
+                "canal": 360,
+                "nombre": "CINECANAL",
+                "logo": "assets/cinecanal.png"
+            },
+            {
+                "canal": 365,
+                "nombre": "TCM",
+                "logo": "assets/tcm.png"
+            },
+            {
+                "canal": 370,
+                "nombre": "CINEMAX",
+                "logo": "assets/cinecanal.png"
+            },
+            {
+                "canal": 375,
+                "nombre": "STUDIO",
+                "logo": "assets/studiouniversal.webp"
+            },
+            {
+                "canal": 380,
+                "nombre": "FX",
+                "logo": "assets/fx.png"
+            },
+            {
+                "canal": 385,
+                "nombre": "GOLDEN",
+                "logo": "assets/golden.png"
+            },
+            {
+                "canal": 390,
+                "nombre": "CINE.AR",
+                "logo": "assets/cinear.webp"
+            },
+            {
+                "canal": 405,
+                "nombre": "VOLVER",
+                "logo": "assets/volver.webp"
+            },
+            {
+                "canal": 410,
+                "nombre": "TNT SERIES",
+                "logo": "assets/tntseries.jpg"
+            },
+            {
+                "canal": 415,
+                "nombre": "TL NOVELAS",
+                "logo": "assets/tlnovelas.png"
+            },
+            {
+                "canal": 420,
+                "nombre": "TNT NOVELAS",
+                "logo": "assets/tntnovelas.png"
+            },
+            {
+                "canal": 433,
+                "nombre": "STAR CHANNEL",
+                "logo": "assets/star.png"
+            },
+            {
+                "canal": 434,
+                "nombre": "UNIVERSAL",
+                "logo": "assets/universal.png"
+            },
+            {
+                "canal": 435,
+                "nombre": "WARNER",
+                "logo": "assets/warner.webp"
+            },
+            {
+                "canal": 436,
+                "nombre": "AXN",
+                "logo": "assets/axn.jpg"
+            },
+            {
+                "canal": 437,
+                "nombre": "SONY",
+                "logo": "assets/sony.webp"
+            },
+            {
+                "canal": 438,
+                "nombre": "CIUDAD MAGAZINE",
+                "logo": "assets/magazine.webp"
+            },
+            {
+                "canal": 439,
+                "nombre": "MTV",
+                "logo": "assets/mtv.png"
+            },
+            {
+                "canal": 440,
+                "nombre": "QUIERO MUSICA",
+                "logo": "assets/quiero.webp"
+            },
+            {
+                "canal": 444,
+                "nombre": "FILM & ARTS",
+                "logo": "assets/filmandarts.png"
+            },
+            {
+                "canal": 446,
+                "nombre": "A&E MUNDO",
+                "logo": "assets/aye.webp"
+            },
+            {
+                "canal": 450,
+                "nombre": "TLC TRAVEL",
+                "logo": "assets/tlc.jpg"
+            },
+            {
+                "canal": 520,
+                "nombre": "N.GEOGRAPHIC",
+                "logo": "assets/nationalgeographic.png"
+            },
+            {
+                "canal": 525,
+                "nombre": "DISCOVERY",
+                "logo": "assets/discovery.png"
+            },
+            {
+                "canal": 527,
+                "nombre": "SCIENCE",
+                "logo": "assets/science.webp"
+            },
+            {
+                "canal": 535,
+                "nombre": "ANIMAL",
+                "logo": "assets/animalplanet.png"
+            },
+            {
+                "canal": 540,
+                "nombre": "HISTORY",
+                "logo": "assets/history.png"
+            },
+            {
+                "canal": 545,
+                "nombre": "ENCUENTRO",
+                "logo": "assets/encuentro.webp"
+            },
+            {
+                "canal": 550,
+                "nombre": "H&H",
+                "logo": "assets/hyh.webp"
+            },
+            {
+                "canal": 555,
+                "nombre": "EL GOURMET",
+                "logo": "assets/elgourmet.png"
+            },
+            {
+                "canal": 640,
+                "nombre": "FOOD NETWORK",
+                "logo": "assets/food.webp"
+            },
+            {
+                "canal": 650,
+                "nombre": "RURAL",
+                "logo": "assets/larural.jpg"
+            },
+            {
+                "canal": 651,
+                "nombre": "DISNEY",
+                "logo": "assets/disney.png"
+            },
+            {
+                "canal": 652,
+                "nombre": "NICK JR.",
+                "logo": "assets/nickjr.webp"
+            },
+            {
+                "canal": 653,
+                "nombre": "NICK",
+                "logo": "assets/nick.png"
+            },
+            {
+                "canal": 654,
+                "nombre": "CARTOON",
+                "logo": "assets/cartoonito.png"
+            },
+            {
+                "canal": 655,
+                "nombre": "DISCOVERY KIDS",
+                "logo": "assets/discoverykids.webp"
+            },
+            {
+                "canal": 656,
+                "nombre": "DISNEY JUNIOR",
+                "logo": "assets/disneyjr.png"
+            },
+            {
+                "canal": 660,
+                "nombre": "ADULT SWIM",
+                "logo": "assets/adultswim.webp"
+            },
+            {
+                "canal": 710,
+                "nombre": "TVE",
+                "logo": "assets/tveahd.webp"
+            },
+            {
+                "canal": 720,
+                "nombre": "ESTRELLAS",
+                "logo": "assets/canaldelasestrellas.png"
+            },
+            {
+                "canal": 730,
+                "nombre": "EWTN",
+                "logo": "assets/ewtn.png"
+            },
+            {
+                "canal": 740,
+                "nombre": "CANAL LUZ",
+                "logo": "assets/canalluz.png"
+            },
+            {
+                "canal": 750,
+                "nombre": "CNN ESPAÑOL",
+                "logo": "assets/cnn.png"
+            },
+            {
+                "canal": 1211,
+                "nombre": "* TELEMAX HD",
+                "logo": "assets/telemax.jpg"
+            },
+            {
+                "canal": 1222,
+                "nombre": "* HISTORY HD",
+                "logo": "assets/history.png"
+            },
+            {
+                "canal": 1226,
+                "nombre": "* HISTORY 2 HD",
+                "logo": "assets/history.png"
+            },
+            {
+                "canal": 1230,
+                "nombre": "* DISC. ORIGINAL HD",
+                "logo": "assets/discoveryid.png"
+            },
+            {
+                "canal": 1233,
+                "nombre": "* DISC. THEATER HD",
+                "logo": "assets/discoveryid.png"
+            },
+            {
+                "canal": 1244,
+                "nombre": "* DISC. SCIENCE HD",
+                "logo": "assets/science.webp"
+            },
+            {
+                "canal": 1255,
+                "nombre": "* N.GEO HD",
+                "logo": "assets/nationalgeographic.png"
+            },
+            {
+                "canal": 1260,
+                "nombre": "* WORLD HD",
+                "logo": "assets/discoveryworld.png"
+            },
+            {
+                "canal": 1263,
+                "nombre": "* DISC. HOME HD",
+                "logo": "assets/discoveryhgtv.webp"
+            },
+            {
+                "canal": 1266,
+                "nombre": "* EL GOURMET HD",
+                "logo": "assets/elgourmet.png"
+            },
+            {
+                "canal": 1277,
+                "nombre": "* FOOD HD",
+                "logo": "assets/food.webp"
+            }
+        ],
+        "analogica": [
+            {
+                "canal": 2,
+                "nombre": "TN",
+                "logo": "assets/tn.png"
+            },
+            {
+                "canal": 3,
+                "nombre": "C5N",
+                "logo": "assets/c5n.png"
+            },
+            {
+                "canal": 4,
+                "nombre": "CRONICA TV",
+                "logo": "assets/cronica.png"
+            },
+            {
+                "canal": 5,
+                "nombre": "AMERICA 24",
+                "logo": "assets/a24.png"
+            },
+            {
+                "canal": 6,
+                "nombre": "26 TV",
+                "logo": "assets/canal26.jpg"
+            },
+            {
+                "canal": 7,
+                "nombre": "LA NACION",
+                "logo": "assets/ln+.jpg"
+            },
+            {
+                "canal": 8,
+                "nombre": "TV PUBLICA",
+                "logo": "assets/tvpublica.jpg"
+            },
+            {
+                "canal": 9,
+                "nombre": "CANAL 9",
+                "logo": "assets/elnueve.png"
+            },
+            {
+                "canal": 10,
+                "nombre": "AMERICA 2",
+                "logo": "assets/america.jpg"
+            },
+            {
+                "canal": 11,
+                "nombre": "11 CCC",
+                "logo": "assets/11ccc.jpg"
+            },
+            {
+                "canal": 12,
+                "nombre": "12 CCC",
+                "logo": "assets/12ccc.jpg"
+            },
+            {
+                "canal": 13,
+                "nombre": "13 CCC",
+                "logo": "assets/13ccc.webp"
+            },
+            {
+                "canal": 14,
+                "nombre": "14 CCC",
+                "logo": "assets/14ccc.jpg"
+            },
+            {
+                "canal": 15,
+                "nombre": "EL OCHO TV",
+                "logo": "assets/canal8.jpg"
+            },
+            {
+                "canal": 16,
+                "nombre": "CANAL 10",
+                "logo": "assets/10tucuman.jpg"
+            },
+            {
+                "canal": 17,
+                "nombre": "MULTIVISIÓN FEDERAL",
+                "logo": "assets/multivision.png"
+            },
+            {
+                "canal": 18,
+                "nombre": "KZO ENTERTAINMENT",
+                "logo": "assets/kzo.jpg"
+            },
+            {
+                "canal": 19,
+                "nombre": "MIX TV",
+                "logo": "assets/mixtv.png"
+            },
+            {
+                "canal": 20,
+                "nombre": "ESPN",
+                "logo": "assets/espn.png"
+            },
+            {
+                "canal": 21,
+                "nombre": "ESPN 2",
+                "logo": "assets/espn2.png"
+            },
+            {
+                "canal": 22,
+                "nombre": "TyCSPORTS",
+                "logo": "assets/tycsport.jpg"
+            },
+            {
+                "canal": 23,
+                "nombre": "FOXSPORTS",
+                "logo": "assets/foxsport.webp"
+            },
+            {
+                "canal": 24,
+                "nombre": "FOXSPORTS 2",
+                "logo": "assets/foxsports2.png"
+            },
+            {
+                "canal": 25,
+                "nombre": "DSPORTS",
+                "logo": "assets/dsports.jpg"
+            },
+            {
+                "canal": 26,
+                "nombre": "DSPORTS 2",
+                "logo": "assets/dsports2.png"
+            },
+            {
+                "canal": 27,
+                "nombre": "TNT",
+                "logo": "assets/tnt.webp"
+            },
+            {
+                "canal": 28,
+                "nombre": "SPACE",
+                "logo": "assets/space.jpg"
+            },
+            {
+                "canal": 29,
+                "nombre": "DREAMWORKS",
+                "logo": "assets/dreamword.jpg"
+            },
+            {
+                "canal": 30,
+                "nombre": "CINECANAL",
+                "logo": "assets/cinecanal.png"
+            },
+            {
+                "canal": 31,
+                "nombre": "TCM",
+                "logo": "assets/tcm.png"
+            },
+            {
+                "canal": 32,
+                "nombre": "CINEMAX",
+                "logo": "assets/cinecanal.png"
+            },
+            {
+                "canal": 33,
+                "nombre": "STUDIO",
+                "logo": "assets/studiouniversal.webp"
+            },
+            {
+                "canal": 34,
+                "nombre": "FX",
+                "logo": "assets/fx.png"
+            },
+            {
+                "canal": 35,
+                "nombre": "VOLVER",
+                "logo": "assets/volver.webp"
+            },
+            {
+                "canal": 36,
+                "nombre": "TNT SERIES",
+                "logo": "assets/tntseries.jpg"
+            },
+            {
+                "canal": 37,
+                "nombre": "TNT NOVELAS",
+                "logo": "assets/tntnovelas.png"
+            },
+            {
+                "canal": 38,
+                "nombre": "STAR CHANNEL",
+                "logo": "assets/star.png"
+            },
+            {
+                "canal": 39,
+                "nombre": "UNIVERSAL",
+                "logo": "assets/universal.png"
+            },
+            {
+                "canal": 40,
+                "nombre": "WARNER",
+                "logo": "assets/warner.webp"
+            },
+            {
+                "canal": 41,
+                "nombre": "AXN",
+                "logo": "assets/axn.jpg"
+            },
+            {
+                "canal": 42,
+                "nombre": "SONY",
+                "logo": "assets/sony.webp"
+            },
+            {
+                "canal": 43,
+                "nombre": "CIUDAD MAGAZINE",
+                "logo": "assets/magazine.webp"
+            },
+            {
+                "canal": 44,
+                "nombre": "MTV",
+                "logo": "assets/mtv.png"
+            },
+            {
+                "canal": 45,
+                "nombre": "A&E MUNDO",
+                "logo": "assets/aye.webp"
+            },
+            {
+                "canal": 46,
+                "nombre": "N.GEOGRAPHIC",
+                "logo": "assets/nationalgeographic.png"
+            },
+            {
+                "canal": 47,
+                "nombre": "DISCOVERY",
+                "logo": "assets/discovery.png"
+            },
+            {
+                "canal": 48,
+                "nombre": "ANIMAL",
+                "logo": "assets/animalplanet.png"
+            },
+            {
+                "canal": 49,
+                "nombre": "HISTORY",
+                "logo": "assets/history.png"
+            },
+            {
+                "canal": 50,
+                "nombre": "ENCUENTRO",
+                "logo": "assets/encuentro.webp"
+            },
+            {
+                "canal": 51,
+                "nombre": "H&H",
+                "logo": "assets/hyh.webp"
+            },
+            {
+                "canal": 52,
+                "nombre": "EL GOURMET",
+                "logo": "assets/elgourmet.png"
+            },
+            {
+                "canal": 53,
+                "nombre": "DISNEY",
+                "logo": "assets/disney.png"
+            },
+            {
+                "canal": 54,
+                "nombre": "NICK JR.",
+                "logo": "assets/nickjr.webp"
+            },
+            {
+                "canal": 55,
+                "nombre": "NICK",
+                "logo": "assets/nick.png"
+            },
+            {
+                "canal": 56,
+                "nombre": "CARTOON",
+                "logo": "assets/cartoonito.png"
+            },
+            {
+                "canal": 57,
+                "nombre": "DISCOVERY KIDS",
+                "logo": "assets/discoverykids.webp"
+            },
+            {
+                "canal": 58,
+                "nombre": "TVE",
+                "logo": "assets/tveahd.webp"
+            },
+            {
+                "canal": 59,
+                "nombre": "ESTRELLAS",
+                "logo": "assets/canaldelasestrellas.png"
+            },
+            {
+                "canal": 60,
+                "nombre": "EWTN",
+                "logo": "assets/ewtn.png"
+            }
+        ],
+        "aire-digital": [
+            {
+                "canal": 102,
+                "nombre": "TN",
+                "logo": "assets/tn.png"
+            },
+            {
+                "canal": 103,
+                "nombre": "C5N",
+                "logo": "assets/c5n.png"
+            },
+            {
+                "canal": 104,
+                "nombre": "CRONICA TV",
+                "logo": "assets/cronica.png"
+            },
+            {
+                "canal": 105,
+                "nombre": "AMERICA 24",
+                "logo": "assets/a24.png"
+            },
+            {
+                "canal": 106,
+                "nombre": "26 TV",
+                "logo": "assets/canal26.jpg"
+            },
+            {
+                "canal": 107,
+                "nombre": "LA NACION",
+                "logo": "assets/ln+.jpg"
+            },
+            {
+                "canal": 109,
+                "nombre": "KZO ENTERTAINMENT",
+                "logo": "assets/kzo.jpg"
+            },
+            {
+                "canal": 112,
+                "nombre": "MIX TV",
+                "logo": "assets/mixtv.png"
+            },
+            {
+                "canal": 114,
+                "nombre": "TV PUBLICA",
+                "logo": "assets/tvpublica.jpg"
+            },
+            {
+                "canal": 116,
+                "nombre": "CANAL 9",
+                "logo": "assets/elnueve.png"
+            },
+            {
+                "canal": 118,
+                "nombre": "AMERICA 2",
+                "logo": "assets/america.jpg"
+            },
+            {
+                "canal": 121,
+                "nombre": "11 CCC PLAY",
+                "logo": "assets/11ccc.jpg"
+            },
+            {
+                "canal": 122,
+                "nombre": "12 CCC STREAM",
+                "logo": "assets/12ccc.jpg"
+            },
+            {
+                "canal": 133,
+                "nombre": "13 CCC SPORTS",
+                "logo": "assets/13ccc.webp"
+            },
+            {
+                "canal": 144,
+                "nombre": "14 CCC INFO",
+                "logo": "assets/14ccc.jpg"
+            },
+            {
+                "canal": 150,
+                "nombre": "EL OCHO TV",
+                "logo": "assets/canal8.jpg"
+            },
+            {
+                "canal": 155,
+                "nombre": "CANAL 10",
+                "logo": "assets/10tucuman.jpg"
+            },
+            {
+                "canal": 160,
+                "nombre": "MULTIVISIÓN FEDERAL",
+                "logo": "assets/multivision.png"
+            },
+            {
+                "canal": 210,
+                "nombre": "ESPN",
+                "logo": "assets/espn.png"
+            },
+            {
+                "canal": 215,
+                "nombre": "ESPN 2",
+                "logo": "assets/espn2.png"
+            },
+            {
+                "canal": 220,
+                "nombre": "ESPN 3",
+                "logo": "assets/espn3.jpg"
+            },
+            {
+                "canal": 222,
+                "nombre": "ESPN 4",
+                "logo": "assets/espn.png"
+            },
+            {
+                "canal": 225,
+                "nombre": "TyCSPORTS",
+                "logo": "assets/tycsport.jpg"
+            },
+            {
+                "canal": 230,
+                "nombre": "DEPORTV",
+                "logo": "assets/deportv.png"
+            },
+            {
+                "canal": 235,
+                "nombre": "AM.SPORTS",
+                "logo": "assets/americasports.png"
+            },
+            {
+                "canal": 240,
+                "nombre": "TURBO",
+                "logo": "assets/turbo.png"
+            },
+            {
+                "canal": 245,
+                "nombre": "FOXSPORTS 3",
+                "logo": "assets/foxsports3.png"
+            },
+            {
+                "canal": 250,
+                "nombre": "FOXSPORTS 2",
+                "logo": "assets/foxsports2.png"
+            },
+            {
+                "canal": 255,
+                "nombre": "FOXSPORTS",
+                "logo": "assets/foxsport.webp"
+            },
+            {
+                "canal": 260,
+                "nombre": "ESPN PREMIUM",
+                "logo": "assets/espnpremium.webp"
+            },
+            {
+                "canal": 265,
+                "nombre": "TNT SPORTS",
+                "logo": "assets/tntsports.webp"
+            },
+            {
+                "canal": 270,
+                "nombre": "DSPORTS",
+                "logo": "assets/dsports.jpg"
+            },
+            {
+                "canal": 275,
+                "nombre": "DSPORTS 2",
+                "logo": "assets/dsports2.png"
+            },
+            {
+                "canal": 315,
+                "nombre": "HBO",
+                "logo": "assets/hbo.png"
+            },
+            {
+                "canal": 320,
+                "nombre": "HBO PLUS",
+                "logo": "assets/hboplus.png"
+            },
+            {
+                "canal": 325,
+                "nombre": "HBO 2",
+                "logo": "assets/hbo2.webp"
+            },
+            {
+                "canal": 330,
+                "nombre": "HBO FAMILY",
+                "logo": "assets/hbofamily.webp"
+            },
+            {
+                "canal": 332,
+                "nombre": "TNT",
+                "logo": "assets/tnt.webp"
+            },
+            {
+                "canal": 333,
+                "nombre": "SPACE",
+                "logo": "assets/space.jpg"
+            },
+            {
+                "canal": 335,
+                "nombre": "SONY MOVIES",
+                "logo": "assets/sonymovie.png"
+            },
+            {
+                "canal": 340,
+                "nombre": "AMC",
+                "logo": "assets/amc.webp"
+            },
+            {
+                "canal": 350,
+                "nombre": "EUROPA EUROPA",
+                "logo": "assets/europaeuropa.webp"
+            },
+            {
+                "canal": 355,
+                "nombre": "DREAMWORKS",
+                "logo": "assets/dreamword.jpg"
+            },
+            {
+                "canal": 360,
+                "nombre": "CINECANAL",
+                "logo": "assets/cinecanal.png"
+            },
+            {
+                "canal": 370,
+                "nombre": "CINEMAX",
+                "logo": "assets/cinecanal.png"
+            },
+            {
+                "canal": 375,
+                "nombre": "STUDIO",
+                "logo": "assets/studiouniversal.webp"
+            },
+            {
+                "canal": 380,
+                "nombre": "FX",
+                "logo": "assets/fx.png"
+            },
+            {
+                "canal": 385,
+                "nombre": "GOLDEN",
+                "logo": "assets/golden.png"
+            },
+            {
+                "canal": 390,
+                "nombre": "CINE.AR",
+                "logo": "assets/cinear.webp"
+            },
+            {
+                "canal": 405,
+                "nombre": "VOLVER",
+                "logo": "assets/volver.webp"
+            },
+            {
+                "canal": 410,
+                "nombre": "TNT SERIES",
+                "logo": "assets/tntseries.jpg"
+            },
+            {
+                "canal": 415,
+                "nombre": "TL NOVELAS",
+                "logo": "assets/tlnovelas.png"
+            },
+            {
+                "canal": 420,
+                "nombre": "TNT NOVELAS",
+                "logo": "assets/tntnovelas.png"
+            },
+            {
+                "canal": 433,
+                "nombre": "STAR CHANNEL",
+                "logo": "assets/star.png"
+            },
+            {
+                "canal": 434,
+                "nombre": "UNIVERSAL",
+                "logo": "assets/universal.png"
+            },
+            {
+                "canal": 435,
+                "nombre": "WARNER",
+                "logo": "assets/warner.webp"
+            },
+            {
+                "canal": 436,
+                "nombre": "AXN",
+                "logo": "assets/axn.jpg"
+            },
+            {
+                "canal": 437,
+                "nombre": "SONY",
+                "logo": "assets/sony.webp"
+            },
+            {
+                "canal": 438,
+                "nombre": "CIUDAD MAGAZINE",
+                "logo": "assets/magazine.webp"
+            },
+            {
+                "canal": 440,
+                "nombre": "QUIERO MUSICA",
+                "logo": "assets/quiero.webp"
+            },
+            {
+                "canal": 444,
+                "nombre": "FILM & ARTS",
+                "logo": "assets/filmandarts.png"
+            },
+            {
+                "canal": 446,
+                "nombre": "A&E MUNDO",
+                "logo": "assets/aye.webp"
+            },
+            {
+                "canal": 450,
+                "nombre": "TLC TRAVEL",
+                "logo": "assets/tlc.jpg"
+            },
+            {
+                "canal": 520,
+                "nombre": "N.GEOGRAPHIC",
+                "logo": "assets/nationalgeographic.png"
+            },
+            {
+                "canal": 525,
+                "nombre": "DISCOVERY",
+                "logo": "assets/discovery.png"
+            },
+            {
+                "canal": 527,
+                "nombre": "SCIENCE",
+                "logo": "assets/science.webp"
+            },
+            {
+                "canal": 535,
+                "nombre": "ANIMAL",
+                "logo": "assets/animalplanet.png"
+            },
+            {
+                "canal": 540,
+                "nombre": "HISTORY",
+                "logo": "assets/history.png"
+            },
+            {
+                "canal": 545,
+                "nombre": "ENCUENTRO",
+                "logo": "assets/encuentro.webp"
+            },
+            {
+                "canal": 550,
+                "nombre": "H&H",
+                "logo": "assets/hyh.webp"
+            },
+            {
+                "canal": 555,
+                "nombre": "EL GOURMET",
+                "logo": "assets/elgourmet.png"
+            },
+            {
+                "canal": 640,
+                "nombre": "FOOD NETWORK",
+                "logo": "assets/food.webp"
+            },
+            {
+                "canal": 650,
+                "nombre": "RURAL",
+                "logo": "assets/larural.jpg"
+            },
+            {
+                "canal": 651,
+                "nombre": "DISNEY",
+                "logo": "assets/disney.png"
+            },
+            {
+                "canal": 652,
+                "nombre": "NICK JR.",
+                "logo": "assets/nickjr.webp"
+            },
+            {
+                "canal": 653,
+                "nombre": "NICK",
+                "logo": "assets/nick.png"
+            },
+            {
+                "canal": 654,
+                "nombre": "CARTOON",
+                "logo": "assets/cartoonito.png"
+            },
+            {
+                "canal": 655,
+                "nombre": "DISCOVERY KIDS",
+                "logo": "assets/discoverykids.webp"
+            },
+            {
+                "canal": 656,
+                "nombre": "DISNEY JUNIOR",
+                "logo": "assets/disneyjr.png"
+            },
+            {
+                "canal": 660,
+                "nombre": "ADULT SWIM",
+                "logo": "assets/adultswim.webp"
+            },
+            {
+                "canal": 710,
+                "nombre": "TVE",
+                "logo": "assets/tveahd.webp"
+            },
+            {
+                "canal": 720,
+                "nombre": "ESTRELLAS",
+                "logo": "assets/canaldelasestrellas.png"
+            },
+            {
+                "canal": 730,
+                "nombre": "EWTN",
+                "logo": "assets/ewtn.png"
+            },
+            {
+                "canal": 740,
+                "nombre": "CANAL LUZ",
+                "logo": "assets/canalluz.png"
+            },
+            {
+                "canal": 750,
+                "nombre": "CNN ESPAÑOL",
+                "logo": "assets/cnn.png"
+            },
+            {
+                "canal": 1222,
+                "nombre": "* HISTORY HD",
+                "logo": "assets/history.png"
+            },
+            {
+                "canal": 1244,
+                "nombre": "* DISC. SCIENCE HD",
+                "logo": "assets/science.webp"
+            },
+            {
+                "canal": 1255,
+                "nombre": "* N.GEO HD",
+                "logo": "assets/nationalgeographic.png"
+            },
+            {
+                "canal": 1444,
+                "nombre": "* HBO HD",
+                "logo": "assets/hbo.png"
+            },
+            {
+                "canal": 1464,
+                "nombre": "* CINECANAL HD",
+                "logo": "assets/cinecanal.png"
+            },
+            {
+                "canal": 1490,
+                "nombre": "* SPACE HD",
+                "logo": "assets/space.jpg"
+            },
+            {
+                "canal": 1493,
+                "nombre": "* TNT HD",
+                "logo": "assets/tnt.webp"
+            }
+        ],
+        "imagen_grilla": {
+            "digital": "grillas_images/grilla_ccc_digital.jpg",
+            "analogica": "grillas_images/grilla_ccc_analogica.jpg",
+            "aire-digital": "grillas_images/grilla_ccc_aire-digital.jpg"
+        }
+    }
+}

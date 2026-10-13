@@ -1,6 +1,15 @@
 const PDFDocument = require('pdfkit');
 const pool = require('../config/db');
 
+const normalizarFecha = (val) => {
+  if (!val || typeof val !== 'string') return val;
+  const match = val.trim().match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
+  if (match) {
+    return `${match[3]}-${match[2].padStart(2, '0')}-${match[1].padStart(2, '0')}`;
+  }
+  return val.trim();
+};
+
 const emitirReportePDF = async (req, res) => {
   try {
     const {
@@ -43,15 +52,15 @@ const emitirReportePDF = async (req, res) => {
 
     if (fecha) {
       query += ` AND DATE(r.fecha) = $${paramIndex++}`;
-      values.push(fecha);
+      values.push(normalizarFecha(fecha));
     }
     if (fecha_desde) {
       query += ` AND DATE(r.fecha) >= $${paramIndex++}`;
-      values.push(fecha_desde);
+      values.push(normalizarFecha(fecha_desde));
     }
     if (fecha_hasta) {
       query += ` AND DATE(r.fecha) <= $${paramIndex++}`;
-      values.push(fecha_hasta);
+      values.push(normalizarFecha(fecha_hasta));
     }
     if (asesor_id) {
       query += ` AND r.usuario_id = $${paramIndex++}`;
@@ -268,15 +277,15 @@ const emitirReporteLlamadasPDF = async (req, res) => {
 
     if (fecha) {
       query += ` AND DATE(l.fecha) = $${paramIndex++}`;
-      values.push(fecha);
+      values.push(normalizarFecha(fecha));
     }
     if (fecha_desde) {
       query += ` AND DATE(l.fecha) >= $${paramIndex++}`;
-      values.push(fecha_desde);
+      values.push(normalizarFecha(fecha_desde));
     }
     if (fecha_hasta) {
       query += ` AND DATE(l.fecha) <= $${paramIndex++}`;
-      values.push(fecha_hasta);
+      values.push(normalizarFecha(fecha_hasta));
     }
     if (asesor_id) {
       query += ` AND l.usuario_id = $${paramIndex++}`;
@@ -1293,16 +1302,18 @@ const buildDinamicaData = async (fecha_desde, fecha_hasta, canal, sucursal_id, a
   let pIdxL = 1;
 
   if (fecha_desde) {
+    const fDesde = normalizarFecha(fecha_desde);
     whereR += ` AND DATE(r.fecha) >= $${pIdxR++}`;
-    paramsR.push(fecha_desde);
+    paramsR.push(fDesde);
     whereL += ` AND DATE(l.fecha) >= $${pIdxL++}`;
-    paramsL.push(fecha_desde);
+    paramsL.push(fDesde);
   }
   if (fecha_hasta) {
+    const fHasta = normalizarFecha(fecha_hasta);
     whereR += ` AND DATE(r.fecha) <= $${pIdxR++}`;
-    paramsR.push(fecha_hasta);
+    paramsR.push(fHasta);
     whereL += ` AND DATE(l.fecha) <= $${pIdxL++}`;
-    paramsL.push(fecha_hasta);
+    paramsL.push(fHasta);
   }
   if (sucursal_id) {
     whereR += ` AND r.sucursal_id = $${pIdxR++}`;
@@ -1351,7 +1362,7 @@ const buildDinamicaData = async (fecha_desde, fecha_hasta, canal, sucursal_id, a
     let renumberedWhereL = whereL;
     let offsetIdx = unionParams.length;
     paramsL.forEach((val, i) => {
-      renumberedWhereL = renumberedWhereL.replace(`$${i + 1}`, `$${offsetIdx + i + 1}`);
+      renumberedWhereL = renumberedWhereL.replace(new RegExp(`\\$${i + 1}\\b`, 'g'), `$${offsetIdx + i + 1}`);
     });
     unionParts.push(`
       SELECT 

@@ -24,7 +24,8 @@ const PORT = process.env.PORT || 3000;
 
 app.use(helmet({
   contentSecurityPolicy: false,
-  crossOriginEmbedderPolicy: false
+  crossOriginEmbedderPolicy: false,
+  originAgentCluster: false
 }));
 app.use(cors());
 app.use(express.json());
