@@ -49,8 +49,9 @@ const getInbox = async (req, res) => {
 
     let query = `
       SELECT 
-        md.id AS destinatario_registro_id,
+        m.id,
         m.id AS mensaje_id,
+        md.id AS destinatario_registro_id,
         m.asunto,
         m.cuerpo,
         m.created_at,

@@ -203,9 +203,9 @@ const MensajesModule = {
       const tipoBadge = m.tipo_destinatario === 'acc' ? '<span class="badge badge-secondary" style="font-size: 0.68rem; margin-left: 0.35rem;">ACC</span>' : '';
 
       html += `
-        <tr class="${isUnread ? 'mensaje-unread-row' : ''}" style="cursor: pointer;" onclick="MensajesModule.onFilaClick(event, ${m.id})">
+        <tr class="${isUnread ? 'mensaje-unread-row' : ''}" style="cursor: pointer;" onclick="MensajesModule.onFilaClick(event, ${m.id || m.mensaje_id})">
           <td style="text-align: center;">
-            <button type="button" class="btn-star-fav ${isFav ? 'is-favorite' : ''}" onclick="MensajesModule.toggleFavorito(event, ${m.id}, ${isFav})" title="${isFav ? 'Quitar de favoritos' : 'Marcar como favorito'}">
+            <button type="button" class="btn-star-fav ${isFav ? 'is-favorite' : ''}" onclick="MensajesModule.toggleFavorito(event, ${m.id || m.mensaje_id}, ${isFav})" title="${isFav ? 'Quitar de favoritos' : 'Marcar como favorito'}">
               ${isFav ? '⭐' : '☆'}
             </button>
           </td>
@@ -229,10 +229,10 @@ const MensajesModule = {
           </td>
           <td style="text-align: right;">
             <div class="flex-row justify-end align-center gap-1" style="justify-content: flex-end;">
-              <button type="button" class="btn btn-xs btn-outline-secondary" onclick="MensajesModule.toggleLeido(event, ${m.id}, ${!isUnread})" title="${isUnread ? 'Marcar como leído' : 'Marcar como no leído'}">
+              <button type="button" class="btn btn-xs btn-outline-secondary" onclick="MensajesModule.toggleLeido(event, ${m.id || m.mensaje_id}, ${!isUnread})" title="${isUnread ? 'Marcar como leído' : 'Marcar como no leído'}">
                 ${isUnread ? '👁️' : '✉️'}
               </button>
-              <button type="button" class="btn btn-xs btn-outline-danger" onclick="MensajesModule.eliminarMensaje(event, ${m.id})" title="Eliminar mensaje">
+              <button type="button" class="btn btn-xs btn-outline-danger" onclick="MensajesModule.eliminarMensaje(event, ${m.id || m.mensaje_id})" title="Eliminar mensaje">
                 🗑️
               </button>
             </div>
@@ -355,10 +355,10 @@ const MensajesModule = {
     if (e) e.stopPropagation();
     try {
       await API.patch(`/mensajes/${mensajeId}/favorito`, { favorito: !estadoActual });
-      const item = this.inboxData.find(x => x.id === mensajeId);
+      const item = this.inboxData.find(x => (x.id === mensajeId || x.mensaje_id === mensajeId));
       if (item) item.favorito = !estadoActual;
       if (this.currentInboxFilter === 'favoritos' && estadoActual) {
-        this.inboxData = this.inboxData.filter(x => x.id !== mensajeId);
+        this.inboxData = this.inboxData.filter(x => (x.id !== mensajeId && x.mensaje_id !== mensajeId));
       }
       this.renderInboxTable(this.inboxData);
     } catch (err) {
@@ -370,7 +370,7 @@ const MensajesModule = {
     if (e) e.stopPropagation();
     try {
       await API.patch(`/mensajes/${mensajeId}/leido`, { leido: nuevoEstado });
-      const item = this.inboxData.find(x => x.id === mensajeId);
+      const item = this.inboxData.find(x => (x.id === mensajeId || x.mensaje_id === mensajeId));
       if (item) item.leido = nuevoEstado;
       this.renderInboxTable(this.inboxData);
       await this.actualizarBadge();
@@ -386,7 +386,7 @@ const MensajesModule = {
     try {
       await API.delete(`/mensajes/${mensajeId}`);
       if (this.currentView === 'inbox') {
-        this.inboxData = this.inboxData.filter(x => x.id !== mensajeId);
+        this.inboxData = this.inboxData.filter(x => (x.id !== mensajeId && x.mensaje_id !== mensajeId));
         this.renderInboxTable(this.inboxData);
       } else {
         this.sentData = this.sentData.filter(x => x.id !== mensajeId);
@@ -403,7 +403,7 @@ const MensajesModule = {
       const msg = await API.get(`/mensajes/${mensajeId}`);
       this.renderModalLectura(msg);
       
-      const itemInbox = this.inboxData.find(x => x.id === mensajeId);
+      const itemInbox = this.inboxData.find(x => (x.id === mensajeId || x.mensaje_id === mensajeId));
       if (itemInbox && !itemInbox.leido) {
         itemInbox.leido = true;
         this.renderInboxTable(this.inboxData);
