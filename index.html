@@ -2895,16 +2895,28 @@
           <div id="alert-redactar-mensaje" class="form-alert hidden mb-3"></div>
 
           <div class="form-group mb-3">
-            <label for="mensaje-input-para"><strong>Para:</strong> <span class="req">*</span> <small class="text-muted">(Destinatario principal)</small></label>
-            <select id="mensaje-input-para" class="form-control" required>
-              <option value="">Seleccione un usuario...</option>
-            </select>
+            <div class="flex-row justify-between align-center mb-1">
+              <label><strong>Para:</strong> <span class="req">*</span> <small class="text-muted">(Destinatarios - Sin límite)</small></label>
+              <div class="flex-row gap-2 align-center">
+                <button type="button" class="btn btn-xs btn-outline-secondary" onclick="MensajesModule.seleccionarTodosPara()">Seleccionar todos</button>
+                <button type="button" class="btn btn-xs btn-outline-secondary" onclick="MensajesModule.deseleccionarTodosPara()">Limpiar</button>
+                <span id="mensaje-para-count" class="font-xs text-muted">0 seleccionados</span>
+              </div>
+            </div>
+            <div id="mensaje-para-container" class="mensaje-acc-box">
+              <div class="text-muted font-xs">Cargando usuarios...</div>
+            </div>
+            <select id="mensaje-input-para" class="hidden" style="display:none;"></select>
           </div>
 
           <div class="form-group mb-3">
             <div class="flex-row justify-between align-center mb-1">
-              <label for="mensaje-input-acc"><strong>ACC:</strong> <small class="text-muted">(Con Copia - Máximo 5 usuarios adicionales)</small></label>
-              <span id="mensaje-acc-count" class="font-xs text-muted">0 / 5 seleccionados</span>
+              <label><strong>ACC:</strong> <small class="text-muted">(Con Copia - Sin límite)</small></label>
+              <div class="flex-row gap-2 align-center">
+                <button type="button" class="btn btn-xs btn-outline-secondary" onclick="MensajesModule.seleccionarTodosAcc()">Seleccionar todos</button>
+                <button type="button" class="btn btn-xs btn-outline-secondary" onclick="MensajesModule.deseleccionarTodosAcc()">Limpiar</button>
+                <span id="mensaje-acc-count" class="font-xs text-muted">0 seleccionados</span>
+              </div>
             </div>
             <div id="mensaje-acc-container" class="mensaje-acc-box">
               <div class="text-muted font-xs">Cargando usuarios...</div>

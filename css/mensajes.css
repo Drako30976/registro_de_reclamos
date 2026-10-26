@@ -48,7 +48,8 @@
   gap: 0.4rem;
 }
 
-.mensaje-acc-chip {
+.mensaje-acc-chip,
+.mensaje-para-chip {
   display: inline-flex;
   align-items: center;
   gap: 0.35rem;
@@ -63,18 +64,21 @@
   transition: all 0.15s ease;
 }
 
-[data-theme="dark"] .mensaje-acc-chip {
+[data-theme="dark"] .mensaje-acc-chip,
+[data-theme="dark"] .mensaje-para-chip {
   background: rgba(30, 41, 59, 0.8);
   color: #93C5FD;
   border-color: #3B82F6;
 }
 
-.mensaje-acc-chip input[type="checkbox"] {
+.mensaje-acc-chip input[type="checkbox"],
+.mensaje-para-chip input[type="checkbox"] {
   margin: 0;
   cursor: pointer;
 }
 
-.mensaje-acc-chip.selected {
+.mensaje-acc-chip.selected,
+.mensaje-para-chip.selected {
   background: var(--primary);
   color: #FFFFFF;
   border-color: var(--primary);

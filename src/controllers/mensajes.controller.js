@@ -219,12 +219,8 @@ const crearMensaje = async (req, res) => {
   const client = await pool.connect();
   try {
     const remitenteId = req.user.id;
-    const { destinatario_id, asunto, cuerpo } = req.body;
+    const { destinatario_id, destinatarios_ids, asunto, cuerpo } = req.body;
     let { acc_ids } = req.body;
-
-    if (!destinatario_id) {
-      return res.status(400).json({ error: 'El destinatario principal (Para) es obligatorio.' });
-    }
 
     if (!cuerpo || !cuerpo.trim()) {
       return res.status(400).json({ error: 'El contenido del mensaje no puede estar vacío.' });
@@ -234,9 +230,35 @@ const crearMensaje = async (req, res) => {
       return res.status(400).json({ error: 'El mensaje no puede superar los 10.000 caracteres.' });
     }
 
-    const paraId = parseInt(destinatario_id, 10);
-    if (isNaN(paraId) || paraId === remitenteId) {
-      return res.status(400).json({ error: 'Destinatario inválido.' });
+    let paraList = [];
+    if (destinatarios_ids) {
+      if (typeof destinatarios_ids === 'string') {
+        try {
+          paraList = JSON.parse(destinatarios_ids);
+        } catch {
+          paraList = destinatarios_ids.split(',').map(s => parseInt(s.trim(), 10)).filter(n => !isNaN(n));
+        }
+      } else if (Array.isArray(destinatarios_ids)) {
+        paraList = destinatarios_ids.map(n => parseInt(n, 10)).filter(n => !isNaN(n));
+      }
+    } else if (destinatario_id) {
+      if (typeof destinatario_id === 'string' && destinatario_id.startsWith('[')) {
+        try {
+          paraList = JSON.parse(destinatario_id);
+        } catch {
+          const pId = parseInt(destinatario_id, 10);
+          if (!isNaN(pId)) paraList = [pId];
+        }
+      } else {
+        const pId = parseInt(destinatario_id, 10);
+        if (!isNaN(pId)) paraList = [pId];
+      }
+    }
+
+    paraList = [...new Set(paraList.filter(id => id && id !== remitenteId))];
+
+    if (paraList.length === 0) {
+      return res.status(400).json({ error: 'Debe seleccionar al menos un destinatario (Para).' });
     }
 
     let accList = [];
@@ -252,11 +274,7 @@ const crearMensaje = async (req, res) => {
       }
     }
 
-    accList = [...new Set(accList.filter(id => id !== remitenteId && id !== paraId))];
-
-    if (accList.length > 5) {
-      return res.status(400).json({ error: 'Se permite un máximo de 5 destinatarios en copia (ACC).' });
-    }
+    accList = [...new Set(accList.filter(id => id && id !== remitenteId && !paraList.includes(id)))];
 
     const asuntoFinal = asunto && asunto.trim() ? asunto.trim().substring(0, 150) : '(Sin asunto)';
 
@@ -270,10 +288,12 @@ const crearMensaje = async (req, res) => {
 
     const nuevoMensaje = msgInsert.rows[0];
 
-    await client.query(`
-      INSERT INTO mensajes_destinatarios (mensaje_id, destinatario_id, tipo)
-      VALUES ($1, $2, 'para')
-    `, [nuevoMensaje.id, paraId]);
+    for (const paraId of paraList) {
+      await client.query(`
+        INSERT INTO mensajes_destinatarios (mensaje_id, destinatario_id, tipo)
+        VALUES ($1, $2, 'para')
+      `, [nuevoMensaje.id, paraId]);
+    }
 
     for (const accId of accList) {
       await client.query(`

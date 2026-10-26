@@ -2,6 +2,7 @@ const MensajesModule = {
   currentView: 'inbox',
   currentInboxFilter: 'todos',
   contactos: [],
+  selectedParaIds: new Set(),
   selectedAccIds: new Set(),
   inboxData: [],
   sentData: [],
@@ -60,8 +61,16 @@ const MensajesModule = {
   },
 
   renderContactosSelect() {
-    const selectPara = document.getElementById('mensaje-input-para');
+    const paraBox = document.getElementById('mensaje-para-container');
     const accBox = document.getElementById('mensaje-acc-container');
+    const selectPara = document.getElementById('mensaje-input-para');
+
+    if (this.contactos.length === 0) {
+      if (paraBox) paraBox.innerHTML = '<div class="text-muted font-xs">No hay usuarios disponibles</div>';
+      if (accBox) accBox.innerHTML = '<div class="text-muted font-xs">No hay usuarios disponibles</div>';
+      if (selectPara) selectPara.innerHTML = '<option value="">Sin usuarios</option>';
+      return;
+    }
 
     if (selectPara) {
       let html = '<option value="">Seleccione un usuario...</option>';
@@ -71,33 +80,83 @@ const MensajesModule = {
       selectPara.innerHTML = html;
     }
 
-    if (accBox) {
-      if (this.contactos.length === 0) {
-        accBox.innerHTML = '<div class="text-muted font-xs">No hay usuarios disponibles</div>';
-        return;
-      }
-      let html = '';
+    if (paraBox) {
+      let htmlPara = '';
       this.contactos.forEach(c => {
-        html += `
-          <label class="mensaje-acc-chip" id="chip-acc-${c.id}">
-            <input type="checkbox" value="${c.id}" onchange="MensajesModule.toggleAcc(${c.id}, this.checked)">
+        const isChecked = this.selectedParaIds.has(c.id);
+        htmlPara += `
+          <label class="mensaje-acc-chip ${isChecked ? 'selected' : ''}" id="chip-para-${c.id}">
+            <input type="checkbox" value="${c.id}" ${isChecked ? 'checked' : ''} onchange="MensajesModule.togglePara(${c.id}, this.checked)">
             <span>${this.escapeHtml(c.nombre_completo)}</span>
           </label>
         `;
       });
-      accBox.innerHTML = html;
+      paraBox.innerHTML = htmlPara;
     }
+
+    if (accBox) {
+      let htmlAcc = '';
+      this.contactos.forEach(c => {
+        const isChecked = this.selectedAccIds.has(c.id);
+        htmlAcc += `
+          <label class="mensaje-acc-chip ${isChecked ? 'selected' : ''}" id="chip-acc-${c.id}">
+            <input type="checkbox" value="${c.id}" ${isChecked ? 'checked' : ''} onchange="MensajesModule.toggleAcc(${c.id}, this.checked)">
+            <span>${this.escapeHtml(c.nombre_completo)}</span>
+          </label>
+        `;
+      });
+      accBox.innerHTML = htmlAcc;
+    }
+  },
+
+  togglePara(userId, isChecked) {
+    if (isChecked) {
+      this.selectedParaIds.add(userId);
+      if (this.selectedAccIds.has(userId)) {
+        this.selectedAccIds.delete(userId);
+        const chipAcc = document.getElementById(`chip-acc-${userId}`);
+        if (chipAcc) {
+          chipAcc.classList.remove('selected');
+          const chk = chipAcc.querySelector('input');
+          if (chk) chk.checked = false;
+        }
+        this.actualizarContadorAcc();
+      }
+    } else {
+      this.selectedParaIds.delete(userId);
+    }
+
+    const chip = document.getElementById(`chip-para-${userId}`);
+    if (chip) {
+      if (isChecked && this.selectedParaIds.has(userId)) {
+        chip.classList.add('selected');
+      } else {
+        chip.classList.remove('selected');
+      }
+    }
+
+    const selectPara = document.getElementById('mensaje-input-para');
+    if (selectPara) {
+      const firstId = Array.from(this.selectedParaIds)[0];
+      selectPara.value = firstId || '';
+    }
+
+    this.actualizarContadorPara();
   },
 
   toggleAcc(userId, isChecked) {
     if (isChecked) {
-      if (this.selectedAccIds.size >= 5) {
-        alert('Solo puede seleccionar un máximo de 5 destinatarios en copia (ACC).');
-        const chk = document.querySelector(`#chip-acc-${userId} input`);
-        if (chk) chk.checked = false;
-        return;
-      }
       this.selectedAccIds.add(userId);
+      if (this.selectedParaIds.has(userId)) {
+        this.selectedParaIds.delete(userId);
+        const chipPara = document.getElementById(`chip-para-${userId}`);
+        if (chipPara) {
+          chipPara.classList.remove('selected');
+          const chk = chipPara.querySelector('input');
+          if (chk) chk.checked = false;
+        }
+        this.actualizarContadorPara();
+      }
     } else {
       this.selectedAccIds.delete(userId);
     }
@@ -111,10 +170,86 @@ const MensajesModule = {
       }
     }
 
+    this.actualizarContadorAcc();
+  },
+
+  actualizarContadorPara() {
+    const countLabel = document.getElementById('mensaje-para-count');
+    if (countLabel) {
+      const n = this.selectedParaIds.size;
+      countLabel.textContent = `${n} seleccionado${n !== 1 ? 's' : ''}`;
+    }
+  },
+
+  actualizarContadorAcc() {
     const countLabel = document.getElementById('mensaje-acc-count');
     if (countLabel) {
-      countLabel.textContent = `${this.selectedAccIds.size} / 5 seleccionados`;
+      const n = this.selectedAccIds.size;
+      countLabel.textContent = `${n} seleccionado${n !== 1 ? 's' : ''}`;
     }
+  },
+
+  seleccionarTodosPara() {
+    this.contactos.forEach(c => {
+      this.selectedParaIds.add(c.id);
+      this.selectedAccIds.delete(c.id);
+      const chipPara = document.getElementById(`chip-para-${c.id}`);
+      if (chipPara) {
+        chipPara.classList.add('selected');
+        const chk = chipPara.querySelector('input');
+        if (chk) chk.checked = true;
+      }
+      const chipAcc = document.getElementById(`chip-acc-${c.id}`);
+      if (chipAcc) {
+        chipAcc.classList.remove('selected');
+        const chk = chipAcc.querySelector('input');
+        if (chk) chk.checked = false;
+      }
+    });
+    const selectPara = document.getElementById('mensaje-input-para');
+    if (selectPara) {
+      const firstId = Array.from(this.selectedParaIds)[0];
+      selectPara.value = firstId || '';
+    }
+    this.actualizarContadorPara();
+    this.actualizarContadorAcc();
+  },
+
+  deseleccionarTodosPara() {
+    this.selectedParaIds.clear();
+    document.querySelectorAll('#mensaje-para-container .mensaje-acc-chip').forEach(c => {
+      c.classList.remove('selected');
+      const chk = c.querySelector('input');
+      if (chk) chk.checked = false;
+    });
+    const selectPara = document.getElementById('mensaje-input-para');
+    if (selectPara) selectPara.value = '';
+    this.actualizarContadorPara();
+  },
+
+  seleccionarTodosAcc() {
+    this.contactos.forEach(c => {
+      if (!this.selectedParaIds.has(c.id)) {
+        this.selectedAccIds.add(c.id);
+        const chipAcc = document.getElementById(`chip-acc-${c.id}`);
+        if (chipAcc) {
+          chipAcc.classList.add('selected');
+          const chk = chipAcc.querySelector('input');
+          if (chk) chk.checked = true;
+        }
+      }
+    });
+    this.actualizarContadorAcc();
+  },
+
+  deseleccionarTodosAcc() {
+    this.selectedAccIds.clear();
+    document.querySelectorAll('#mensaje-acc-container .mensaje-acc-chip').forEach(c => {
+      c.classList.remove('selected');
+      const chk = c.querySelector('input');
+      if (chk) chk.checked = false;
+    });
+    this.actualizarContadorAcc();
   },
 
   cambiarVista(vista) {
@@ -525,6 +660,7 @@ const MensajesModule = {
     const modal = document.getElementById('modal-redactar-mensaje');
     if (!modal) return;
 
+    this.selectedParaIds.clear();
     this.selectedAccIds.clear();
     this.archivosParaEnviar = [];
 
@@ -537,14 +673,20 @@ const MensajesModule = {
       alertEl.textContent = '';
     }
 
-    const countAcc = document.getElementById('mensaje-acc-count');
-    if (countAcc) countAcc.textContent = '0 / 5 seleccionados';
+    this.actualizarContadorPara();
+    this.actualizarContadorAcc();
 
     const countCuerpo = document.getElementById('mensaje-cuerpo-counter');
     if (countCuerpo) countCuerpo.textContent = '0 / 10.000 caracteres';
 
     const previewAdj = document.getElementById('mensaje-adjuntos-preview');
     if (previewAdj) previewAdj.innerHTML = '';
+
+    document.querySelectorAll('#mensaje-para-container .mensaje-acc-chip').forEach(c => {
+      c.classList.remove('selected');
+      const chk = c.querySelector('input');
+      if (chk) chk.checked = false;
+    });
 
     document.querySelectorAll('#mensaje-acc-container .mensaje-acc-chip').forEach(c => {
       c.classList.remove('selected');
@@ -634,12 +776,12 @@ const MensajesModule = {
       alertEl.textContent = '';
     }
 
-    const destinatarioId = document.getElementById('mensaje-input-para').value;
+    const paraArray = Array.from(this.selectedParaIds);
     const asunto = document.getElementById('mensaje-input-asunto').value.trim();
     const cuerpo = document.getElementById('mensaje-input-cuerpo').value.trim();
 
-    if (!destinatarioId) {
-      this.mostrarAlertaRedactar('Debe seleccionar el destinatario principal (Para).');
+    if (paraArray.length === 0) {
+      this.mostrarAlertaRedactar('Debe seleccionar al menos un destinatario principal (Para).');
       return;
     }
 
@@ -654,7 +796,8 @@ const MensajesModule = {
     }
 
     const formData = new FormData();
-    formData.append('destinatario_id', destinatarioId);
+    formData.append('destinatarios_ids', JSON.stringify(paraArray));
+    formData.append('destinatario_id', paraArray[0]);
     formData.append('asunto', asunto);
     formData.append('cuerpo', cuerpo);
 
