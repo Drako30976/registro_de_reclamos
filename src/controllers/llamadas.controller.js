@@ -25,13 +25,17 @@ const crearLlamada = async (req, res) => {
 
     const asesor_id = req.user.id;
 
-    if (!sucursal_id || !numero_cliente || !tipo_consulta_id || !caracteristica_id || !definicion_id || !finalizacion_id) {
+    if (!sucursal_id || !tipo_consulta_id || !caracteristica_id || !definicion_id || !finalizacion_id) {
       return res.status(400).json({
-        error: 'Los campos Sucursal, Número de Cliente, Tipo de Consulta, Características, Definición y Finalización son obligatorios.'
+        error: 'Los campos Sucursal, Tipo de Consulta, Características, Definición y Finalización son obligatorios.'
       });
     }
 
-    if (numero_cliente.trim().length > 15) {
+    const numCliente = numero_cliente && typeof numero_cliente === 'string' && numero_cliente.trim().length > 0
+      ? numero_cliente.trim()
+      : null;
+
+    if (numCliente && numCliente.length > 15) {
       return res.status(400).json({
         error: 'El número de cliente no puede superar los 15 caracteres.'
       });
@@ -66,7 +70,7 @@ const crearLlamada = async (req, res) => {
     const values = [
       sucursal_id,
       asesor_id,
-      numero_cliente.trim(),
+      numCliente,
       telContacto,
       tipo_consulta_id,
       caracteristica_id,
@@ -113,7 +117,7 @@ const crearLlamada = async (req, res) => {
     const llamadaCompleta = fullResult.rows[0];
 
     await registrarAuditoria({
-      accion: `Se cargó llamada telefónica para el abonado ${numero_cliente.trim()}`,
+      accion: `Se cargó llamada telefónica ${numCliente ? `para el abonado ${numCliente}` : '(sin abonado)'}`,
       usuario_id: req.user.id,
       usuario_nombre: req.user.usuario,
       entidad: 'llamadas',
@@ -337,11 +341,19 @@ const actualizarLlamada = async (req, res) => {
       return res.status(400).json({ error: 'Los campos Definición y Finalización son obligatorios.' });
     }
 
+    const clienteAValidar = numero_cliente !== undefined
+      ? (numero_cliente && typeof numero_cliente === 'string' && numero_cliente.trim().length > 0 ? numero_cliente.trim() : null)
+      : registroOriginal.numero_cliente;
+
+    if (clienteAValidar && clienteAValidar.length > 15) {
+      return res.status(400).json({ error: 'El número de cliente no puede superar los 15 caracteres.' });
+    }
+
     const updateQuery = `
       UPDATE llamadas
       SET 
         sucursal_id = COALESCE($1, sucursal_id),
-        numero_cliente = COALESCE($2, numero_cliente),
+        numero_cliente = $2,
         telefono_contacto = COALESCE($3, telefono_contacto),
         tipo_consulta_id = COALESCE($4, tipo_consulta_id),
         caracteristica_id = COALESCE($5, caracteristica_id),
@@ -355,7 +367,7 @@ const actualizarLlamada = async (req, res) => {
 
     const updateValues = [
       sucursal_id || null,
-      numero_cliente ? numero_cliente.trim() : null,
+      clienteAValidar,
       telefono_contacto !== undefined ? telefono_contacto.trim() : null,
       tipo_consulta_id || null,
       caracteristica_id || null,
@@ -367,10 +379,10 @@ const actualizarLlamada = async (req, res) => {
 
     const result = await pool.query(updateQuery, updateValues);
 
-    const resumenOriginal = `Fecha: ${new Date(registroOriginal.fecha).toLocaleString()} | Sucursal: ${registroOriginal.sucursal} | Asesor: ${registroOriginal.asesor} | Abonado: ${registroOriginal.numero_cliente} | Teléfono: ${registroOriginal.telefono_contacto || 'N/A'} | Tipo: ${registroOriginal.tipo_consulta} | Característica: ${registroOriginal.caracteristica} | Definición: ${registroOriginal.definicion || 'N/A'} | Finalización: ${registroOriginal.finalizacion || 'N/A'} | Comentario: ${registroOriginal.comentario || 'N/A'}`;
+    const resumenOriginal = `Fecha: ${new Date(registroOriginal.fecha).toLocaleString()} | Sucursal: ${registroOriginal.sucursal} | Asesor: ${registroOriginal.asesor} | Abonado: ${registroOriginal.numero_cliente || 'N/A'} | Teléfono: ${registroOriginal.telefono_contacto || 'N/A'} | Tipo: ${registroOriginal.tipo_consulta} | Característica: ${registroOriginal.caracteristica} | Definición: ${registroOriginal.definicion || 'N/A'} | Finalización: ${registroOriginal.finalizacion || 'N/A'} | Comentario: ${registroOriginal.comentario || 'N/A'}`;
 
     await registrarAuditoria({
-      accion: `Se modificó llamada telefónica del abonado ${registroOriginal.numero_cliente}`,
+      accion: `Se modificó llamada telefónica ${registroOriginal.numero_cliente ? `del abonado ${registroOriginal.numero_cliente}` : `ID ${id}`}`,
       usuario_id: req.user.id,
       usuario_nombre: req.user.usuario,
       entidad: 'llamadas',
@@ -422,10 +434,10 @@ const eliminarLlamada = async (req, res) => {
 
     await pool.query('DELETE FROM llamadas WHERE id = $1', [id]);
 
-    const resumenOriginal = `Fecha: ${new Date(registroOriginal.fecha).toLocaleString()} | Sucursal: ${registroOriginal.sucursal} | Asesor: ${registroOriginal.asesor} | Abonado: ${registroOriginal.numero_cliente} | Teléfono: ${registroOriginal.telefono_contacto || 'N/A'} | Tipo: ${registroOriginal.tipo_consulta} | Característica: ${registroOriginal.caracteristica} | Definición: ${registroOriginal.definicion || 'N/A'} | Finalización: ${registroOriginal.finalizacion || 'N/A'} | Comentario: ${registroOriginal.comentario || 'N/A'}`;
+    const resumenOriginal = `Fecha: ${new Date(registroOriginal.fecha).toLocaleString()} | Sucursal: ${registroOriginal.sucursal} | Asesor: ${registroOriginal.asesor} | Abonado: ${registroOriginal.numero_cliente || 'N/A'} | Teléfono: ${registroOriginal.telefono_contacto || 'N/A'} | Tipo: ${registroOriginal.tipo_consulta} | Característica: ${registroOriginal.caracteristica} | Definición: ${registroOriginal.definicion || 'N/A'} | Finalización: ${registroOriginal.finalizacion || 'N/A'} | Comentario: ${registroOriginal.comentario || 'N/A'}`;
 
     await registrarAuditoria({
-      accion: `Se borró registro de llamada del abonado ${registroOriginal.numero_cliente}`,
+      accion: `Se borró registro de llamada ${registroOriginal.numero_cliente ? `del abonado ${registroOriginal.numero_cliente}` : `ID ${id}`}`,
       usuario_id: req.user.id,
       usuario_nombre: req.user.usuario,
       entidad: 'llamadas',

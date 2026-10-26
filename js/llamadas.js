@@ -324,12 +324,12 @@ const LlamadasModule = {
     const finalizacion_id = document.getElementById('llamada-finalizacion').value;
     const comentario = document.getElementById('llamada-comentario').value.trim();
 
-    if (!sucursal_id || !numero_cliente || !telefono_contacto || !tipo_consulta_id || !caracteristica_id || !definicion_id || !finalizacion_id) {
-      this.showAlert('Los campos Sucursal, Número de Cliente, Teléfono de contacto, Tipo de Consulta, Características, Definición y Finalización son obligatorios.', 'error');
+    if (!sucursal_id || !telefono_contacto || !tipo_consulta_id || !caracteristica_id || !definicion_id || !finalizacion_id) {
+      this.showAlert('Los campos Sucursal, Teléfono de contacto, Tipo de Consulta, Características, Definición y Finalización son obligatorios.', 'error');
       return;
     }
 
-    if (numero_cliente.length > 15) {
+    if (numero_cliente && numero_cliente.length > 15) {
       this.showAlert('El número de cliente no puede superar los 15 caracteres.', 'error');
       return;
     }
@@ -346,7 +346,7 @@ const LlamadasModule = {
 
     const payload = {
       sucursal_id: parseInt(sucursal_id, 10),
-      numero_cliente,
+      numero_cliente: numero_cliente || null,
       telefono_contacto,
       tipo_consulta_id: parseInt(tipo_consulta_id, 10),
       caracteristica_id: parseInt(caracteristica_id, 10),
@@ -442,7 +442,7 @@ const LlamadasModule = {
           <td><span class="font-bold">${fechaFmt}</span> <small class="text-muted">${horaFmt} hs</small></td>
           <td><span class="badge badge-secondary">${r.sucursal || '-'}</span></td>
           <td>${r.asesor || '-'}</td>
-          <td><strong style="color: #0D9488;">${r.numero_cliente}</strong></td>
+          <td><strong style="color: #0D9488;">${r.numero_cliente || '-'}</strong></td>
           <td>${r.telefono_contacto || '-'}</td>
           <td>${r.tipo_consulta || '-'}</td>
           <td>${r.caracteristica || '-'}</td>
@@ -891,7 +891,7 @@ const LlamadasHistorialModule = {
       }
 
       if (rol === 'Admin') {
-        botonesAccion += `<button class="btn btn-sm btn-outline-danger" onclick="LlamadasHistorialModule.confirmarEliminar(${r.id}, '${r.numero_cliente}')">Eliminar</button>`;
+        botonesAccion += `<button class="btn btn-sm btn-outline-danger" onclick="LlamadasHistorialModule.confirmarEliminar(${r.id}, '${r.numero_cliente || 'S/N'}')">Eliminar</button>`;
       }
 
       if (rol === 'Espectador') {
@@ -909,7 +909,7 @@ const LlamadasHistorialModule = {
           <td>${fechaFormateada}</td>
           <td><span class="badge badge-secondary">${r.sucursal}</span></td>
           <td>${userHoverHtml}</td>
-          <td><strong style="color: #0D9488;">${r.numero_cliente}</strong></td>
+          <td><strong style="color: #0D9488;">${r.numero_cliente || '-'}</strong></td>
           <td>${r.telefono_contacto || '-'}</td>
           <td>${r.tipo_consulta}</td>
           <td>${r.caracteristica}</td>
@@ -928,7 +928,7 @@ const LlamadasHistorialModule = {
       const r = await API.get(`/llamadas/${id}`);
       
       const modal = document.getElementById('modal-editar-llamada');
-      document.getElementById('edit-llamada-cliente').value = r.numero_cliente;
+      document.getElementById('edit-llamada-cliente').value = r.numero_cliente || '';
       document.getElementById('edit-llamada-telefono').value = r.telefono_contacto || '';
 
       const selSuc = document.getElementById('edit-llamada-sucursal');
@@ -1026,12 +1026,12 @@ const LlamadasHistorialModule = {
     const finalizacion_id = document.getElementById('edit-llamada-finalizacion').value;
     const comentario = document.getElementById('edit-llamada-comentario').value.trim();
 
-    if (!sucursal_id || !numero_cliente || !telefono_contacto || !tipo_consulta_id || !caracteristica_id || !definicion_id || !finalizacion_id) {
-      alert('Los campos Sucursal, Cliente, Teléfono, Tipo, Características, Definición y Finalización son obligatorios.');
+    if (!sucursal_id || !telefono_contacto || !tipo_consulta_id || !caracteristica_id || !definicion_id || !finalizacion_id) {
+      alert('Los campos Sucursal, Teléfono, Tipo, Características, Definición y Finalización son obligatorios.');
       return;
     }
 
-    if (numero_cliente.length > 15) {
+    if (numero_cliente && numero_cliente.length > 15) {
       alert('El número de cliente no puede superar los 15 caracteres.');
       return;
     }
@@ -1048,7 +1048,7 @@ const LlamadasHistorialModule = {
 
     const payload = {
       sucursal_id: parseInt(sucursal_id, 10),
-      numero_cliente,
+      numero_cliente: numero_cliente || null,
       telefono_contacto,
       tipo_consulta_id: parseInt(tipo_consulta_id, 10),
       caracteristica_id: parseInt(caracteristica_id, 10),

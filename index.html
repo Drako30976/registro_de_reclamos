@@ -429,9 +429,9 @@
                       </div>
 
                       <div class="form-group">
-                        <label for="llamada-cliente">Número de Cliente / Abonado <span class="req">*</span></label>
-                        <input type="text" id="llamada-cliente" maxlength="15" pattern="[0-9]*" inputmode="numeric" placeholder="Solo números" required>
-                        <small class="text-muted">Hasta 15 dígitos numéricos</small>
+                        <label for="llamada-cliente">Número de Cliente / Abonado </label>
+                        <input type="text" id="llamada-cliente" maxlength="15" pattern="[0-9]*" inputmode="numeric" placeholder="Opcional (solo números)">
+                        <small class="text-muted">Opcional - Hasta 15 dígitos numéricos</small>
                       </div>
 
                       <div class="form-group">
@@ -1901,8 +1901,8 @@
             <select id="edit-llamada-sucursal" required></select>
           </div>
           <div class="form-group">
-            <label>N° Cliente / Abonado</label>
-            <input type="text" id="edit-llamada-cliente" maxlength="15" required>
+            <label>N° Cliente / Abonado <span class="text-muted">(Opcional)</span></label>
+            <input type="text" id="edit-llamada-cliente" maxlength="15" placeholder="Opcional">
           </div>
           <div class="form-group">
             <label>Teléfono de Contacto <span class="req">*</span></label>

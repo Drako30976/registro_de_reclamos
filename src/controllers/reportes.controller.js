@@ -256,7 +256,7 @@ const emitirReporteLlamadasPDF = async (req, res) => {
       SELECT 
         l.id,
         l.fecha,
-        l.numero_cliente,
+        COALESCE(l.numero_cliente, '-') AS numero_cliente,
         COALESCE(l.telefono_contacto, '-') AS telefono_contacto,
         s.nombre AS sucursal,
         u.nombre_completo AS asesor,

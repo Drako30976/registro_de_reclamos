@@ -64,7 +64,7 @@ async function migrateDatabase() {
           fecha TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
           sucursal_id INT NOT NULL REFERENCES sucursales(id) ON DELETE RESTRICT,
           usuario_id INT NOT NULL REFERENCES usuarios(id) ON DELETE RESTRICT,
-          numero_cliente VARCHAR(15) NOT NULL,
+          numero_cliente VARCHAR(15),
           telefono_contacto VARCHAR(30) DEFAULT '',
           tipo_consulta_id INT NOT NULL REFERENCES tipos_llamada(id) ON DELETE RESTRICT,
           caracteristica_id INT NOT NULL REFERENCES caracteristicas_llamada(id) ON DELETE RESTRICT,
@@ -76,6 +76,7 @@ async function migrateDatabase() {
       );
 
       ALTER TABLE llamadas ADD COLUMN IF NOT EXISTS telefono_contacto VARCHAR(30) DEFAULT '';
+      ALTER TABLE llamadas ALTER COLUMN numero_cliente DROP NOT NULL;
 
       DO $$
       BEGIN
