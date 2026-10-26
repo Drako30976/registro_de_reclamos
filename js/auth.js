@@ -55,6 +55,13 @@ const Auth = {
             const subHistRec = document.getElementById('reclamos-subtab-btn-historial');
             if (subHistRec) subHistRec.click();
           }
+          if (typeof MensajesModule !== 'undefined') {
+            MensajesModule.actualizarBadge();
+            MensajesModule.iniciarPolling();
+          }
+          if (typeof ChatsModule !== 'undefined') {
+            ChatsModule.init();
+          }
         } catch (err) {
           errorEl.textContent = err.message || 'Error al iniciar sesión';
           errorEl.classList.remove('hidden');
@@ -141,6 +148,11 @@ const Auth = {
 
     if (tabCanales) {
       tabCanales.style.display = 'inline-flex';
+    }
+
+    const tabMensajes = document.querySelector('[data-tab="mensajes"]');
+    if (tabMensajes) {
+      tabMensajes.style.display = 'inline-flex';
     }
 
     if (tabPerfil) {

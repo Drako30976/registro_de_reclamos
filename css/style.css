@@ -739,7 +739,9 @@ body {
 .btn-tab-main.active {
   background: #FFFFFF;
   color: var(--primary);
-  box-shadow: var(--shadow-sm);
+  border-color: var(--primary);
+  box-shadow: 0 2px 8px rgba(4, 39, 196, 0.15);
+  transform: translateY(-1px);
 }
 
 .subtabs-nested {
@@ -2964,3 +2966,98 @@ body {
 }
 
 
+
+
+[data-theme="dark"] #view-tareas,
+[data-theme="dark"] #view-masivos,
+[data-theme="dark"] .card-mis-tareas,
+[data-theme="dark"] #sec-inconvenientes-masivos {
+  color: #F8FAFC !important;
+}
+
+[data-theme="dark"] .masivo-servicio-title {
+  color: #F8FAFC !important;
+}
+
+[data-theme="dark"] .masivo-meta-tag,
+[data-theme="dark"] .masivo-accordion-arrow,
+[data-theme="dark"] .masivo-detail-item .detail-label {
+  color: #CBD5E1 !important;
+}
+
+[data-theme="dark"] .masivo-accordion-content {
+  background: #0F172A !important;
+  color: #F8FAFC !important;
+}
+
+[data-theme="dark"] .masivo-accordion-content strong,
+[data-theme="dark"] .masivo-accordion-content span:not(.badge) {
+  color: #F8FAFC !important;
+}
+
+[data-theme="dark"] .masivo-detail-box {
+  color: #F8FAFC !important;
+}
+
+[data-theme="dark"] .masivo-dano-box {
+  background: rgba(239, 68, 68, 0.2) !important;
+  border-color: #EF4444 !important;
+  color: #FECACA !important;
+}
+
+[data-theme="dark"] .masivo-resuelto-box {
+  background: rgba(16, 185, 129, 0.2) !important;
+  border-color: #10B981 !important;
+  color: #A7F3D0 !important;
+}
+
+[data-theme="dark"] .masivo-banner-card {
+  background: #1E293B !important;
+}
+
+[data-theme="dark"] .mis-tareas-item {
+  background: #1E293B !important;
+  border-color: #334155 !important;
+}
+
+[data-theme="dark"] .mis-tareas-item:hover {
+  background: #24334A !important;
+}
+
+[data-theme="dark"] .mis-tareas-subgrupo {
+  border-bottom-color: #334155 !important;
+}
+
+[data-theme="dark"] .tarea-texto {
+  color: #F8FAFC !important;
+}
+
+[data-theme="dark"] .tarea-texto.tarea-tachada {
+  color: #94A3B8 !important;
+}
+
+[data-theme="dark"] .mis-tareas-item-meta {
+  border-top-color: #334155 !important;
+  color: #CBD5E1 !important;
+}
+
+[data-theme="dark"] #view-tareas table td,
+[data-theme="dark"] #view-tareas table th,
+[data-theme="dark"] #view-masivos table td,
+[data-theme="dark"] #view-masivos table th {
+  color: #F8FAFC !important;
+}
+
+[data-theme="dark"] #view-tareas .text-muted,
+[data-theme="dark"] #view-masivos .text-muted {
+  color: #CBD5E1 !important;
+}
+
+[data-theme="dark"] .subtabs-main .btn-tab-main {
+  color: #CBD5E1 !important;
+}
+
+[data-theme="dark"] .subtabs-main .btn-tab-main.active {
+  background: #0427C4 !important;
+  color: #FFFFFF !important;
+}

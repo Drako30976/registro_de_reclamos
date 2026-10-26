@@ -540,11 +540,12 @@ const AuditoriasModule = {
     btnGuardar.textContent = 'Guardando auditoría...';
 
     try {
-      await API.post('/auditorias', payload);
+      const auditCreada = await API.post('/auditorias', payload);
 
-      alert('Auditoría registrada exitosamente.');
       this.resetearFormularioNuevaAuditoria();
       document.getElementById('subtab-btn-historial-auditorias').click();
+
+      this.ofrecerFeedbackAsesor(auditCreada, payload);
     } catch (err) {
       console.error('Error al guardar auditoría:', err);
       alertEl.textContent = err.message || 'Error al guardar la auditoría.';
@@ -1496,5 +1497,183 @@ const AuditoriasModule = {
     } catch (err) {
       alert('Error al eliminar canal: ' + err.message);
     }
-  }
+  },
+
+  ofrecerFeedbackAsesor(auditoria, payload) {
+    const modal = document.getElementById('modal-feedback-auditoria');
+    if (!modal) {
+      alert('Auditoría registrada exitosamente.');
+      return;
+    }
+
+    const asesorSelect = document.getElementById('nueva-auditoria-asesor');
+    let asesorNombre = 'Asesor';
+    if (asesorSelect) {
+      const opt = asesorSelect.querySelector(`option[value="${payload.asesor_id}"]`);
+      if (opt) asesorNombre = opt.textContent;
+    }
+
+    const nombreEl = document.getElementById('feedback-asesor-nombre');
+    const badgeEl = document.getElementById('feedback-resultado-badge');
+    const metaEl = document.getElementById('feedback-audit-meta');
+    const asuntoInput = document.getElementById('feedback-input-asunto');
+    const cuerpoInput = document.getElementById('feedback-input-cuerpo');
+    const alertEl = document.getElementById('alert-feedback-auditoria');
+
+    if (alertEl) {
+      alertEl.classList.add('hidden');
+      alertEl.textContent = '';
+    }
+
+    if (nombreEl) nombreEl.textContent = asesorNombre;
+    if (metaEl) {
+      metaEl.textContent = `Auditoría N° ${auditoria.id} - Fecha evaluada: ${payload.fecha} - Ref/Tel: ${payload.referencia}`;
+    }
+
+    const pct = auditoria.porcentaje_calidad || 0;
+    const res = auditoria.resultado || 'Evaluado';
+    if (badgeEl) {
+      let bClass = 'badge-success';
+      if (res === 'Crítico' || res === 'No Cumple') bClass = 'badge-danger';
+      else if (res === 'Regular') bClass = 'badge-warning';
+      badgeEl.innerHTML = `<span class="badge ${bClass}" style="font-size: 0.9rem;">${pct}% (${res})</span>`;
+    }
+
+    if (asuntoInput) {
+      asuntoInput.value = `Feedback de Auditoría de Calidad N° ${auditoria.id} (${res})`;
+    }
+
+    if (cuerpoInput) {
+      let texto = `Hola ${asesorNombre},
+
+Se ha completado la Auditoría de Calidad N° ${auditoria.id} correspondiente a tu interacción del día ${payload.fecha} (Referencia: ${payload.referencia}).
+
+`;
+      texto += `• Resultado Final: ${pct}% (${res})
+`;
+      if (payload.error_critico) {
+        texto += `• Error Crítico Detectado: ${payload.comentario_error_critico || 'Sí'}
+`;
+      }
+      if (payload.comentario) {
+        texto += `• Comentario sobre la interacción: ${payload.comentario}
+`;
+      }
+      if (payload.observaciones_generales) {
+        texto += `• Observaciones Generales: ${payload.observaciones_generales}
+`;
+      }
+
+      texto += `
+Detalle por categorías evaluadas:
+`;
+      payload.detalles.forEach(d => {
+        texto += `- ${d.criterio_nombre} / ${d.subcriterio_nombre}: [${d.evaluacion}]`;
+        if (d.observacion) {
+          texto += ` (Obs: ${d.observacion})`;
+        }
+        texto += `
+`;
+      });
+
+      texto += `
+Cualquier duda o consulta sobre esta evaluación, quedo a disposición.
+Saludos cordiales.`;
+      cuerpoInput.value = texto;
+      this.actualizarContadorFeedback(cuerpoInput);
+    }
+
+    this.pendingFeedbackData = {
+      destinatario_id: payload.asesor_id,
+      auditoria_id: auditoria.id
+    };
+
+    modal.classList.remove('hidden');
+  },
+
+  actualizarContadorFeedback(textarea) {
+    const counter = document.getElementById('feedback-cuerpo-counter');
+    if (counter && textarea) {
+      counter.textContent = `${textarea.value.length} / 10.000`;
+    }
+  },
+
+  cerrarModalFeedback() {
+    const modal = document.getElementById('modal-feedback-auditoria');
+    if (modal) modal.classList.add('hidden');
+    this.pendingFeedbackData = null;
+  },
+
+  async enviarFeedbackConfirmado(e) {
+    if (e) e.preventDefault();
+
+    if (!this.pendingFeedbackData || !this.pendingFeedbackData.destinatario_id) {
+      this.cerrarModalFeedback();
+      return;
+    }
+
+    const asunto = document.getElementById('feedback-input-asunto').value.trim();
+    const cuerpo = document.getElementById('feedback-input-cuerpo').value.trim();
+    const alertEl = document.getElementById('alert-feedback-auditoria');
+    const btnSubmit = document.getElementById('btn-enviar-feedback-submit');
+
+    if (alertEl) {
+      alertEl.classList.add('hidden');
+      alertEl.textContent = '';
+    }
+
+    if (!cuerpo) {
+      if (alertEl) {
+        alertEl.textContent = 'El contenido del feedback no puede estar vacío.';
+        alertEl.classList.remove('hidden');
+      }
+      return;
+    }
+
+    try {
+      if (btnSubmit) {
+        btnSubmit.disabled = true;
+        btnSubmit.textContent = 'Enviando feedback...';
+      }
+
+      const formData = new FormData();
+      formData.append('destinatario_id', this.pendingFeedbackData.destinatario_id);
+      formData.append('asunto', asunto);
+      formData.append('cuerpo', cuerpo);
+
+      const token = API.getToken();
+      const res = await fetch('/api/mensajes', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        },
+        body: formData
+      });
+
+      const data = await res.json();
+      if (!res.ok) {
+        throw new Error(data.error || 'Error al enviar feedback.');
+      }
+
+      alert('Feedback enviado exitosamente al asesor por Mensajería Interna.');
+      this.cerrarModalFeedback();
+
+      if (typeof MensajesModule !== 'undefined') {
+        MensajesModule.actualizarBadge();
+      }
+    } catch (err) {
+      if (alertEl) {
+        alertEl.textContent = err.message || 'Error al enviar feedback.';
+        alertEl.classList.remove('hidden');
+      } else {
+        alert(err.message || 'Error al enviar feedback.');
+      }
+    } finally {
+      if (btnSubmit) {
+        btnSubmit.disabled = false;
+        btnSubmit.innerHTML = '<span>✉️</span> Enviar Feedback al Asesor';
+      }
+    }
+  },
+
 };

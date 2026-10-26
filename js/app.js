@@ -13,6 +13,13 @@ const App = {
         const subHistRec = document.getElementById('reclamos-subtab-btn-historial');
         if (subHistRec) subHistRec.click();
       }
+      if (typeof MensajesModule !== 'undefined') {
+        MensajesModule.actualizarBadge();
+        MensajesModule.iniciarPolling();
+      }
+      if (typeof ChatsModule !== 'undefined') {
+        ChatsModule.init();
+      }
     }
   },
 
@@ -242,6 +249,9 @@ const App = {
         break;
       case 'canales':
         if (typeof CanalesModule !== 'undefined') CanalesModule.init();
+        break;
+      case 'mensajes':
+        if (typeof MensajesModule !== 'undefined') MensajesModule.init();
         break;
       case 'perfil':
         PerfilModule.init();
