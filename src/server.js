@@ -19,6 +19,8 @@ const mensajesRoutes = require('./routes/mensajes.routes');
 const chatsRoutes = require('./routes/chats.routes');
 const { initCanalesTables } = require('./services/canalesSeed');
 const { migrateDatabase } = require('./services/dbMigrations');
+const { iniciarCronBackup, ejecutarBackupCompleto } = require('./services/backup.service');
+const { verifyToken, checkRole } = require('./middlewares/auth');
 
 const helmet = require('helmet');
 
@@ -60,6 +62,19 @@ app.use('/api/canales', canalesRoutes);
 app.use('/api/mensajes', mensajesRoutes);
 app.use('/api/chats', chatsRoutes);
 
+// Endpoint administrativo para disparar backup manual y probar envío por correo
+app.post('/api/sistema/backup', verifyToken, checkRole('Admin'), async (req, res) => {
+  try {
+    const resultado = await ejecutarBackupCompleto();
+    res.json({
+      message: 'Backup generado exitosamente.',
+      ...resultado
+    });
+  } catch (error) {
+    console.error('Error al generar backup manual:', error);
+    res.status(500).json({ error: error.message || 'Error al generar backup.' });
+  }
+});
 
 app.get('/api/health', async (req, res) => {
   try {
@@ -93,6 +108,7 @@ app.listen(PORT, async () => {
     console.log(` Conexión a PostgreSQL confirmada: BD '${res.rows[0].current_database}' con usuario '${res.rows[0].current_user}'`);
     await migrateDatabase();
     await initCanalesTables();
+    iniciarCronBackup();
   } catch (err) {
     console.error(` Error conectando a PostgreSQL:`, err.message);
   }
