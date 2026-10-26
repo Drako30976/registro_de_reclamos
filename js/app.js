@@ -18,7 +18,12 @@ const App = {
         MensajesModule.iniciarPolling();
       }
       if (typeof ChatsModule !== 'undefined') {
-        ChatsModule.init();
+        const rol = (user.rol || '').trim().toLowerCase();
+        if (rol === 'asesor' || rol === 'admin') {
+          ChatsModule.init();
+        } else {
+          ChatsModule.destruir();
+        }
       }
     }
   },

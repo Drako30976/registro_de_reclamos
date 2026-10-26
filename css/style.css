@@ -3101,3 +3101,45 @@ body {
 [data-theme="dark"] .ver-audit-obs-card p {
   color: #F8FAFC !important;
 }
+
+.form-actions-between {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  width: 100%;
+}
+
+.btn-limpiar-form {
+  background-color: #F59E0B;
+  color: #FFFFFF;
+  border: 1px solid #D97706;
+  font-weight: 600;
+  box-shadow: 0 2px 4px rgba(245, 158, 11, 0.2);
+}
+
+.btn-limpiar-form:hover {
+  background-color: #D97706;
+  border-color: #B45309;
+  color: #FFFFFF;
+  box-shadow: 0 4px 10px rgba(217, 119, 6, 0.35);
+}
+
+.btn-limpiar-form:active {
+  transform: scale(0.99);
+}
+
+[data-theme="dark"] .btn-limpiar-form {
+  background-color: #D97706;
+  color: #FFFFFF;
+  border: 1px solid #F59E0B;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
+}
+
+[data-theme="dark"] .btn-limpiar-form:hover {
+  background-color: #B45309;
+  border-color: #F59E0B;
+  color: #FFFFFF;
+  box-shadow: 0 4px 12px rgba(217, 119, 6, 0.45);
+}

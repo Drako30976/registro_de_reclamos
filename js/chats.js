@@ -18,7 +18,34 @@ const ChatsModule = {
     { pattern: /:O/gi, emoji: '😮' }
   ],
 
+  esUsuarioPermitido() {
+    const user = API.getUser();
+    if (!user || !user.rol) return false;
+    const rol = (user.rol || '').trim().toLowerCase();
+    return rol === 'asesor' || rol === 'admin';
+  },
+
+  destruir() {
+    if (this.pollingInterval) {
+      clearInterval(this.pollingInterval);
+      this.pollingInterval = null;
+    }
+    this.activeContacto = null;
+    this.contactos = [];
+    this.historial = [];
+    this.archivosAdjuntos = [];
+    this.modoEdicion = null;
+    const container = document.getElementById('chats-floating-container');
+    if (container) {
+      container.remove();
+    }
+  },
+
   async init() {
+    if (!this.esUsuarioPermitido()) {
+      this.destruir();
+      return;
+    }
     this.renderDock();
     await this.cargarContactos();
     this.iniciarPolling();
@@ -26,7 +53,15 @@ const ChatsModule = {
 
   iniciarPolling() {
     if (this.pollingInterval) clearInterval(this.pollingInterval);
+    if (!this.esUsuarioPermitido()) {
+      this.destruir();
+      return;
+    }
     this.pollingInterval = setInterval(async () => {
+      if (!this.esUsuarioPermitido()) {
+        this.destruir();
+        return;
+      }
       const user = API.getUser();
       if (user) {
         await this.cargarContactos(true);
@@ -38,6 +73,10 @@ const ChatsModule = {
   },
 
   renderDock() {
+    if (!this.esUsuarioPermitido()) {
+      this.destruir();
+      return;
+    }
     let container = document.getElementById('chats-floating-container');
     if (!container) {
       container = document.createElement('div');
@@ -81,6 +120,10 @@ const ChatsModule = {
   },
 
   async cargarContactos(silent = false) {
+    if (!this.esUsuarioPermitido()) {
+      this.destruir();
+      return;
+    }
     try {
       const res = await API.get('/chats/contactos');
       this.contactos = res || [];
@@ -143,6 +186,10 @@ const ChatsModule = {
   },
 
   async abrirChatCon(contactoId) {
+    if (!this.esUsuarioPermitido()) {
+      this.destruir();
+      return;
+    }
     const contacto = this.contactos.find(c => c.id === contactoId);
     if (!contacto) return;
 
@@ -326,6 +373,10 @@ const ChatsModule = {
   },
 
   async cargarHistorial(contactoId, autoScroll = true) {
+    if (!this.esUsuarioPermitido()) {
+      this.destruir();
+      return;
+    }
     if (!this.activeContacto || this.activeContacto.id !== contactoId) return;
 
     try {
@@ -456,6 +507,10 @@ const ChatsModule = {
   },
 
   async enviarChat() {
+    if (!this.esUsuarioPermitido()) {
+      this.destruir();
+      return;
+    }
     if (!this.activeContacto) return;
 
     const input = document.getElementById('chat-message-input');

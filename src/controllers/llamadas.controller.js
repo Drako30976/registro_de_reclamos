@@ -54,28 +54,7 @@ const crearLlamada = async (req, res) => {
       });
     }
 
-    const checkExistente = await pool.query(`
-      SELECT 
-        l.id,
-        TO_CHAR(l.fecha AT TIME ZONE 'America/Argentina/Buenos_Aires', 'DD/MM/YYYY') as fecha_fmt,
-        TO_CHAR(l.fecha AT TIME ZONE 'America/Argentina/Buenos_Aires', 'HH24:MI') as hora_fmt,
-        u.nombre_completo as asesor,
-        s.nombre as sucursal
-      FROM llamadas l
-      JOIN usuarios u ON l.usuario_id = u.id
-      JOIN sucursales s ON l.sucursal_id = s.id
-      WHERE LOWER(TRIM(l.numero_cliente)) = LOWER(TRIM($1))
-        AND l.sucursal_id = $2
-        AND (l.fecha AT TIME ZONE 'America/Argentina/Buenos_Aires')::date = (CURRENT_TIMESTAMP AT TIME ZONE 'America/Argentina/Buenos_Aires')::date
-      LIMIT 1
-    `, [numero_cliente, sucursal_id]);
 
-    if (checkExistente.rows.length > 0) {
-      const reg = checkExistente.rows[0];
-      return res.status(400).json({
-        error: `Ya existe una llamada registrada para el abonado "${numero_cliente.trim()}" en la sucursal ${reg.sucursal} en el día de hoy (${reg.fecha_fmt} a las ${reg.hora_fmt} hs por ${reg.asesor}). Solo se permite una llamada por abonado al día por sucursal.`
-      });
-    }
 
     const query = `
       INSERT INTO llamadas 
@@ -337,31 +316,7 @@ const actualizarLlamada = async (req, res) => {
       return res.status(403).json({ error: 'No tiene autorización para modificar llamadas registradas por otro asesor.' });
     }
 
-    const clienteAValidar = numero_cliente ? numero_cliente.trim() : registroOriginal.numero_cliente;
-    const sucursalAValidar = sucursal_id ? parseInt(sucursal_id, 10) : registroOriginal.sucursal_id;
-    const checkExistente = await pool.query(`
-      SELECT 
-        l.id,
-        TO_CHAR(l.fecha AT TIME ZONE 'America/Argentina/Buenos_Aires', 'DD/MM/YYYY') as fecha_fmt,
-        TO_CHAR(l.fecha AT TIME ZONE 'America/Argentina/Buenos_Aires', 'HH24:MI') as hora_fmt,
-        u.nombre_completo as asesor,
-        s.nombre as sucursal
-      FROM llamadas l
-      JOIN usuarios u ON l.usuario_id = u.id
-      JOIN sucursales s ON l.sucursal_id = s.id
-      WHERE LOWER(TRIM(l.numero_cliente)) = LOWER(TRIM($1))
-        AND l.sucursal_id = $2
-        AND (l.fecha AT TIME ZONE 'America/Argentina/Buenos_Aires')::date = ($3::timestamptz AT TIME ZONE 'America/Argentina/Buenos_Aires')::date
-        AND l.id != $4
-      LIMIT 1
-    `, [clienteAValidar, sucursalAValidar, registroOriginal.fecha, id]);
 
-    if (checkExistente.rows.length > 0) {
-      const reg = checkExistente.rows[0];
-      return res.status(400).json({
-        error: `Ya existe otra llamada registrada para el abonado "${clienteAValidar}" en la sucursal ${reg.sucursal} en dicha fecha (${reg.fecha_fmt} a las ${reg.hora_fmt} hs por ${reg.asesor}).`
-      });
-    }
 
     const comentarioTexto = comentario !== undefined
       ? (typeof comentario === 'string' && comentario.trim().length > 0 ? comentario.trim() : null)

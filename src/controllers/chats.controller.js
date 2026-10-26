@@ -57,7 +57,7 @@ const getContactos = async (req, res) => {
         ) AS no_leidos
       FROM usuarios u
       WHERE u.activo = true 
-        AND LOWER(TRIM(u.usuario)) != 'admin' 
+        AND u.rol IN ('Asesor', 'Admin') 
         AND u.id != $1
       ORDER BY ultimo_mensaje_fecha DESC NULLS LAST, u.nombre_completo ASC
     `, [currentUserId]);
@@ -78,6 +78,14 @@ const getHistorial = async (req, res) => {
     const cId = parseInt(contactoId, 10);
     if (isNaN(cId)) {
       return res.status(400).json({ error: 'ID de contacto inválido.' });
+    }
+
+    const checkContacto = await pool.query(
+      'SELECT id, rol, activo FROM usuarios WHERE id = $1',
+      [cId]
+    );
+    if (checkContacto.rows.length === 0 || !checkContacto.rows[0].activo || !['Asesor', 'Admin'].includes(checkContacto.rows[0].rol)) {
+      return res.status(403).json({ error: 'El contacto seleccionado no está habilitado para el chat.' });
     }
 
     let query = `
@@ -154,6 +162,14 @@ const enviarMensaje = async (req, res) => {
     const receptorId = parseInt(receptor_id, 10);
     if (isNaN(receptorId) || receptorId === emisorId) {
       return res.status(400).json({ error: 'Receptor inválido.' });
+    }
+
+    const checkReceptor = await pool.query(
+      'SELECT id, rol, activo FROM usuarios WHERE id = $1',
+      [receptorId]
+    );
+    if (checkReceptor.rows.length === 0 || !checkReceptor.rows[0].activo || !['Asesor', 'Admin'].includes(checkReceptor.rows[0].rol)) {
+      return res.status(403).json({ error: 'El destinatario no está habilitado para el servicio de chat.' });
     }
 
     const texto = contenido && typeof contenido === 'string' ? contenido.trim() : '';

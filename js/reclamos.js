@@ -206,11 +206,41 @@ const ReclamosModule = {
     el.disabled = disabled;
   },
 
+  limpiarFormularioReclamo() {
+    const inputCliente = document.getElementById('reclamo-cliente');
+    if (inputCliente) inputCliente.value = '';
+
+    const selSucursal = document.getElementById('reclamo-sucursal');
+    if (selSucursal) selSucursal.value = '';
+
+    this.populateTipos();
+
+    const inputComentario = document.getElementById('reclamo-comentario');
+    if (inputComentario) inputComentario.value = '';
+
+    const comentarioCounter = document.getElementById('reclamo-comentario-counter');
+    if (comentarioCounter) comentarioCounter.textContent = 'Opcional - Hasta 500 caracteres (0 / 500)';
+
+    const alertEl = document.getElementById('reclamo-form-alert');
+    if (alertEl) {
+      alertEl.textContent = '';
+      alertEl.className = 'form-alert hidden';
+    }
+
+    if (inputCliente) inputCliente.focus();
+  },
+
   bindEvents() {
     const tipoSelect = document.getElementById('reclamo-tipo');
     const carSelect = document.getElementById('reclamo-caracteristica');
     const defSelect = document.getElementById('reclamo-definicion');
     const form = document.getElementById('form-gestion-reclamo');
+    const btnLimpiar = document.getElementById('btn-limpiar-reclamo');
+    if (btnLimpiar) {
+      btnLimpiar.onclick = () => {
+        this.limpiarFormularioReclamo();
+      };
+    }
 
     if (tipoSelect) {
       tipoSelect.onchange = () => {
@@ -361,11 +391,12 @@ const ReclamosModule = {
             this.renderPreviewReclamos();
           }
 
-          document.getElementById('reclamo-cliente').value = '';
-          this.populateTipos();
-          document.getElementById('reclamo-sucursal').value = '';
-          if (inputComentario) inputComentario.value = '';
-          if (comentarioCounter) comentarioCounter.textContent = 'Opcional - Hasta 500 caracteres (0 / 500)';
+          // Se mantiene todos los datos ingresados excepto el número de cliente
+          const inputCliente = document.getElementById('reclamo-cliente');
+          if (inputCliente) {
+            inputCliente.value = '';
+            inputCliente.focus();
+          }
 
           setTimeout(() => {
             alertEl.className = 'form-alert hidden';

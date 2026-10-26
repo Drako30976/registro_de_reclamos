@@ -11,6 +11,9 @@ const Auth = {
     if (!token || !this.currentUser) {
       if (loginModal) loginModal.classList.remove('hidden');
       if (appContent) appContent.classList.add('hidden');
+      if (typeof ChatsModule !== 'undefined') {
+        ChatsModule.destruir();
+      }
       this.bindLoginForm();
     } else {
       if (loginModal) loginModal.classList.add('hidden');
@@ -60,7 +63,12 @@ const Auth = {
             MensajesModule.iniciarPolling();
           }
           if (typeof ChatsModule !== 'undefined') {
-            ChatsModule.init();
+            const userRol = (this.currentUser.rol || '').trim().toLowerCase();
+            if (userRol === 'asesor' || userRol === 'admin') {
+              ChatsModule.init();
+            } else {
+              ChatsModule.destruir();
+            }
           }
         } catch (err) {
           errorEl.textContent = err.message || 'Error al iniciar sesión';
@@ -168,6 +176,17 @@ const Auth = {
       } else {
         secAdminUsuarios.classList.add('hidden');
         secAdminUsuarios.style.display = 'none';
+      }
+    }
+
+    if (typeof ChatsModule !== 'undefined') {
+      const rolLower = (rol || '').trim().toLowerCase();
+      if (rolLower === 'asesor' || rolLower === 'admin') {
+        if (!document.getElementById('chats-floating-container')) {
+          ChatsModule.init();
+        }
+      } else {
+        ChatsModule.destruir();
       }
     }
   }

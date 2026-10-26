@@ -1,9 +1,11 @@
 const express = require('express');
 const router = express.Router();
 const chatsController = require('../controllers/chats.controller');
-const { verifyToken } = require('../middlewares/auth');
+const { verifyToken, checkRole } = require('../middlewares/auth');
 
 router.use(verifyToken);
+// Acceso exclusivo para roles 'Asesor' y 'Admin' (bloquea Supervisor, Espectador, etc.)
+router.use(checkRole('Asesor', 'Admin'));
 
 router.get('/contactos', chatsController.getContactos);
 router.get('/unread-count', chatsController.getUnreadCount);
