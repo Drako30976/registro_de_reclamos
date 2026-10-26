@@ -51,6 +51,37 @@ CREATE TABLE IF NOT EXISTS finalizaciones (
     activo BOOLEAN DEFAULT TRUE
 );
 
+CREATE TABLE IF NOT EXISTS tipos_llamada (
+    id SERIAL PRIMARY KEY,
+    contenido VARCHAR(50) NOT NULL,
+    descripcion VARCHAR(150) DEFAULT '',
+    activo BOOLEAN DEFAULT TRUE
+);
+
+CREATE TABLE IF NOT EXISTS caracteristicas_llamada (
+    id SERIAL PRIMARY KEY,
+    tipo_llamada_id INT NOT NULL REFERENCES tipos_llamada(id) ON DELETE CASCADE,
+    contenido VARCHAR(50) NOT NULL,
+    descripcion VARCHAR(150) DEFAULT '',
+    activo BOOLEAN DEFAULT TRUE
+);
+
+CREATE TABLE IF NOT EXISTS definiciones_llamada (
+    id SERIAL PRIMARY KEY,
+    caracteristica_id INT NOT NULL REFERENCES caracteristicas_llamada(id) ON DELETE CASCADE,
+    contenido VARCHAR(50) NOT NULL,
+    descripcion VARCHAR(150) DEFAULT '',
+    activo BOOLEAN DEFAULT TRUE
+);
+
+CREATE TABLE IF NOT EXISTS finalizaciones_llamada (
+    id SERIAL PRIMARY KEY,
+    definicion_id INT REFERENCES definiciones_llamada(id) ON DELETE CASCADE,
+    contenido VARCHAR(50) NOT NULL,
+    descripcion VARCHAR(150) DEFAULT '',
+    activo BOOLEAN DEFAULT TRUE
+);
+
 CREATE TABLE IF NOT EXISTS reclamos (
     id SERIAL PRIMARY KEY,
     fecha TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
@@ -72,10 +103,11 @@ CREATE TABLE IF NOT EXISTS llamadas (
     sucursal_id INT NOT NULL REFERENCES sucursales(id) ON DELETE RESTRICT,
     usuario_id INT NOT NULL REFERENCES usuarios(id) ON DELETE RESTRICT,
     numero_cliente VARCHAR(15) NOT NULL,
-    tipo_consulta_id INT NOT NULL REFERENCES tipos_consulta(id) ON DELETE RESTRICT,
-    caracteristica_id INT NOT NULL REFERENCES caracteristicas_consulta(id) ON DELETE RESTRICT,
-    definicion_id INT REFERENCES definiciones_consulta(id) ON DELETE SET NULL,
-    finalizacion_id INT REFERENCES finalizaciones(id) ON DELETE SET NULL,
+    telefono_contacto VARCHAR(30) DEFAULT '',
+    tipo_consulta_id INT NOT NULL REFERENCES tipos_llamada(id) ON DELETE RESTRICT,
+    caracteristica_id INT NOT NULL REFERENCES caracteristicas_llamada(id) ON DELETE RESTRICT,
+    definicion_id INT REFERENCES definiciones_llamada(id) ON DELETE SET NULL,
+    finalizacion_id INT REFERENCES finalizaciones_llamada(id) ON DELETE SET NULL,
     comentario VARCHAR(500),
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
@@ -186,10 +218,79 @@ CREATE TABLE IF NOT EXISTS auditorias_calidad_detalle (
     observacion VARCHAR(250)
 );
 
+CREATE TABLE IF NOT EXISTS mensajes_internos (
+    id SERIAL PRIMARY KEY,
+    remitente_id INT NOT NULL REFERENCES usuarios(id) ON DELETE CASCADE,
+    asunto VARCHAR(150) NOT NULL DEFAULT '(Sin asunto)',
+    cuerpo TEXT NOT NULL,
+    eliminado_remitente BOOLEAN DEFAULT FALSE,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS mensajes_destinatarios (
+    id SERIAL PRIMARY KEY,
+    mensaje_id INT NOT NULL REFERENCES mensajes_internos(id) ON DELETE CASCADE,
+    destinatario_id INT NOT NULL REFERENCES usuarios(id) ON DELETE CASCADE,
+    tipo VARCHAR(10) NOT NULL DEFAULT 'para',
+    leido BOOLEAN DEFAULT FALSE,
+    leido_at TIMESTAMP WITH TIME ZONE,
+    favorito BOOLEAN DEFAULT FALSE,
+    eliminado BOOLEAN DEFAULT FALSE,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS mensajes_adjuntos (
+    id SERIAL PRIMARY KEY,
+    mensaje_id INT NOT NULL REFERENCES mensajes_internos(id) ON DELETE CASCADE,
+    nombre_original VARCHAR(255) NOT NULL,
+    nombre_archivo VARCHAR(255) NOT NULL,
+    ruta VARCHAR(255) NOT NULL,
+    tipo_mime VARCHAR(100),
+    peso_bytes BIGINT,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS chats_mensajes (
+    id SERIAL PRIMARY KEY,
+    emisor_id INT NOT NULL REFERENCES usuarios(id) ON DELETE CASCADE,
+    receptor_id INT NOT NULL REFERENCES usuarios(id) ON DELETE CASCADE,
+    contenido VARCHAR(200) NOT NULL,
+    editado BOOLEAN DEFAULT FALSE,
+    eliminado BOOLEAN DEFAULT FALSE,
+    leido BOOLEAN DEFAULT FALSE,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS chats_adjuntos (
+    id SERIAL PRIMARY KEY,
+    chat_id INT NOT NULL REFERENCES chats_mensajes(id) ON DELETE CASCADE,
+    tipo VARCHAR(20) NOT NULL DEFAULT 'imagen',
+    nombre_original VARCHAR(255) NOT NULL,
+    nombre_archivo VARCHAR(255) NOT NULL,
+    ruta VARCHAR(255) NOT NULL,
+    tipo_mime VARCHAR(100),
+    peso_bytes BIGINT,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
 CREATE INDEX IF NOT EXISTS idx_reclamos_fecha ON reclamos (fecha);
 CREATE INDEX IF NOT EXISTS idx_reclamos_sucursal ON reclamos (sucursal_id);
 CREATE INDEX IF NOT EXISTS idx_reclamos_usuario ON reclamos (usuario_id);
 CREATE INDEX IF NOT EXISTS idx_reclamos_tipo ON reclamos (tipo_consulta_id);
+CREATE INDEX IF NOT EXISTS idx_llamadas_fecha ON llamadas(fecha DESC);
+CREATE INDEX IF NOT EXISTS idx_llamadas_cliente ON llamadas(numero_cliente);
+CREATE INDEX IF NOT EXISTS idx_llamadas_telefono ON llamadas(telefono_contacto);
+CREATE INDEX IF NOT EXISTS idx_llamadas_sucursal ON llamadas(sucursal_id);
+CREATE INDEX IF NOT EXISTS idx_llamadas_usuario ON llamadas(usuario_id);
+CREATE INDEX IF NOT EXISTS idx_reclamos_fecha_ar ON reclamos (((fecha AT TIME ZONE 'America/Argentina/Buenos_Aires')::date));
+CREATE INDEX IF NOT EXISTS idx_llamadas_fecha_ar ON llamadas (((fecha AT TIME ZONE 'America/Argentina/Buenos_Aires')::date));
+CREATE INDEX IF NOT EXISTS idx_mensajes_remitente ON mensajes_internos(remitente_id, created_at DESC);
+CREATE INDEX IF NOT EXISTS idx_mensajes_dest_usuario ON mensajes_destinatarios(destinatario_id, eliminado, leido, favorito);
+CREATE INDEX IF NOT EXISTS idx_mensajes_dest_mensaje ON mensajes_destinatarios(mensaje_id);
+CREATE INDEX IF NOT EXISTS idx_mensajes_adjuntos_mensaje ON mensajes_adjuntos(mensaje_id);
+CREATE INDEX IF NOT EXISTS idx_chats_conversacion ON chats_mensajes(emisor_id, receptor_id, created_at ASC);
+CREATE INDEX IF NOT EXISTS idx_chats_adjuntos_chat ON chats_adjuntos(chat_id);
 CREATE INDEX IF NOT EXISTS idx_auditoria_fecha ON auditoria_logs (fecha DESC);
 CREATE INDEX IF NOT EXISTS idx_masivos_estado ON inconvenientes_masivos(estado);
 CREATE INDEX IF NOT EXISTS idx_masivos_fecha_inicio ON inconvenientes_masivos(fecha_inicio DESC);

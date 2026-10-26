@@ -288,6 +288,183 @@ const eliminarElementoEstructura = async (req, res) => {
   }
 };
 
+const getArbolEstructuraLlamadas = async (req, res) => {
+  try {
+    const tipos = await pool.query('SELECT * FROM tipos_llamada WHERE activo = true ORDER BY id ASC');
+    const caracteristicas = await pool.query('SELECT * FROM caracteristicas_llamada WHERE activo = true ORDER BY id ASC');
+    const definiciones = await pool.query('SELECT * FROM definiciones_llamada WHERE activo = true ORDER BY id ASC');
+    const finalizaciones = await pool.query('SELECT * FROM finalizaciones_llamada WHERE activo = true ORDER BY id ASC');
+
+    const finPorDef = {};
+    finalizaciones.rows.forEach(f => {
+      const defId = f.definicion_id || 0;
+      if (!finPorDef[defId]) finPorDef[defId] = [];
+      finPorDef[defId].push(f);
+    });
+
+    const defPorCaract = {};
+    definiciones.rows.forEach(d => {
+      d.finalizaciones = finPorDef[d.id] || [];
+      if (!defPorCaract[d.caracteristica_id]) defPorCaract[d.caracteristica_id] = [];
+      defPorCaract[d.caracteristica_id].push(d);
+    });
+
+    const carPorTipo = {};
+    caracteristicas.rows.forEach(c => {
+      c.definiciones = defPorCaract[c.id] || [];
+      if (!carPorTipo[c.tipo_llamada_id]) carPorTipo[c.tipo_llamada_id] = [];
+      carPorTipo[c.tipo_llamada_id].push(c);
+    });
+
+    const arbol = tipos.rows.map(t => ({
+      ...t,
+      caracteristicas: carPorTipo[t.id] || []
+    }));
+
+    res.json(arbol);
+  } catch (error) {
+    console.error('Error al obtener árbol de estructura de llamadas:', error);
+    res.status(500).json({ error: 'Error al consultar la estructura de llamadas.' });
+  }
+};
+
+const guardarElementoEstructuraLlamadas = async (req, res) => {
+  try {
+    const { nivel, parent_id, contenido, descripcion } = req.body;
+    if (!nivel || !contenido || !contenido.trim()) {
+      return res.status(400).json({ error: 'Nivel y contenido son obligatorios.' });
+    }
+
+    let result;
+    const cleanContent = contenido.trim();
+    const cleanDesc = descripcion ? descripcion.trim() : '';
+
+    if (nivel === 'tipo') {
+      result = await pool.query(
+        'INSERT INTO tipos_llamada (contenido, descripcion) VALUES ($1, $2) RETURNING *',
+        [cleanContent, cleanDesc]
+      );
+    } else if (nivel === 'caracteristica') {
+      if (!parent_id) return res.status(400).json({ error: 'Falta tipo_llamada_id (parent_id).' });
+      result = await pool.query(
+        'INSERT INTO caracteristicas_llamada (tipo_llamada_id, contenido, descripcion) VALUES ($1, $2, $3) RETURNING *',
+        [parent_id, cleanContent, cleanDesc]
+      );
+    } else if (nivel === 'definicion') {
+      if (!parent_id) return res.status(400).json({ error: 'Falta caracteristica_id (parent_id).' });
+      result = await pool.query(
+        'INSERT INTO definiciones_llamada (caracteristica_id, contenido, descripcion) VALUES ($1, $2, $3) RETURNING *',
+        [parent_id, cleanContent, cleanDesc]
+      );
+    } else if (nivel === 'finalizacion') {
+      if (!parent_id) return res.status(400).json({ error: 'Falta definicion_id (parent_id).' });
+      result = await pool.query(
+        'INSERT INTO finalizaciones_llamada (definicion_id, contenido, descripcion) VALUES ($1, $2, $3) RETURNING *',
+        [parent_id, cleanContent, cleanDesc]
+      );
+    } else {
+      return res.status(400).json({ error: 'Nivel no válido.' });
+    }
+
+    await registrarAuditoria({
+      accion: `Se creó en estructura de llamadas [${nivel}]: "${cleanContent}"`,
+      usuario_id: req.user.id,
+      usuario_nombre: req.user.usuario,
+      entidad: 'estructura_llamadas',
+      registro_id: result.rows[0].id,
+      datos_nuevos: result.rows[0]
+    });
+
+    res.status(201).json(result.rows[0]);
+  } catch (error) {
+    console.error('Error al guardar elemento de estructura de llamadas:', error);
+    res.status(500).json({ error: 'Error al registrar el elemento.' });
+  }
+};
+
+const actualizarElementoEstructuraLlamadas = async (req, res) => {
+  try {
+    const { nivel, id } = req.params;
+    const { contenido, descripcion, activo } = req.body;
+
+    const tablas = {
+      tipo: 'tipos_llamada',
+      caracteristica: 'caracteristicas_llamada',
+      definicion: 'definiciones_llamada',
+      finalizacion: 'finalizaciones_llamada'
+    };
+
+    const tabla = tablas[nivel];
+    if (!tabla) return res.status(400).json({ error: 'Nivel no válido.' });
+
+    const prev = await pool.query(`SELECT * FROM ${tabla} WHERE id = $1`, [id]);
+    if (prev.rows.length === 0) return res.status(404).json({ error: 'Registro no encontrado.' });
+
+    const result = await pool.query(
+      `UPDATE ${tabla}
+       SET contenido = COALESCE($1, contenido),
+           descripcion = COALESCE($2, descripcion),
+           activo = COALESCE($3, activo)
+       WHERE id = $4 RETURNING *`,
+      [
+        contenido ? contenido.trim() : null,
+        descripcion !== undefined ? descripcion.trim() : null,
+        activo !== undefined ? activo : null,
+        id
+      ]
+    );
+
+    await registrarAuditoria({
+      accion: `Se modificó en estructura de llamadas [${nivel}]: "${prev.rows[0].contenido}"`,
+      usuario_id: req.user.id,
+      usuario_nombre: req.user.usuario,
+      entidad: 'estructura_llamadas',
+      registro_id: id,
+      datos_anteriores: prev.rows[0],
+      datos_nuevos: result.rows[0]
+    });
+
+    res.json(result.rows[0]);
+  } catch (error) {
+    console.error('Error al actualizar elemento de estructura de llamadas:', error);
+    res.status(500).json({ error: 'Error al actualizar.' });
+  }
+};
+
+const eliminarElementoEstructuraLlamadas = async (req, res) => {
+  try {
+    const { nivel, id } = req.params;
+    const tablas = {
+      tipo: 'tipos_llamada',
+      caracteristica: 'caracteristicas_llamada',
+      definicion: 'definiciones_llamada',
+      finalizacion: 'finalizaciones_llamada'
+    };
+
+    const tabla = tablas[nivel];
+    if (!tabla) return res.status(400).json({ error: 'Nivel no válido.' });
+
+    const prev = await pool.query(`SELECT * FROM ${tabla} WHERE id = $1`, [id]);
+    if (prev.rows.length === 0) return res.status(404).json({ error: 'Registro no encontrado.' });
+
+    await pool.query(`DELETE FROM ${tabla} WHERE id = $1`, [id]);
+
+    await registrarAuditoria({
+      accion: `Se eliminó en estructura de llamadas [${nivel}]: "${prev.rows[0].contenido}"`,
+      usuario_id: req.user.id,
+      usuario_nombre: req.user.usuario,
+      entidad: 'estructura_llamadas',
+      registro_id: id,
+      datos_anteriores: prev.rows[0]
+    });
+
+    res.json({ message: 'Elemento eliminado correctamente.' });
+  } catch (error) {
+    console.error('Error al eliminar elemento de estructura de llamadas:', error);
+    res.status(500).json({ error: 'Error al eliminar. Es posible que existan llamadas vinculadas.' });
+  }
+};
+
 const getAsesores = async (req, res) => {
   try {
     const result = await pool.query(
@@ -312,5 +489,9 @@ module.exports = {
   guardarElementoEstructura,
   actualizarElementoEstructura,
   eliminarElementoEstructura,
+  getArbolEstructuraLlamadas,
+  guardarElementoEstructuraLlamadas,
+  actualizarElementoEstructuraLlamadas,
+  eliminarElementoEstructuraLlamadas,
   getAsesores
 };

@@ -1,6 +1,8 @@
 const { Pool } = require('pg');
 require('dotenv').config();
 
+process.env.PGTZ = process.env.PGTZ || 'America/Argentina/Buenos_Aires';
+
 const pool = new Pool({
   host: process.env.DB_HOST || 'localhost',
   port: parseInt(process.env.DB_PORT || '5433', 10),

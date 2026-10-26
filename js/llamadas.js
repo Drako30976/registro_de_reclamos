@@ -159,7 +159,7 @@ const LlamadasModule = {
     try {
       const [sucursales, arbol] = await Promise.all([
         API.get('/catalogos/sucursales'),
-        API.get('/catalogos/estructura')
+        API.get('/catalogos/estructura-llamadas')
       ]);
 
       this.sucursales = sucursales;
@@ -317,19 +317,25 @@ const LlamadasModule = {
 
     const sucursal_id = document.getElementById('llamada-sucursal').value;
     const numero_cliente = document.getElementById('llamada-cliente').value.trim();
+    const telefono_contacto = document.getElementById('llamada-telefono').value.trim();
     const tipo_consulta_id = document.getElementById('llamada-tipo').value;
     const caracteristica_id = document.getElementById('llamada-caracteristica').value;
     const definicion_id = document.getElementById('llamada-definicion').value;
     const finalizacion_id = document.getElementById('llamada-finalizacion').value;
     const comentario = document.getElementById('llamada-comentario').value.trim();
 
-    if (!sucursal_id || !numero_cliente || !tipo_consulta_id || !caracteristica_id || !definicion_id || !finalizacion_id) {
-      this.showAlert('Los campos Sucursal, Número de Cliente, Tipo de Consulta, Características, Definición y Finalización son obligatorios.', 'error');
+    if (!sucursal_id || !numero_cliente || !telefono_contacto || !tipo_consulta_id || !caracteristica_id || !definicion_id || !finalizacion_id) {
+      this.showAlert('Los campos Sucursal, Número de Cliente, Teléfono de contacto, Tipo de Consulta, Características, Definición y Finalización son obligatorios.', 'error');
       return;
     }
 
     if (numero_cliente.length > 15) {
       this.showAlert('El número de cliente no puede superar los 15 caracteres.', 'error');
+      return;
+    }
+
+    if (telefono_contacto.length > 30) {
+      this.showAlert('El teléfono de contacto no puede superar los 30 caracteres.', 'error');
       return;
     }
 
@@ -341,6 +347,7 @@ const LlamadasModule = {
     const payload = {
       sucursal_id: parseInt(sucursal_id, 10),
       numero_cliente,
+      telefono_contacto,
       tipo_consulta_id: parseInt(tipo_consulta_id, 10),
       caracteristica_id: parseInt(caracteristica_id, 10),
       definicion_id: parseInt(definicion_id, 10),
@@ -414,7 +421,7 @@ const LlamadasModule = {
     }
 
     if (this.llamadasRecientes.length === 0) {
-      tbody.innerHTML = '<tr><td colspan="9" class="text-center py-4 text-muted">Aún no se han cargado llamadas en esta sesión.</td></tr>';
+      tbody.innerHTML = '<tr><td colspan="10" class="text-center py-4 text-muted">Aún no se han cargado llamadas en esta sesión.</td></tr>';
       return;
     }
 
@@ -436,6 +443,7 @@ const LlamadasModule = {
           <td><span class="badge badge-secondary">${r.sucursal || '-'}</span></td>
           <td>${r.asesor || '-'}</td>
           <td><strong style="color: #0D9488;">${r.numero_cliente}</strong></td>
+          <td>${r.telefono_contacto || '-'}</td>
           <td>${r.tipo_consulta || '-'}</td>
           <td>${r.caracteristica || '-'}</td>
           <td>${r.definicion || '-'}</td>
@@ -521,7 +529,7 @@ const LlamadasHistorialModule = {
     try {
       const [sucursales, tipos, usuarios] = await Promise.all([
         API.get('/catalogos/sucursales'),
-        API.get('/catalogos/estructura'),
+        API.get('/catalogos/estructura-llamadas'),
         API.get('/catalogos/asesores').catch(() => [])
       ]);
 
@@ -685,6 +693,7 @@ const LlamadasHistorialModule = {
         document.getElementById('filtro-llamada-tipo').value = '';
         document.getElementById('filtro-llamada-asesor').value = '';
         document.getElementById('filtro-llamada-cliente').value = '';
+        document.getElementById('filtro-llamada-telefono').value = '';
 
         this.actualizarOpcionesCaracteristicas(null);
         this.actualizarOpcionesDefiniciones(null, null);
@@ -810,6 +819,7 @@ const LlamadasHistorialModule = {
     const finalizacionId = document.getElementById('filtro-llamada-finalizacion')?.value;
     const asesorId = document.getElementById('filtro-llamada-asesor')?.value;
     const cliente = document.getElementById('filtro-llamada-cliente')?.value;
+    const telefono = document.getElementById('filtro-llamada-telefono')?.value;
 
     if (fechaDesde) params.append('fecha_desde', fechaDesde);
     if (fechaHasta) params.append('fecha_hasta', fechaHasta);
@@ -820,6 +830,7 @@ const LlamadasHistorialModule = {
     if (finalizacionId) params.append('finalizacion_id', finalizacionId);
     if (asesorId) params.append('asesor_id', asesorId);
     if (cliente) params.append('numero_cliente', cliente);
+    if (telefono) params.append('telefono', telefono);
 
     return params.toString();
   },
@@ -843,14 +854,14 @@ const LlamadasHistorialModule = {
     if (emptyState) emptyState.classList.add('hidden');
     if (tableContainer) tableContainer.classList.remove('hidden');
 
-    tbody.innerHTML = '<tr><td colspan="10" class="text-center py-4">Buscando llamadas...</td></tr>';
+    tbody.innerHTML = '<tr><td colspan="11" class="text-center py-4">Buscando llamadas...</td></tr>';
 
     try {
       const data = await API.get(`/llamadas?${qs}`);
       this.llamadas = data;
       this.renderTabla();
     } catch (err) {
-      tbody.innerHTML = `<tr><td colspan="10" class="text-center text-danger py-4">Error al cargar llamadas: ${err.message}</td></tr>`;
+      tbody.innerHTML = `<tr><td colspan="11" class="text-center text-danger py-4">Error al cargar llamadas: ${err.message}</td></tr>`;
     }
   },
 
@@ -862,7 +873,7 @@ const LlamadasHistorialModule = {
     const rol = user ? user.rol : '';
 
     if (this.llamadas.length === 0) {
-      tbody.innerHTML = '<tr><td colspan="10" class="text-center py-6 text-muted">No se encontraron llamadas con los filtros aplicados.</td></tr>';
+      tbody.innerHTML = '<tr><td colspan="11" class="text-center py-6 text-muted">No se encontraron llamadas con los filtros aplicados.</td></tr>';
       return;
     }
 
@@ -899,6 +910,7 @@ const LlamadasHistorialModule = {
           <td><span class="badge badge-secondary">${r.sucursal}</span></td>
           <td>${userHoverHtml}</td>
           <td><strong style="color: #0D9488;">${r.numero_cliente}</strong></td>
+          <td>${r.telefono_contacto || '-'}</td>
           <td>${r.tipo_consulta}</td>
           <td>${r.caracteristica}</td>
           <td>${r.definicion || '-'}</td>
@@ -917,6 +929,7 @@ const LlamadasHistorialModule = {
       
       const modal = document.getElementById('modal-editar-llamada');
       document.getElementById('edit-llamada-cliente').value = r.numero_cliente;
+      document.getElementById('edit-llamada-telefono').value = r.telefono_contacto || '';
 
       const selSuc = document.getElementById('edit-llamada-sucursal');
       selSuc.innerHTML = '';
@@ -1006,19 +1019,25 @@ const LlamadasHistorialModule = {
 
     const sucursal_id = document.getElementById('edit-llamada-sucursal').value;
     const numero_cliente = document.getElementById('edit-llamada-cliente').value.trim();
+    const telefono_contacto = document.getElementById('edit-llamada-telefono').value.trim();
     const tipo_consulta_id = document.getElementById('edit-llamada-tipo').value;
     const caracteristica_id = document.getElementById('edit-llamada-caracteristica').value;
     const definicion_id = document.getElementById('edit-llamada-definicion').value;
     const finalizacion_id = document.getElementById('edit-llamada-finalizacion').value;
     const comentario = document.getElementById('edit-llamada-comentario').value.trim();
 
-    if (!sucursal_id || !numero_cliente || !tipo_consulta_id || !caracteristica_id || !definicion_id || !finalizacion_id) {
-      alert('Los campos Sucursal, Cliente, Tipo, Características, Definición y Finalización son obligatorios.');
+    if (!sucursal_id || !numero_cliente || !telefono_contacto || !tipo_consulta_id || !caracteristica_id || !definicion_id || !finalizacion_id) {
+      alert('Los campos Sucursal, Cliente, Teléfono, Tipo, Características, Definición y Finalización son obligatorios.');
       return;
     }
 
     if (numero_cliente.length > 15) {
       alert('El número de cliente no puede superar los 15 caracteres.');
+      return;
+    }
+
+    if (telefono_contacto.length > 30) {
+      alert('El teléfono de contacto no puede superar los 30 caracteres.');
       return;
     }
 
@@ -1030,6 +1049,7 @@ const LlamadasHistorialModule = {
     const payload = {
       sucursal_id: parseInt(sucursal_id, 10),
       numero_cliente,
+      telefono_contacto,
       tipo_consulta_id: parseInt(tipo_consulta_id, 10),
       caracteristica_id: parseInt(caracteristica_id, 10),
       definicion_id: parseInt(definicion_id, 10),

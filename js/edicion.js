@@ -1,6 +1,7 @@
 const EdicionModule = {
   sucursales: [],
   arbol: [],
+  arbolLlamadas: [],
 
   async init() {
     this.bindEvents();
@@ -10,31 +11,29 @@ const EdicionModule = {
   async cargarTodo() {
     await Promise.all([
       this.cargarSucursales(),
-      this.cargarEstructura()
+      this.cargarEstructura(),
+      this.cargarEstructuraLlamadas()
     ]);
   },
 
   bindEvents() {
-
     const btnTabSuc = document.getElementById('subtab-btn-sucursales');
     const btnTabEst = document.getElementById('subtab-btn-estructura');
+    const btnTabEstLlam = document.getElementById('subtab-btn-estructura-llamadas');
     const secSuc = document.getElementById('edicion-sec-sucursales');
     const secEst = document.getElementById('edicion-sec-estructura');
+    const secEstLlam = document.getElementById('edicion-sec-estructura-llamadas');
 
-    if (btnTabSuc && btnTabEst) {
-      btnTabSuc.onclick = () => {
-        btnTabSuc.classList.add('active');
-        btnTabEst.classList.remove('active');
-        secSuc.classList.remove('hidden');
-        secEst.classList.add('hidden');
-      };
-      btnTabEst.onclick = () => {
-        btnTabEst.classList.add('active');
-        btnTabSuc.classList.remove('active');
-        secEst.classList.remove('hidden');
-        secSuc.classList.add('hidden');
-      };
-    }
+    const switchSubtab = (activeBtn, activeSec) => {
+      [btnTabSuc, btnTabEst, btnTabEstLlam].forEach(b => b?.classList.remove('active'));
+      [secSuc, secEst, secEstLlam].forEach(s => s?.classList.add('hidden'));
+      activeBtn?.classList.add('active');
+      activeSec?.classList.remove('hidden');
+    };
+
+    if (btnTabSuc) btnTabSuc.onclick = () => switchSubtab(btnTabSuc, secSuc);
+    if (btnTabEst) btnTabEst.onclick = () => switchSubtab(btnTabEst, secEst);
+    if (btnTabEstLlam) btnTabEstLlam.onclick = () => switchSubtab(btnTabEstLlam, secEstLlam);
 
     const formCrearSuc = document.getElementById('form-crear-sucursal');
     if (formCrearSuc) {
@@ -60,6 +59,7 @@ const EdicionModule = {
     if (formCrearEst) {
       formCrearEst.onsubmit = async (e) => {
         e.preventDefault();
+        const origen = document.getElementById('nodo-origen')?.value || 'reclamos';
         const nivel = document.getElementById('nodo-nivel').value;
         const parent_id = document.getElementById('nodo-parent-id').value;
         const contenido = document.getElementById('nodo-contenido').value.trim();
@@ -67,8 +67,10 @@ const EdicionModule = {
 
         if (!contenido) return;
 
+        const endpoint = origen === 'llamadas' ? '/catalogos/estructura-llamadas' : '/catalogos/estructura';
+
         try {
-          await API.post('/catalogos/estructura', {
+          await API.post(endpoint, {
             nivel,
             parent_id: parent_id ? parseInt(parent_id, 10) : null,
             contenido,
@@ -76,7 +78,11 @@ const EdicionModule = {
           });
 
           this.cerrarModal('modal-crear-nodo-estructura');
-          await this.cargarEstructura();
+          if (origen === 'llamadas') {
+            await this.cargarEstructuraLlamadas();
+          } else {
+            await this.cargarEstructura();
+          }
           alert(`Elemento "${contenido}" agregado a la estructura.`);
         } catch (err) {
           alert('Error al agregar elemento: ' + err.message);
@@ -175,9 +181,9 @@ const EdicionModule = {
           <div class="tree-header">
             <span class="tree-title"><strong>Tipo:</strong> ${tipo.contenido}</span>
             <div class="tree-actions">
-              <button class="btn btn-xs btn-outline-primary" onclick="EdicionModule.abrirModalCrearNodo('caracteristica', ${tipo.id}, 'Tipo: ${tipo.contenido}')">+ Característica</button>
-              <button class="btn btn-xs btn-outline-secondary" onclick="EdicionModule.editarNodo('tipo', ${tipo.id}, '${tipo.contenido}')">Editar</button>
-              ${rol === 'Admin' ? `<button class="btn btn-xs btn-outline-danger" onclick="EdicionModule.eliminarNodo('tipo', ${tipo.id}, '${tipo.contenido}')">Eliminar</button>` : ''}
+              <button class="btn btn-xs btn-outline-primary" onclick="EdicionModule.abrirModalCrearNodo('caracteristica', ${tipo.id}, 'Tipo: ${tipo.contenido}', 'reclamos')">+ Característica</button>
+              <button class="btn btn-xs btn-outline-secondary" onclick="EdicionModule.editarNodo('tipo', ${tipo.id}, '${tipo.contenido}', 'reclamos')">Editar</button>
+              ${rol === 'Admin' ? `<button class="btn btn-xs btn-outline-danger" onclick="EdicionModule.eliminarNodo('tipo', ${tipo.id}, '${tipo.contenido}', 'reclamos')">Eliminar</button>` : ''}
             </div>
           </div>
 
@@ -187,9 +193,9 @@ const EdicionModule = {
                 <div class="tree-header">
                   <span class="tree-title"><strong>Caract:</strong> ${car.contenido}</span>
                   <div class="tree-actions">
-                    <button class="btn btn-xs btn-outline-primary" onclick="EdicionModule.abrirModalCrearNodo('definicion', ${car.id}, 'Caract: ${car.contenido}')">+ Definición</button>
-                    <button class="btn btn-xs btn-outline-secondary" onclick="EdicionModule.editarNodo('caracteristica', ${car.id}, '${car.contenido}')">Editar</button>
-                    ${rol === 'Admin' ? `<button class="btn btn-xs btn-outline-danger" onclick="EdicionModule.eliminarNodo('caracteristica', ${car.id}, '${car.contenido}')">Eliminar</button>` : ''}
+                    <button class="btn btn-xs btn-outline-primary" onclick="EdicionModule.abrirModalCrearNodo('definicion', ${car.id}, 'Caract: ${car.contenido}', 'reclamos')">+ Definición</button>
+                    <button class="btn btn-xs btn-outline-secondary" onclick="EdicionModule.editarNodo('caracteristica', ${car.id}, '${car.contenido}', 'reclamos')">Editar</button>
+                    ${rol === 'Admin' ? `<button class="btn btn-xs btn-outline-danger" onclick="EdicionModule.eliminarNodo('caracteristica', ${car.id}, '${car.contenido}', 'reclamos')">Eliminar</button>` : ''}
                   </div>
                 </div>
 
@@ -199,9 +205,9 @@ const EdicionModule = {
                       <div class="tree-header">
                         <span class="tree-title"><strong>Def:</strong> ${def.contenido}</span>
                         <div class="tree-actions">
-                          <button class="btn btn-xs btn-outline-primary" onclick="EdicionModule.abrirModalCrearNodo('finalizacion', ${def.id}, 'Def: ${def.contenido}')">+ Finalización</button>
-                          <button class="btn btn-xs btn-outline-secondary" onclick="EdicionModule.editarNodo('definicion', ${def.id}, '${def.contenido}')">Editar</button>
-                          ${rol === 'Admin' ? `<button class="btn btn-xs btn-outline-danger" onclick="EdicionModule.eliminarNodo('definicion', ${def.id}, '${def.contenido}')">Eliminar</button>` : ''}
+                          <button class="btn btn-xs btn-outline-primary" onclick="EdicionModule.abrirModalCrearNodo('finalizacion', ${def.id}, 'Def: ${def.contenido}', 'reclamos')">+ Finalización</button>
+                          <button class="btn btn-xs btn-outline-secondary" onclick="EdicionModule.editarNodo('definicion', ${def.id}, '${def.contenido}', 'reclamos')">Editar</button>
+                          ${rol === 'Admin' ? `<button class="btn btn-xs btn-outline-danger" onclick="EdicionModule.eliminarNodo('definicion', ${def.id}, '${def.contenido}', 'reclamos')">Eliminar</button>` : ''}
                         </div>
                       </div>
 
@@ -209,7 +215,7 @@ const EdicionModule = {
                         ${(def.finalizaciones || []).map(fin => `
                           <span class="tree-leaf">
                             ${fin.contenido}
-                            ${rol === 'Admin' ? `<button class="leaf-del" onclick="EdicionModule.eliminarNodo('finalizacion', ${fin.id}, '${fin.contenido}')">&times;</button>` : ''}
+                            ${rol === 'Admin' ? `<button class="leaf-del" onclick="EdicionModule.eliminarNodo('finalizacion', ${fin.id}, '${fin.contenido}', 'reclamos')">&times;</button>` : ''}
                           </span>
                         `).join('')}
                       </div>
@@ -226,8 +232,80 @@ const EdicionModule = {
     }
   },
 
-  abrirModalCrearNodo(nivel, parentId = null, parentLabel = '') {
+  async cargarEstructuraLlamadas() {
+    const treeEl = document.getElementById('arbol-estructura-llamadas-edicion');
+    if (!treeEl) return;
+
+    try {
+      this.arbolLlamadas = await API.get('/catalogos/estructura-llamadas');
+      const user = API.getUser();
+      const rol = user ? user.rol : '';
+
+      if (this.arbolLlamadas.length === 0) {
+        treeEl.innerHTML = '<p class="text-muted">No hay tipos de llamada configurados.</p>';
+        return;
+      }
+
+      treeEl.innerHTML = this.arbolLlamadas.map(tipo => `
+        <div class="tree-node tree-tipo">
+          <div class="tree-header">
+            <span class="tree-title"><strong>Tipo:</strong> ${tipo.contenido}</span>
+            <div class="tree-actions">
+              <button class="btn btn-xs btn-outline-primary" onclick="EdicionModule.abrirModalCrearNodo('caracteristica', ${tipo.id}, 'Tipo: ${tipo.contenido}', 'llamadas')">+ Característica</button>
+              <button class="btn btn-xs btn-outline-secondary" onclick="EdicionModule.editarNodo('tipo', ${tipo.id}, '${tipo.contenido}', 'llamadas')">Editar</button>
+              ${rol === 'Admin' ? `<button class="btn btn-xs btn-outline-danger" onclick="EdicionModule.eliminarNodo('tipo', ${tipo.id}, '${tipo.contenido}', 'llamadas')">Eliminar</button>` : ''}
+            </div>
+          </div>
+
+          <div class="tree-children">
+            ${(tipo.caracteristicas || []).map(car => `
+              <div class="tree-node tree-caracteristica">
+                <div class="tree-header">
+                  <span class="tree-title"><strong>Caract:</strong> ${car.contenido}</span>
+                  <div class="tree-actions">
+                    <button class="btn btn-xs btn-outline-primary" onclick="EdicionModule.abrirModalCrearNodo('definicion', ${car.id}, 'Caract: ${car.contenido}', 'llamadas')">+ Definición</button>
+                    <button class="btn btn-xs btn-outline-secondary" onclick="EdicionModule.editarNodo('caracteristica', ${car.id}, '${car.contenido}', 'llamadas')">Editar</button>
+                    ${rol === 'Admin' ? `<button class="btn btn-xs btn-outline-danger" onclick="EdicionModule.eliminarNodo('caracteristica', ${car.id}, '${car.contenido}', 'llamadas')">Eliminar</button>` : ''}
+                  </div>
+                </div>
+
+                <div class="tree-children">
+                  ${(car.definiciones || []).map(def => `
+                    <div class="tree-node tree-definicion">
+                      <div class="tree-header">
+                        <span class="tree-title"><strong>Def:</strong> ${def.contenido}</span>
+                        <div class="tree-actions">
+                          <button class="btn btn-xs btn-outline-primary" onclick="EdicionModule.abrirModalCrearNodo('finalizacion', ${def.id}, 'Def: ${def.contenido}', 'llamadas')">+ Finalización</button>
+                          <button class="btn btn-xs btn-outline-secondary" onclick="EdicionModule.editarNodo('definicion', ${def.id}, '${def.contenido}', 'llamadas')">Editar</button>
+                          ${rol === 'Admin' ? `<button class="btn btn-xs btn-outline-danger" onclick="EdicionModule.eliminarNodo('definicion', ${def.id}, '${def.contenido}', 'llamadas')">Eliminar</button>` : ''}
+                        </div>
+                      </div>
+
+                      <div class="tree-children tree-leaves">
+                        ${(def.finalizaciones || []).map(fin => `
+                          <span class="tree-leaf">
+                            ${fin.contenido}
+                            ${rol === 'Admin' ? `<button class="leaf-del" onclick="EdicionModule.eliminarNodo('finalizacion', ${fin.id}, '${fin.contenido}', 'llamadas')">&times;</button>` : ''}
+                          </span>
+                        `).join('')}
+                      </div>
+                    </div>
+                  `).join('')}
+                </div>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+      `).join('');
+    } catch (err) {
+      treeEl.innerHTML = `<p class="text-danger">Error al cargar árbol de llamadas: ${err.message}</p>`;
+    }
+  },
+
+  abrirModalCrearNodo(nivel, parentId = null, parentLabel = '', origen = 'reclamos') {
     const modal = document.getElementById('modal-crear-nodo-estructura');
+    const origenInput = document.getElementById('nodo-origen');
+    if (origenInput) origenInput.value = origen;
     document.getElementById('nodo-nivel').value = nivel;
     document.getElementById('nodo-parent-id').value = parentId || '';
     document.getElementById('nodo-parent-label').textContent = parentLabel ? `Bajo: ${parentLabel}` : 'Nuevo Tipo Principal';
@@ -236,7 +314,7 @@ const EdicionModule = {
     if (modal) modal.classList.remove('hidden');
   },
 
-  async editarNodo(nivel, id, contenidoActual) {
+  async editarNodo(nivel, id, contenidoActual, origen = 'reclamos') {
     const nuevoContenido = prompt(`Modificar contenido para ${nivel}:`, contenidoActual);
     if (nuevoContenido === null) return;
     if (!nuevoContenido.trim()) {
@@ -244,22 +322,33 @@ const EdicionModule = {
       return;
     }
 
+    const endpoint = origen === 'llamadas' ? `/catalogos/estructura-llamadas/${nivel}/${id}` : `/catalogos/estructura/${nivel}/${id}`;
+
     try {
-      await API.put(`/catalogos/estructura/${nivel}/${id}`, {
+      await API.put(endpoint, {
         contenido: nuevoContenido.trim()
       });
-      await this.cargarEstructura();
+      if (origen === 'llamadas') {
+        await this.cargarEstructuraLlamadas();
+      } else {
+        await this.cargarEstructura();
+      }
       alert('Elemento actualizado.');
     } catch (err) {
       alert('Error al actualizar: ' + err.message);
     }
   },
 
-  async eliminarNodo(nivel, id, contenido) {
+  async eliminarNodo(nivel, id, contenido, origen = 'reclamos') {
     if (confirm(`¿Está seguro de eliminar ${nivel} "${contenido}" y sus elementos dependientes?`)) {
+      const endpoint = origen === 'llamadas' ? `/catalogos/estructura-llamadas/${nivel}/${id}` : `/catalogos/estructura/${nivel}/${id}`;
       try {
-        await API.delete(`/catalogos/estructura/${nivel}/${id}`);
-        await this.cargarEstructura();
+        await API.delete(endpoint);
+        if (origen === 'llamadas') {
+          await this.cargarEstructuraLlamadas();
+        } else {
+          await this.cargarEstructura();
+        }
         alert('Elemento eliminado.');
       } catch (err) {
         alert('Error al eliminar: ' + err.message);

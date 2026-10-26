@@ -411,7 +411,7 @@
                   <div id="llamada-form-alert" class="form-alert hidden"></div>
 
                   <form id="form-gestion-llamada">
-                    <div class="form-grid-2">
+                    <div class="form-grid-3">
                       <div class="form-group">
                         <label for="llamada-sucursal">Sucursal <span class="req">*</span></label>
                         <select id="llamada-sucursal" required>
@@ -423,6 +423,12 @@
                         <label for="llamada-cliente">Número de Cliente / Abonado <span class="req">*</span></label>
                         <input type="text" id="llamada-cliente" maxlength="15" pattern="[0-9]*" inputmode="numeric" placeholder="Solo números" required>
                         <small class="text-muted">Hasta 15 dígitos numéricos</small>
+                      </div>
+
+                      <div class="form-group">
+                        <label for="llamada-telefono">Teléfono de contacto <span class="req">*</span></label>
+                        <input type="text" id="llamada-telefono" maxlength="30" placeholder="Ej: 3814123456" required>
+                        <small class="text-muted">Número o celular de contacto</small>
                       </div>
                     </div>
 
@@ -519,6 +525,7 @@
                       <th>Sucursal</th>
                       <th>Asesor</th>
                       <th>Abonado</th>
+                      <th>Teléfono</th>
                       <th>Tipo de Consulta</th>
                       <th>Características</th>
                       <th>Definición</th>
@@ -528,7 +535,7 @@
                   </thead>
                   <tbody id="tabla-preview-body-llamadas">
                     <tr>
-                      <td colspan="9" class="text-center py-4 text-muted">Aún no se han cargado llamadas en esta sesión.</td>
+                      <td colspan="10" class="text-center py-4 text-muted">Aún no se han cargado llamadas en esta sesión.</td>
                     </tr>
                   </tbody>
                 </table>
@@ -603,6 +610,10 @@
                   <label>Abonado / Cliente</label>
                   <input type="text" id="filtro-llamada-cliente" placeholder="Buscar cliente...">
                 </div>
+                <div class="filter-group">
+                  <label>Teléfono</label>
+                  <input type="text" id="filtro-llamada-telefono" placeholder="Buscar teléfono...">
+                </div>
               </div>
               <div class="filter-actions mt-3">
                 <button id="btn-aplicar-filtros-llamadas" class="btn btn-primary" style="background: #0D9488; border-color: #0D9488;">Buscar / Filtrar</button>
@@ -624,6 +635,7 @@
                     <th>Sucursal</th>
                     <th>Asesor</th>
                     <th>N° Cliente</th>
+                    <th>Teléfono</th>
                     <th>Tipo de Consulta</th>
                     <th>Características</th>
                     <th>Definición</th>
@@ -634,7 +646,7 @@
                 </thead>
                 <tbody id="tabla-historial-llamadas-body">
                   <tr>
-                    <td colspan="10" class="text-center py-4">Cargando llamadas...</td>
+                    <td colspan="11" class="text-center py-4">Cargando llamadas...</td>
                   </tr>
                 </tbody>
               </table>
@@ -685,6 +697,7 @@
         <div class="subtabs-bar mb-3">
           <button id="subtab-btn-sucursales" class="btn btn-tab active">Sucursales</button>
           <button id="subtab-btn-estructura" class="btn btn-tab">Estructura Jerárquica de Reclamos</button>
+          <button id="subtab-btn-estructura-llamadas" class="btn btn-tab">Estructura Jerárquica de Llamadas</button>
         </div>
 
         <div id="edicion-sec-sucursales">
@@ -710,6 +723,21 @@
             </div>
             <div id="arbol-estructura-edicion" class="p-3 tree-container">
               Cargando estructura...
+            </div>
+          </div>
+        </div>
+
+        <div id="edicion-sec-estructura-llamadas" class="hidden">
+          <div class="card mb-4">
+            <div class="card-header flex-row justify-between align-center">
+              <div>
+                <h3>Árbol de Tipos, Características, Definiciones y Finalizaciones de Llamadas</h3>
+                <p class="text-muted font-sm">Gestione las opciones en cascada disponibles para las llamadas telefónicas (0810).</p>
+              </div>
+              <button class="btn btn-sm btn-primary" onclick="EdicionModule.abrirModalCrearNodo('tipo', null, '', 'llamadas')">+ Nuevo Tipo Principal</button>
+            </div>
+            <div id="arbol-estructura-llamadas-edicion" class="p-3 tree-container">
+              Cargando estructura de llamadas...
             </div>
           </div>
         </div>
@@ -1762,6 +1790,10 @@
             <input type="text" id="edit-llamada-cliente" maxlength="15" required>
           </div>
           <div class="form-group">
+            <label>Teléfono de Contacto <span class="req">*</span></label>
+            <input type="text" id="edit-llamada-telefono" maxlength="30" required>
+          </div>
+          <div class="form-group">
             <label>Tipo de Consulta</label>
             <select id="edit-llamada-tipo" required></select>
           </div>
@@ -1819,6 +1851,7 @@
       </div>
       <form id="form-crear-nodo-estructura">
         <div class="modal-body">
+          <input type="hidden" id="nodo-origen" value="reclamos">
           <input type="hidden" id="nodo-nivel">
           <input type="hidden" id="nodo-parent-id">
           <p id="nodo-parent-label" class="badge badge-info mb-3"></p>

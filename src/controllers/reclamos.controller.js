@@ -192,15 +192,15 @@ const getReclamos = async (req, res) => {
     let paramIndex = 1;
 
     if (fecha) {
-      query += ` AND DATE(r.fecha) = $${paramIndex++}`;
+      query += ` AND (r.fecha AT TIME ZONE 'America/Argentina/Buenos_Aires')::date = $${paramIndex++}`;
       values.push(normalizarFecha(fecha));
     }
     if (fecha_desde) {
-      query += ` AND DATE(r.fecha) >= $${paramIndex++}`;
+      query += ` AND (r.fecha AT TIME ZONE 'America/Argentina/Buenos_Aires')::date >= $${paramIndex++}`;
       values.push(normalizarFecha(fecha_desde));
     }
     if (fecha_hasta) {
-      query += ` AND DATE(r.fecha) <= $${paramIndex++}`;
+      query += ` AND (r.fecha AT TIME ZONE 'America/Argentina/Buenos_Aires')::date <= $${paramIndex++}`;
       values.push(normalizarFecha(fecha_hasta));
     }
     if (asesor_id) {

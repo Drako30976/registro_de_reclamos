@@ -15,6 +15,8 @@ const masivosRoutes = require('./routes/masivos.routes');
 const auditoriasRoutes = require('./routes/auditorias.routes');
 const llamadasRoutes = require('./routes/llamadas.routes');
 const canalesRoutes = require('./routes/canales.routes');
+const mensajesRoutes = require('./routes/mensajes.routes');
+const chatsRoutes = require('./routes/chats.routes');
 const { initCanalesTables } = require('./services/canalesSeed');
 const { migrateDatabase } = require('./services/dbMigrations');
 
@@ -55,6 +57,8 @@ app.use('/api/tareas', tareasRoutes);
 app.use('/api/masivos', masivosRoutes);
 app.use('/api/auditorias', auditoriasRoutes);
 app.use('/api/canales', canalesRoutes);
+app.use('/api/mensajes', mensajesRoutes);
+app.use('/api/chats', chatsRoutes);
 
 
 app.get('/api/health', async (req, res) => {

@@ -15,6 +15,11 @@ router.post('/estructura', checkRole('Admin', 'Supervisor'), catalogosController
 router.put('/estructura/:nivel/:id', checkRole('Admin', 'Supervisor'), catalogosController.actualizarElementoEstructura);
 router.delete('/estructura/:nivel/:id', checkRole('Admin'), catalogosController.eliminarElementoEstructura);
 
+router.get('/estructura-llamadas', catalogosController.getArbolEstructuraLlamadas);
+router.post('/estructura-llamadas', checkRole('Admin', 'Supervisor'), catalogosController.guardarElementoEstructuraLlamadas);
+router.put('/estructura-llamadas/:nivel/:id', checkRole('Admin', 'Supervisor'), catalogosController.actualizarElementoEstructuraLlamadas);
+router.delete('/estructura-llamadas/:nivel/:id', checkRole('Admin'), catalogosController.eliminarElementoEstructuraLlamadas);
+
 router.get('/asesores', catalogosController.getAsesores);
 
 module.exports = router;

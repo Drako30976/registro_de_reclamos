@@ -22,7 +22,8 @@ const emitirReportePDF = async (req, res) => {
       caracteristica_id,
       definicion_id,
       finalizacion_id,
-      numero_cliente
+      numero_cliente,
+      telefono
     } = req.query;
 
     let query = `
@@ -51,15 +52,15 @@ const emitirReportePDF = async (req, res) => {
     let paramIndex = 1;
 
     if (fecha) {
-      query += ` AND DATE(r.fecha) = $${paramIndex++}`;
+      query += ` AND (r.fecha AT TIME ZONE 'America/Argentina/Buenos_Aires')::date = $${paramIndex++}`;
       values.push(normalizarFecha(fecha));
     }
     if (fecha_desde) {
-      query += ` AND DATE(r.fecha) >= $${paramIndex++}`;
+      query += ` AND (r.fecha AT TIME ZONE 'America/Argentina/Buenos_Aires')::date >= $${paramIndex++}`;
       values.push(normalizarFecha(fecha_desde));
     }
     if (fecha_hasta) {
-      query += ` AND DATE(r.fecha) <= $${paramIndex++}`;
+      query += ` AND (r.fecha AT TIME ZONE 'America/Argentina/Buenos_Aires')::date <= $${paramIndex++}`;
       values.push(normalizarFecha(fecha_hasta));
     }
     if (asesor_id) {
@@ -247,7 +248,8 @@ const emitirReporteLlamadasPDF = async (req, res) => {
       caracteristica_id,
       definicion_id,
       finalizacion_id,
-      numero_cliente
+      numero_cliente,
+      telefono
     } = req.query;
 
     let query = `
@@ -255,6 +257,7 @@ const emitirReporteLlamadasPDF = async (req, res) => {
         l.id,
         l.fecha,
         l.numero_cliente,
+        COALESCE(l.telefono_contacto, '-') AS telefono_contacto,
         s.nombre AS sucursal,
         u.nombre_completo AS asesor,
         tc.contenido AS tipo_consulta,
@@ -265,10 +268,10 @@ const emitirReporteLlamadasPDF = async (req, res) => {
       FROM llamadas l
       JOIN sucursales s ON l.sucursal_id = s.id
       JOIN usuarios u ON l.usuario_id = u.id
-      JOIN tipos_consulta tc ON l.tipo_consulta_id = tc.id
-      JOIN caracteristicas_consulta cc ON l.caracteristica_id = cc.id
-      LEFT JOIN definiciones_consulta dc ON l.definicion_id = dc.id
-      LEFT JOIN finalizaciones f ON l.finalizacion_id = f.id
+      JOIN tipos_llamada tc ON l.tipo_consulta_id = tc.id
+      JOIN caracteristicas_llamada cc ON l.caracteristica_id = cc.id
+      LEFT JOIN definiciones_llamada dc ON l.definicion_id = dc.id
+      LEFT JOIN finalizaciones_llamada f ON l.finalizacion_id = f.id
       WHERE 1=1
     `;
 
@@ -276,15 +279,15 @@ const emitirReporteLlamadasPDF = async (req, res) => {
     let paramIndex = 1;
 
     if (fecha) {
-      query += ` AND DATE(l.fecha) = $${paramIndex++}`;
+      query += ` AND (l.fecha AT TIME ZONE 'America/Argentina/Buenos_Aires')::date = $${paramIndex++}`;
       values.push(normalizarFecha(fecha));
     }
     if (fecha_desde) {
-      query += ` AND DATE(l.fecha) >= $${paramIndex++}`;
+      query += ` AND (l.fecha AT TIME ZONE 'America/Argentina/Buenos_Aires')::date >= $${paramIndex++}`;
       values.push(normalizarFecha(fecha_desde));
     }
     if (fecha_hasta) {
-      query += ` AND DATE(l.fecha) <= $${paramIndex++}`;
+      query += ` AND (l.fecha AT TIME ZONE 'America/Argentina/Buenos_Aires')::date <= $${paramIndex++}`;
       values.push(normalizarFecha(fecha_hasta));
     }
     if (asesor_id) {
@@ -319,6 +322,10 @@ const emitirReporteLlamadasPDF = async (req, res) => {
     if (numero_cliente) {
       query += ` AND l.numero_cliente ILIKE $${paramIndex++}`;
       values.push(`%${numero_cliente.trim()}%`);
+    }
+    if (telefono) {
+      query += ` AND l.telefono_contacto ILIKE $${paramIndex++}`;
+      values.push(`%${telefono.trim()}%`);
     }
 
     query += ` ORDER BY l.fecha DESC, l.id DESC`;
@@ -1303,16 +1310,16 @@ const buildDinamicaData = async (fecha_desde, fecha_hasta, canal, sucursal_id, a
 
   if (fecha_desde) {
     const fDesde = normalizarFecha(fecha_desde);
-    whereR += ` AND DATE(r.fecha) >= $${pIdxR++}`;
+    whereR += ` AND (r.fecha AT TIME ZONE 'America/Argentina/Buenos_Aires')::date >= $${pIdxR++}`;
     paramsR.push(fDesde);
-    whereL += ` AND DATE(l.fecha) >= $${pIdxL++}`;
+    whereL += ` AND (l.fecha AT TIME ZONE 'America/Argentina/Buenos_Aires')::date >= $${pIdxL++}`;
     paramsL.push(fDesde);
   }
   if (fecha_hasta) {
     const fHasta = normalizarFecha(fecha_hasta);
-    whereR += ` AND DATE(r.fecha) <= $${pIdxR++}`;
+    whereR += ` AND (r.fecha AT TIME ZONE 'America/Argentina/Buenos_Aires')::date <= $${pIdxR++}`;
     paramsR.push(fHasta);
-    whereL += ` AND DATE(l.fecha) <= $${pIdxL++}`;
+    whereL += ` AND (l.fecha AT TIME ZONE 'America/Argentina/Buenos_Aires')::date <= $${pIdxL++}`;
     paramsL.push(fHasta);
   }
   if (sucursal_id) {
@@ -1379,9 +1386,9 @@ const buildDinamicaData = async (fecha_desde, fecha_hasta, canal, sucursal_id, a
       FROM llamadas l
       JOIN sucursales s ON l.sucursal_id = s.id
       JOIN usuarios u ON l.usuario_id = u.id
-      JOIN tipos_consulta tc ON l.tipo_consulta_id = tc.id
-      JOIN caracteristicas_consulta cc ON l.caracteristica_id = cc.id
-      LEFT JOIN finalizaciones f ON l.finalizacion_id = f.id
+      JOIN tipos_llamada tc ON l.tipo_consulta_id = tc.id
+      JOIN caracteristicas_llamada cc ON l.caracteristica_id = cc.id
+      LEFT JOIN finalizaciones_llamada f ON l.finalizacion_id = f.id
       ${renumberedWhereL}
     `);
     unionParams.push(...paramsL);
