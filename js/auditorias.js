@@ -767,6 +767,7 @@ const AuditoriasModule = {
       tbodyCat.innerHTML = catHtml;
 
       document.getElementById('ver-audit-obs-generales').textContent = a.observaciones_generales || 'Sin observaciones generales registradas.';
+      this.currentAuditoriaDetalleData = a;
     } catch (err) {
       console.error('Error al ver detalle de auditoría:', err);
       alert('Error al consultar el detalle de la auditoría: ' + err.message);
@@ -775,7 +776,38 @@ const AuditoriasModule = {
 
   cerrarModalVerDetalle() {
     this.currentAuditIdDetalle = null;
+    this.currentAuditoriaDetalleData = null;
     document.getElementById('modal-ver-auditoria').classList.add('hidden');
+  },
+
+  enviarAuditoriaDesdeDetalle() {
+    const a = this.currentAuditoriaDetalleData;
+    if (!a) {
+      alert('No se pudo cargar la información de la auditoría seleccionada.');
+      return;
+    }
+
+    const payload = {
+      fecha: a.fecha ? a.fecha.split('T')[0] : '',
+      asesor_id: a.asesor_id,
+      auditor_id: a.auditor_id,
+      canal_id: a.canal_id,
+      referencia: a.referencia,
+      numero_abonado: a.numero_abonado,
+      comentario: a.comentario,
+      error_critico: !!a.error_critico,
+      comentario_error_critico: a.comentario_error_critico,
+      observaciones_generales: a.observaciones_generales || '',
+      detalles: Array.isArray(a.detalles) ? a.detalles.map(d => ({
+        criterio_nombre: d.criterio_nombre,
+        subcriterio_nombre: d.subcriterio_nombre,
+        evaluacion: d.evaluacion,
+        observacion: d.observacion
+      })) : []
+    };
+
+    this.cerrarModalVerDetalle();
+    this.ofrecerFeedbackAsesor(a, payload);
   },
 
   currentAuditIdEditing: null,

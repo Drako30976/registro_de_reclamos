@@ -2319,7 +2319,7 @@
         <button class="modal-close" onclick="AuditoriasModule.cerrarModalVerDetalle()">&times;</button>
       </div>
       <div class="modal-body" style="overflow-y: auto; padding: 1.5rem;">
-        <div class="p-3 mb-3" style="background: #F8FAFC; border: 1px solid #CBD5E1; border-radius: 6px;">
+        <div class="p-3 mb-3 ver-audit-meta-card">
           <div class="form-grid-3 mb-2 font-sm">
             <div><strong class="text-muted">Fecha:</strong> <span id="ver-audit-fecha">-</span></div>
             <div><strong class="text-muted">Asesor:</strong> <span id="ver-audit-asesor">-</span></div>
@@ -2397,15 +2397,20 @@
 
         <div>
           <h4 class="font-bold mb-2">Observaciones Generales y Feedback / Devolución</h4>
-          <div class="p-3" style="background: #F8FAFC; border: 1px solid #CBD5E1; border-radius: 6px; font-size: 0.85rem;">
-            <p id="ver-audit-obs-generales" class="text-muted m-0">Sin observaciones generales registradas.</p>
+          <div class="p-3 ver-audit-obs-card">
+            <p id="ver-audit-obs-generales" class="m-0">Sin observaciones generales registradas.</p>
           </div>
         </div>
       </div>
       <div class="modal-footer flex-row justify-between align-center">
-        <button type="button" id="btn-ver-audit-pdf" class="btn btn-outline-danger">
-          <span class="btn-icon">📄</span> Descargar Informe PDF Individual
-        </button>
+        <div class="flex-row gap-2">
+          <button type="button" id="btn-ver-audit-pdf" class="btn btn-outline-danger">
+            <span class="btn-icon">📄</span> Descargar Informe PDF Individual
+          </button>
+          <button type="button" id="btn-ver-audit-enviar-asesor" class="btn btn-primary" onclick="AuditoriasModule.enviarAuditoriaDesdeDetalle()">
+            <span>✉️</span> Enviar Auditoría al Asesor
+          </button>
+        </div>
         <button type="button" class="btn btn-outline-secondary" onclick="AuditoriasModule.cerrarModalVerDetalle()">Cerrar</button>
       </div>
     </div>

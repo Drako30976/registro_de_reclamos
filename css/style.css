@@ -3061,3 +3061,43 @@ body {
   background: #0427C4 !important;
   color: #FFFFFF !important;
 }
+
+
+.ver-audit-meta-card {
+  background: #F8FAFC;
+  border: 1px solid #CBD5E1;
+  border-radius: 6px;
+  color: var(--text-main);
+}
+
+.ver-audit-obs-card {
+  background: #F8FAFC;
+  border: 1px solid #CBD5E1;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  color: var(--text-main);
+}
+
+[data-theme="dark"] .ver-audit-meta-card {
+  background: #1E293B !important;
+  border-color: #334155 !important;
+  color: #F8FAFC !important;
+}
+
+[data-theme="dark"] .ver-audit-meta-card strong.text-muted {
+  color: #94A3B8 !important;
+}
+
+[data-theme="dark"] .ver-audit-meta-card span {
+  color: #F8FAFC !important;
+}
+
+[data-theme="dark"] .ver-audit-obs-card {
+  background: #1E293B !important;
+  border-color: #334155 !important;
+  color: #F8FAFC !important;
+}
+
+[data-theme="dark"] .ver-audit-obs-card p {
+  color: #F8FAFC !important;
+}

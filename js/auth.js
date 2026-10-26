@@ -82,11 +82,12 @@ const Auth = {
     if (roleEl) roleEl.textContent = `${u.rol} (${u.usuario})`;
 
     if (avatarEl) {
-      if (u.foto_perfil) {
-        avatarEl.src = u.foto_perfil;
-      } else {
-        avatarEl.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(u.nombre_completo)}&background=3B82F6&color=fff`;
-      }
+      const fallbackUrl = `https://ui-avatars.com/api/?name=${encodeURIComponent(u.nombre_completo)}&background=3B82F6&color=fff`;
+      avatarEl.onerror = () => {
+        avatarEl.src = fallbackUrl;
+        avatarEl.onerror = null;
+      };
+      avatarEl.src = u.foto_perfil ? u.foto_perfil : fallbackUrl;
     }
   },
 
