@@ -131,7 +131,21 @@ const getUnreadCount = async (req, res) => {
       FROM mensajes_destinatarios 
       WHERE destinatario_id = $1 AND eliminado = false AND leido = false
     `, [userId]);
-    res.json({ unread_count: parseInt(result.rows[0].unread_count, 10) });
+
+    const latestRes = await pool.query(`
+      SELECT m.id, m.asunto, u.nombre_completo AS remitente_nombre
+      FROM mensajes_destinatarios md
+      JOIN mensajes_internos m ON md.mensaje_id = m.id
+      JOIN usuarios u ON m.remitente_id = u.id
+      WHERE md.destinatario_id = $1 AND md.eliminado = false AND md.leido = false
+      ORDER BY m.created_at DESC
+      LIMIT 1
+    `, [userId]);
+
+    const unread_count = parseInt(result.rows[0].unread_count, 10);
+    const latest = latestRes.rows.length > 0 ? latestRes.rows[0] : null;
+
+    res.json({ unread_count, latest });
   } catch (error) {
     console.error('Error al contar mensajes no leídos:', error);
     res.status(500).json({ error: 'Error al obtener mensajes no leídos.' });

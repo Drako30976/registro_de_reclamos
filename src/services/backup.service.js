@@ -1,3 +1,8 @@
+const dns = require('dns');
+if (dns.setDefaultResultOrder) {
+  dns.setDefaultResultOrder('ipv4first');
+}
+
 const fs = require('fs');
 const path = require('path');
 const zlib = require('zlib');
@@ -66,8 +71,8 @@ async function ejecutarPgDump(sqlPath) {
  */
 async function enviarBackupPorEmail(gzPath, filename, fileSize) {
   const smtpUser = process.env.SMTP_USER;
-  const smtpPass = process.env.SMTP_PASS;
-  const destino = process.env.BACKUP_EMAIL_TO || 'soto.mauroa@gmail.com';
+  const smtpPass = process.env.SMTP_PASS ? process.env.SMTP_PASS.replace(/\s+/g, '') : null;
+  const destino = process.env.BACKUP_EMAIL_TO || 'mauroa.soto1702@gmail.com';
 
   if (!smtpUser || !smtpPass) {
     console.log(`[Backup] AVISO: Archivo generado en ${gzPath} (${(fileSize / (1024 * 1024)).toFixed(2)} MB).`);
@@ -82,6 +87,7 @@ async function enviarBackupPorEmail(gzPath, filename, fileSize) {
     host: process.env.SMTP_HOST || 'smtp.gmail.com',
     port: parseInt(process.env.SMTP_PORT || '465', 10),
     secure: process.env.SMTP_SECURE === 'true' || process.env.SMTP_PORT === '465',
+    family: 4, // Fuerza el uso de IPv4 para evitar errores de ruteo IPv6 (ENETUNREACH)
     auth: {
       user: smtpUser,
       pass: smtpPass
@@ -165,7 +171,7 @@ function limpiarBackupsAntiguos(dias = 15) {
     const files = fs.readdirSync(backupsDir);
 
     for (const file of files) {
-      if (!file.startsWith('backup_reclamos_')) continue;
+      if (!file.startsWith('backup_reclamos_') || !file.endsWith('.sql.gz')) continue;
       const filePath = path.join(backupsDir, file);
       const stats = fs.statSync(filePath);
       if (now - stats.mtimeMs > maxAgeMs) {
@@ -253,4 +259,3 @@ module.exports = {
   ejecutarBackupCompleto,
   iniciarCronBackup
 };
-

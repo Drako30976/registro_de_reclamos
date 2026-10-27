@@ -22,6 +22,10 @@ router.post('/mensajes', chatsController.upload.any(), chatsController.enviarMen
 router.put('/:id', chatsController.editarMensaje);
 router.put('/mensajes/:id', chatsController.editarMensaje);
 
+// Rutas para reacciones con emojis
+router.post('/:id/reaccion', chatsController.toggleReaccion);
+router.post('/mensajes/:id/reaccion', chatsController.toggleReaccion);
+
 // Rutas para eliminar mensaje (soporta /:id y /mensajes/:id)
 router.delete('/:id', chatsController.eliminarMensaje);
 router.delete('/mensajes/:id', chatsController.eliminarMensaje);

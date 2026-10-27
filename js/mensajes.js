@@ -8,6 +8,7 @@ const MensajesModule = {
   sentData: [],
   pollingInterval: null,
   archivosParaEnviar: [],
+  prevUnreadCount: null,
 
   async init() {
     await this.cargarContactos();
@@ -30,6 +31,7 @@ const MensajesModule = {
     try {
       const res = await API.get('/mensajes/unread-count');
       const count = res.unread_count || 0;
+      const latest = res.latest || null;
       const badgeNav = document.getElementById('badge-mensajes-unread');
       const counterInbox = document.getElementById('mensajes-inbox-counter');
 
@@ -46,9 +48,111 @@ const MensajesModule = {
         counterInbox.textContent = count;
         counterInbox.className = count > 0 ? 'badge badge-danger' : 'badge badge-secondary';
       }
+
+      // Detectar recepción de nuevo mensaje
+      if (this.prevUnreadCount !== null && count > this.prevUnreadCount) {
+        this.reproducirSonidoNotificacion();
+        this.mostrarToastNuevoMensaje(latest);
+        if (typeof App !== 'undefined' && App.currentTab === 'mensajes' && this.currentView === 'inbox') {
+          this.cargarInbox(false);
+        }
+      }
+
+      this.prevUnreadCount = count;
     } catch (err) {
       console.error(err);
     }
+  },
+
+  reproducirSonidoNotificacion() {
+    try {
+      const AudioCtx = window.AudioContext || window.webkitAudioContext;
+      if (!AudioCtx) return;
+      const ctx = new AudioCtx();
+      if (ctx.state === 'suspended') {
+        ctx.resume();
+      }
+      const now = ctx.currentTime;
+
+      // Primer tono suave (Re5: 587.33 Hz)
+      const osc1 = ctx.createOscillator();
+      const gain1 = ctx.createGain();
+      osc1.type = 'sine';
+      osc1.frequency.setValueAtTime(587.33, now);
+      gain1.gain.setValueAtTime(0.001, now);
+      gain1.gain.linearRampToValueAtTime(0.12, now + 0.03);
+      gain1.gain.exponentialRampToValueAtTime(0.001, now + 0.22);
+      osc1.connect(gain1);
+      gain1.connect(ctx.destination);
+      osc1.start(now);
+      osc1.stop(now + 0.22);
+
+      // Segundo tono suave más agudo (La5: 880 Hz)
+      const osc2 = ctx.createOscillator();
+      const gain2 = ctx.createGain();
+      osc2.type = 'sine';
+      osc2.frequency.setValueAtTime(880, now + 0.12);
+      gain2.gain.setValueAtTime(0.001, now + 0.12);
+      gain2.gain.linearRampToValueAtTime(0.14, now + 0.15);
+      gain2.gain.exponentialRampToValueAtTime(0.001, now + 0.42);
+      osc2.connect(gain2);
+      gain2.connect(ctx.destination);
+      osc2.start(now + 0.12);
+      osc2.stop(now + 0.42);
+    } catch (e) {
+      // Ignorar restricciones de autoplay si no hubo interacción previa
+    }
+  },
+
+  mostrarToastNuevoMensaje(latest) {
+    let container = document.getElementById('mensajes-toast-container');
+    if (!container) {
+      container = document.createElement('div');
+      container.id = 'mensajes-toast-container';
+      container.className = 'mensajes-toast-container';
+      document.body.appendChild(container);
+    }
+
+    const toast = document.createElement('div');
+    toast.className = 'mensaje-toast';
+
+    const remitente = latest && latest.remitente_nombre ? this.escapeHtml(latest.remitente_nombre) : 'Nuevo remitente';
+    const asunto = latest && latest.asunto ? this.escapeHtml(latest.asunto) : 'Mensaje interno recibido';
+
+    toast.innerHTML = `
+      <div class="mensaje-toast-header">
+        <span>✉️ Nuevo correo recibido</span>
+        <button type="button" class="mensaje-toast-close" title="Cerrar">&times;</button>
+      </div>
+      <div class="mensaje-toast-body">
+        <span class="mensaje-toast-sender">${remitente}:</span> ${asunto}
+      </div>
+    `;
+
+    toast.addEventListener('click', (e) => {
+      if (e.target.closest('.mensaje-toast-close')) {
+        toast.classList.remove('show');
+        setTimeout(() => toast.remove(), 350);
+        return;
+      }
+      if (typeof App !== 'undefined') {
+        App.switchTab('mensajes');
+      }
+      toast.classList.remove('show');
+      setTimeout(() => toast.remove(), 350);
+    });
+
+    container.appendChild(toast);
+    requestAnimationFrame(() => {
+      toast.classList.add('show');
+    });
+
+    setTimeout(() => {
+      if (toast.parentElement) {
+        toast.classList.remove('show');
+        setTimeout(() => toast.remove(), 350);
+      }
+    }, 6000);
   },
 
   async cargarContactos() {

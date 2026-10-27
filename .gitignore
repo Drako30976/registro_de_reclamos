@@ -2,5 +2,10 @@ node_modules/
 .env
 uploads/profiles/*
 !uploads/profiles/.gitkeep
+uploads/chats/*
+!uploads/chats/.gitkeep
+uploads/mensajes/*
+!uploads/mensajes/.gitkeep
+backups/*.gz
 package-lock.json
 .DS_Store

@@ -163,6 +163,18 @@ async function migrateDatabase() {
       CREATE INDEX IF NOT EXISTS idx_mensajes_adjuntos_mensaje ON mensajes_adjuntos(mensaje_id);
       CREATE INDEX IF NOT EXISTS idx_chats_conversacion ON chats_mensajes(emisor_id, receptor_id, created_at ASC);
       CREATE INDEX IF NOT EXISTS idx_chats_adjuntos_chat ON chats_adjuntos(chat_id);
+
+      CREATE TABLE IF NOT EXISTS chats_reacciones (
+          id SERIAL PRIMARY KEY,
+          chat_id INT NOT NULL REFERENCES chats_mensajes(id) ON DELETE CASCADE,
+          usuario_id INT NOT NULL REFERENCES usuarios(id) ON DELETE CASCADE,
+          emoji VARCHAR(10) NOT NULL,
+          created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+          CONSTRAINT unique_chat_user_reaction UNIQUE (chat_id, usuario_id, emoji)
+      );
+
+      CREATE INDEX IF NOT EXISTS idx_chats_reacciones_chat ON chats_reacciones(chat_id);
+      CREATE INDEX IF NOT EXISTS idx_chats_reacciones_user ON chats_reacciones(usuario_id);
     `);
     console.log('Migración de tablas de llamadas y jerarquías completada exitosamente.');
   } catch (err) {

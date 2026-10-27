@@ -7,6 +7,9 @@ const ChatsModule = {
   archivosAdjuntos: [],
   modoEdicion: null,
   emojisList: ['😊', '😀', '😂', '😍', '👍', '🙏', '❤️', '🔥', '🎉', '👋', '😎', '🤔', '😢', '😡', '👀', '💯', '✨', '🚀'],
+  quickEmojisList: ['👍', '❤️', '😂', '😮', '😢', '🙏'],
+  activeQuickReactionMsgId: null,
+  listenersBound: false,
 
   emojiShortcuts: [
     { pattern: /:\)/g, emoji: '😊' },
@@ -49,6 +52,16 @@ const ChatsModule = {
     this.renderDock();
     await this.cargarContactos();
     this.iniciarPolling();
+
+    if (!this.listenersBound) {
+      document.addEventListener('click', (e) => {
+        if (this.activeQuickReactionMsgId && !e.target.closest('.chat-quick-reactions-popover') && !e.target.closest('.chat-action-btn-small')) {
+          this.activeQuickReactionMsgId = null;
+          this.renderHistorial(false);
+        }
+      });
+      this.listenersBound = true;
+    }
   },
 
   iniciarPolling() {
@@ -412,6 +425,51 @@ const ChatsModule = {
       const diffMs = now - fecha.getTime();
       const canEditOrDelete = isOutgoing && (diffMs <= 60 * 60 * 1000);
 
+      // Tilde de recepción / lectura para mensajes salientes
+      const tickHtml = m.leido 
+        ? '<span class="chat-tick chat-tick-read" title="Leído">✓✓</span>' 
+        : '<span class="chat-tick chat-tick-sent" title="Enviado">✓</span>';
+
+      // Reacciones con emojis
+      let reactionsHtml = '';
+      if (Array.isArray(m.reacciones) && m.reacciones.length > 0) {
+        const grouped = {};
+        m.reacciones.forEach(r => {
+          if (!grouped[r.emoji]) {
+            grouped[r.emoji] = { count: 0, users: [], hasReacted: false };
+          }
+          grouped[r.emoji].count++;
+          grouped[r.emoji].users.push(r.usuario_nombre || 'Usuario');
+          if (r.usuario_id === currentUserId) {
+            grouped[r.emoji].hasReacted = true;
+          }
+        });
+
+        reactionsHtml = '<div class="chat-reactions-container">';
+        Object.keys(grouped).forEach(em => {
+          const info = grouped[em];
+          const userNames = info.users.join(', ');
+          const activeClass = info.hasReacted ? 'has-reacted' : '';
+          reactionsHtml += `
+            <button type="button" class="chat-reaction-chip ${activeClass}" onclick="ChatsModule.toggleReaccion(${m.id}, '${em}')" title="${this.escapeHtml(userNames)}">
+              <span class="reaction-emoji">${em}</span>
+              ${info.count > 1 ? `<span class="reaction-count">${info.count}</span>` : ''}
+            </button>
+          `;
+        });
+        reactionsHtml += '</div>';
+      }
+
+      // Popover rápido de reacciones
+      let quickReactionMenu = '';
+      if (this.activeQuickReactionMsgId === m.id) {
+        quickReactionMenu = '<div class="chat-quick-reactions-popover">';
+        this.quickEmojisList.forEach(em => {
+          quickReactionMenu += `<button type="button" class="chat-quick-reaction-btn" onclick="ChatsModule.toggleReaccion(${m.id}, '${em}')">${em}</button>`;
+        });
+        quickReactionMenu += '</div>';
+      }
+
       let mediaHtml = '';
       if (Array.isArray(m.adjuntos) && m.adjuntos.length > 0) {
         const imgs = m.adjuntos.filter(a => a.tipo === 'imagen');
@@ -436,12 +494,14 @@ const ChatsModule = {
 
       html += `
         <div class="chat-bubble-wrapper ${isOutgoing ? 'outgoing' : 'incoming'}">
-          ${canEditOrDelete ? `
-            <div class="chat-bubble-actions">
+          ${quickReactionMenu}
+          <div class="chat-bubble-actions">
+            <button type="button" class="chat-action-btn-small" onclick="ChatsModule.toggleQuickReactionsPopover(event, ${m.id})" title="Reaccionar con emoji">😊+</button>
+            ${canEditOrDelete ? `
               <button type="button" class="chat-action-btn-small" onclick="ChatsModule.iniciarEdicion(${m.id})" title="Editar (hasta 1 hora)">✏️</button>
               <button type="button" class="chat-action-btn-small" onclick="ChatsModule.eliminarChat(${m.id})" title="Eliminar (hasta 1 hora)">🗑️</button>
-            </div>
-          ` : ''}
+            ` : ''}
+          </div>
 
           <div class="chat-bubble ${isOutgoing ? 'outgoing' : 'incoming'}">
             <div>${bodyText}</div>
@@ -449,16 +509,49 @@ const ChatsModule = {
             <div class="chat-bubble-meta">
               <span>${horaStr}</span>
               ${editadoStr}
+              ${isOutgoing ? tickHtml : ''}
             </div>
           </div>
+          ${reactionsHtml}
         </div>
       `;
     });
 
+    const prevScroll = box.scrollTop;
+    const wasNearBottom = box.scrollHeight - box.scrollTop - box.clientHeight < 80;
+
     box.innerHTML = html;
 
-    if (autoScroll) {
+    if (autoScroll || wasNearBottom) {
       box.scrollTop = box.scrollHeight;
+    } else {
+      box.scrollTop = prevScroll;
+    }
+  },
+
+  toggleQuickReactionsPopover(event, mensajeId) {
+    if (event) event.stopPropagation();
+    if (this.activeQuickReactionMsgId === mensajeId) {
+      this.activeQuickReactionMsgId = null;
+    } else {
+      this.activeQuickReactionMsgId = mensajeId;
+    }
+    this.renderHistorial(false);
+  },
+
+  async toggleReaccion(mensajeId, emoji) {
+    if (!this.esUsuarioPermitido()) return;
+    this.activeQuickReactionMsgId = null;
+
+    try {
+      const res = await API.post(`/chats/${mensajeId}/reaccion`, { emoji });
+      const msg = this.historial.find(m => m.id === mensajeId);
+      if (msg && res && res.reacciones) {
+        msg.reacciones = res.reacciones;
+      }
+      this.renderHistorial(false);
+    } catch (err) {
+      console.error('Error al guardar reacción:', err);
     }
   },
 

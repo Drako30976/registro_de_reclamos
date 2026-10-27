@@ -64,57 +64,60 @@
         <img src="/assets/logo_zeus.png" alt="Zeus - Gestión y Reporte de Red" class="zeus-logo">
       </div>
 
-      <div class="zeus-menu-container">
-        <button type="button" id="btn-zeus-menu" class="btn-zeus-menu" aria-label="Abrir menú de navegación" aria-expanded="false">
-          <span class="zeus-menu-icon">☰</span>
-          <span class="zeus-menu-text">Menú</span>
-          <span class="zeus-menu-arrow">▾</span>
+      <div class="zeus-header-right">
+        <button type="button" id="btn-header-mensajes" class="btn-header-mensajes nav-tab-btn" data-tab="mensajes" title="Mensajería" aria-label="Mensajería">
+          <span class="header-mensajes-icon">✉️</span>
+          <span class="header-mensajes-text">Mensajería</span>
+          <span id="badge-mensajes-unread" class="badge-header-mensajes hidden">0</span>
         </button>
 
-        <div id="zeus-dropdown" class="zeus-dropdown hidden">
-          <div class="zeus-dropdown-user">
-            <img id="header-user-avatar" src="https://ui-avatars.com/api/?name=User&background=3B82F6&color=fff" alt="Avatar" class="user-avatar">
-            <div class="zeus-user-info">
-              <span id="header-user-name" class="user-name">Cargando...</span>
-              <small id="header-user-role" class="text-muted font-xs">Usuario</small>
+        <div class="zeus-menu-container">
+          <button type="button" id="btn-zeus-menu" class="btn-zeus-menu" aria-label="Abrir menú de navegación" aria-expanded="false">
+            <span class="zeus-menu-icon">☰</span>
+            <span class="zeus-menu-text">Menú</span>
+            <span class="zeus-menu-arrow">▾</span>
+          </button>
+
+          <div id="zeus-dropdown" class="zeus-dropdown hidden">
+            <div class="zeus-dropdown-user">
+              <img id="header-user-avatar" src="https://ui-avatars.com/api/?name=User&background=3B82F6&color=fff" alt="Avatar" class="user-avatar">
+              <div class="zeus-user-info">
+                <span id="header-user-name" class="user-name">Cargando...</span>
+                <small id="header-user-role" class="text-muted font-xs">Usuario</small>
+              </div>
             </div>
-          </div>
 
-          <div class="zeus-dropdown-divider"></div>
+            <div class="zeus-dropdown-divider"></div>
 
-          <div class="zeus-dropdown-nav">
-            <button class="nav-tab-btn active zeus-nav-item" data-tab="gestion">
-              <span class="tab-icon">🎧</span> Atención al cliente
-            </button>
-            <button class="nav-tab-btn zeus-nav-item" data-tab="registros">
-              <span class="tab-icon">🔍</span> Registros
-            </button>
-            <button class="nav-tab-btn zeus-nav-item" data-tab="edicion">
-              <span class="tab-icon">⚙️</span> Edición
-            </button>
-            <button class="nav-tab-btn zeus-nav-item" data-tab="tareas">
-              <span class="tab-icon">📋</span> Asignar Tareas
-            </button>
-            <button class="nav-tab-btn zeus-nav-item" data-tab="masivos">
-              <span class="tab-icon">🚨</span> Masivos
-            </button>
-            <button class="nav-tab-btn zeus-nav-item" data-tab="auditorias">
-              <span class="tab-icon">⭐</span> Auditorias de calidad
-            </button>
-            <button class="nav-tab-btn zeus-nav-item" data-tab="dinamica" id="nav-btn-dinamica">
-              <span class="tab-icon">📊</span> Reportes/Dinámica
-            </button>
-            <button class="nav-tab-btn zeus-nav-item" data-tab="canales" id="nav-btn-canales">
-              <span class="tab-icon">📺</span> Grilla de canales
-            </button>
-            <button class="nav-tab-btn zeus-nav-item" data-tab="mensajes" id="nav-btn-mensajes">
-              <span class="tab-icon">✉️</span> Mensajería
-              <span id="badge-mensajes-unread" class="badge badge-danger hidden" style="margin-left: auto; border-radius: 9999px; padding: 0.15rem 0.45rem;">0</span>
-            </button>
-            <button class="nav-tab-btn zeus-nav-item" data-tab="perfil">
-              <span class="tab-icon">👤</span> Perfil
-            </button>
-          </div>
+            <div class="zeus-dropdown-nav">
+              <button class="nav-tab-btn active zeus-nav-item" data-tab="gestion">
+                <span class="tab-icon">🎧</span> Atención al cliente
+              </button>
+              <button class="nav-tab-btn zeus-nav-item" data-tab="registros">
+                <span class="tab-icon">🔍</span> Registros
+              </button>
+              <button class="nav-tab-btn zeus-nav-item" data-tab="edicion">
+                <span class="tab-icon">⚙️</span> Edición
+              </button>
+              <button class="nav-tab-btn zeus-nav-item" data-tab="tareas">
+                <span class="tab-icon">📋</span> Asignar Tareas
+              </button>
+              <button class="nav-tab-btn zeus-nav-item" data-tab="masivos">
+                <span class="tab-icon">🚨</span> Masivos
+              </button>
+              <button class="nav-tab-btn zeus-nav-item" data-tab="auditorias">
+                <span class="tab-icon">⭐</span> Auditorias de calidad
+              </button>
+              <button class="nav-tab-btn zeus-nav-item" data-tab="dinamica" id="nav-btn-dinamica">
+                <span class="tab-icon">📊</span> Reportes/Dinámica
+              </button>
+              <button class="nav-tab-btn zeus-nav-item" data-tab="canales" id="nav-btn-canales">
+                <span class="tab-icon">📺</span> Grilla de canales
+              </button>
+              <button class="nav-tab-btn zeus-nav-item" data-tab="perfil">
+                <span class="tab-icon">👤</span> Perfil
+              </button>
+            </div>
 
           <div class="zeus-dropdown-divider"></div>
 
@@ -131,7 +134,11 @@
           </div>
         </div>
       </div>
-    </header>
+    </div>
+
+    <!-- Contenedor de notificaciones flotantes de mensajería -->
+    <div id="mensajes-toast-container" class="mensajes-toast-container"></div>
+  </header>
 
     <main class="app-main">
 

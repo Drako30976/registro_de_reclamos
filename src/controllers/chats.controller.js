@@ -113,7 +113,21 @@ const getHistorial = async (req, res) => {
               'peso_bytes', ca.peso_bytes
             )
           ) FILTER (WHERE ca.id IS NOT NULL), '[]'
-        ) AS adjuntos
+        ) AS adjuntos,
+        (
+          SELECT COALESCE(
+            json_agg(
+              json_build_object(
+                'emoji', cr.emoji,
+                'usuario_id', cr.usuario_id,
+                'usuario_nombre', u_cr.nombre_completo
+              )
+            ), '[]'
+          )
+          FROM chats_reacciones cr
+          JOIN usuarios u_cr ON cr.usuario_id = u_cr.id
+          WHERE cr.chat_id = cm.id
+        ) AS reacciones
       FROM chats_mensajes cm
       JOIN usuarios u_emisor ON cm.emisor_id = u_emisor.id
       JOIN usuarios u_receptor ON cm.receptor_id = u_receptor.id
@@ -343,6 +357,67 @@ const getUnreadCount = async (req, res) => {
   }
 };
 
+const toggleReaccion = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const { id } = req.params;
+    const { emoji } = req.body;
+
+    if (!emoji || typeof emoji !== 'string' || emoji.trim().length === 0) {
+      return res.status(400).json({ error: 'Emoji requerido.' });
+    }
+
+    const trimmedEmoji = emoji.trim();
+
+    const chatMsg = await pool.query(
+      'SELECT id, emisor_id, receptor_id FROM chats_mensajes WHERE id = $1 AND eliminado = false',
+      [id]
+    );
+
+    if (chatMsg.rows.length === 0) {
+      return res.status(404).json({ error: 'Mensaje no encontrado.' });
+    }
+
+    const msg = chatMsg.rows[0];
+    if (msg.emisor_id !== userId && msg.receptor_id !== userId) {
+      return res.status(403).json({ error: 'No tienes acceso a este mensaje de chat.' });
+    }
+
+    const existing = await pool.query(
+      'SELECT id FROM chats_reacciones WHERE chat_id = $1 AND usuario_id = $2 AND emoji = $3',
+      [id, userId, trimmedEmoji]
+    );
+
+    let action = '';
+    if (existing.rows.length > 0) {
+      await pool.query('DELETE FROM chats_reacciones WHERE id = $1', [existing.rows[0].id]);
+      action = 'removed';
+    } else {
+      await pool.query(
+        'INSERT INTO chats_reacciones (chat_id, usuario_id, emoji) VALUES ($1, $2, $3)',
+        [id, userId, trimmedEmoji]
+      );
+      action = 'added';
+    }
+
+    const allReactions = await pool.query(`
+      SELECT 
+        cr.emoji,
+        cr.usuario_id,
+        u.nombre_completo AS usuario_nombre
+      FROM chats_reacciones cr
+      JOIN usuarios u ON cr.usuario_id = u.id
+      WHERE cr.chat_id = $1
+      ORDER BY cr.created_at ASC
+    `, [id]);
+
+    res.json({ success: true, action, reacciones: allReactions.rows });
+  } catch (error) {
+    console.error('Error al reaccionar a mensaje de chat:', error);
+    res.status(500).json({ error: 'Error al procesar reacción.' });
+  }
+};
+
 module.exports = {
   upload,
   getContactos,
@@ -350,5 +425,6 @@ module.exports = {
   enviarMensaje,
   editarMensaje,
   eliminarMensaje,
-  getUnreadCount
+  getUnreadCount,
+  toggleReaccion
 };
