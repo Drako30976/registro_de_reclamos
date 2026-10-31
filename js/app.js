@@ -81,6 +81,21 @@ const App = {
   bindNavigation() {
     this.bindZeusMenu();
 
+    const brandLogo = document.getElementById('zeus-brand-logo');
+    if (brandLogo) {
+      brandLogo.addEventListener('click', () => {
+        this.switchTab('gestion');
+        this.closeZeusMenu();
+      });
+      brandLogo.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          this.switchTab('gestion');
+          this.closeZeusMenu();
+        }
+      });
+    }
+
     const navButtons = document.querySelectorAll('.nav-tab-btn');
     navButtons.forEach(btn => {
       btn.addEventListener('click', () => {
