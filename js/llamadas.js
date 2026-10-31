@@ -207,11 +207,45 @@ const LlamadasModule = {
     el.disabled = disabled;
   },
 
+  limpiarFormularioLlamada() {
+    const inputCliente = document.getElementById('llamada-cliente');
+    if (inputCliente) inputCliente.value = '';
+
+    const inputTelefono = document.getElementById('llamada-telefono');
+    if (inputTelefono) inputTelefono.value = '';
+
+    const selSucursal = document.getElementById('llamada-sucursal');
+    if (selSucursal) selSucursal.value = '';
+
+    this.populateTipos();
+
+    const inputComentario = document.getElementById('llamada-comentario');
+    if (inputComentario) inputComentario.value = '';
+
+    const comentarioCounter = document.getElementById('llamada-comentario-counter');
+    if (comentarioCounter) comentarioCounter.textContent = 'Opcional - Hasta 500 caracteres (0 / 500)';
+
+    const alertEl = document.getElementById('llamada-form-alert');
+    if (alertEl) {
+      alertEl.textContent = '';
+      alertEl.className = 'form-alert hidden';
+    }
+
+    if (inputCliente) inputCliente.focus();
+  },
+
   bindEvents() {
     const tipoSelect = document.getElementById('llamada-tipo');
     const carSelect = document.getElementById('llamada-caracteristica');
     const defSelect = document.getElementById('llamada-definicion');
     const form = document.getElementById('form-gestion-llamada');
+    const btnLimpiar = document.getElementById('btn-limpiar-llamada');
+
+    if (btnLimpiar) {
+      btnLimpiar.onclick = () => {
+        this.limpiarFormularioLlamada();
+      };
+    }
 
     if (tipoSelect) {
       tipoSelect.onchange = () => {
@@ -371,7 +405,19 @@ const LlamadasModule = {
         this.renderPreviewLlamadas();
       }
 
-      this.resetFormulario();
+      // Se mantienen todos los datos ingresados excepto el número de cliente y el teléfono de contacto
+      const inputCliente = document.getElementById('llamada-cliente');
+      if (inputCliente) {
+        inputCliente.value = '';
+      }
+      const inputTelefono = document.getElementById('llamada-telefono');
+      if (inputTelefono) {
+        inputTelefono.value = '';
+      }
+      if (inputCliente) {
+        inputCliente.focus();
+      }
+
       if (typeof LlamadasHistorialModule !== 'undefined' && LlamadasHistorialModule.cargarLlamadas) {
         LlamadasHistorialModule.cargarLlamadas();
       }
@@ -384,17 +430,7 @@ const LlamadasModule = {
   },
 
   resetFormulario() {
-    const form = document.getElementById('form-gestion-llamada');
-    if (form) form.reset();
-
-    this.resetSelect('llamada-caracteristica', '-- Seleccione Característica --', true);
-    this.resetSelect('llamada-definicion', '-- Seleccione Definición --', true);
-    this.resetSelect('llamada-finalizacion', '-- Seleccione Finalización --', true);
-
-    const comentarioCounter = document.getElementById('llamada-comentario-counter');
-    if (comentarioCounter) {
-      comentarioCounter.textContent = 'Opcional - Hasta 500 caracteres (0 / 500)';
-    }
+    this.limpiarFormularioLlamada();
   },
 
   showAlert(message, type) {
