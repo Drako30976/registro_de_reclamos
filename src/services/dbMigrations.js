@@ -175,6 +175,54 @@ async function migrateDatabase() {
 
       CREATE INDEX IF NOT EXISTS idx_chats_reacciones_chat ON chats_reacciones(chat_id);
       CREATE INDEX IF NOT EXISTS idx_chats_reacciones_user ON chats_reacciones(usuario_id);
+
+      ALTER TABLE sucursales ADD COLUMN IF NOT EXISTS localidad VARCHAR(100);
+      ALTER TABLE sucursales ADD COLUMN IF NOT EXISTS direccion VARCHAR(200);
+      ALTER TABLE sucursales ADD COLUMN IF NOT EXISTS horario_atencion VARCHAR(150);
+      ALTER TABLE sucursales ADD COLUMN IF NOT EXISTS logo VARCHAR(255);
+      ALTER TABLE sucursales ADD COLUMN IF NOT EXISTS coordenadas_link VARCHAR(500);
+
+      CREATE TABLE IF NOT EXISTS sucursales_precios (
+          id SERIAL PRIMARY KEY,
+          sucursal_id INT NOT NULL REFERENCES sucursales(id) ON DELETE CASCADE,
+          tipo_servicio VARCHAR(50) NOT NULL,
+          codigo VARCHAR(20) NOT NULL,
+          nombre_concepto VARCHAR(150) NOT NULL,
+          costo NUMERIC(12,2) NOT NULL DEFAULT 0,
+          activo BOOLEAN DEFAULT TRUE,
+          created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+          updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+      );
+
+      CREATE TABLE IF NOT EXISTS sucursales_promociones (
+          id SERIAL PRIMARY KEY,
+          sucursal_id INT NOT NULL REFERENCES sucursales(id) ON DELETE CASCADE,
+          nombre VARCHAR(150) NOT NULL,
+          estado VARCHAR(20) NOT NULL DEFAULT 'Activo',
+          zona_barrio VARCHAR(150) NOT NULL,
+          duracion VARCHAR(100) NOT NULL,
+          instalacion_bonificada BOOLEAN DEFAULT TRUE,
+          costo_instalacion NUMERIC(12,2) DEFAULT 0,
+          fecha_vencimiento DATE,
+          observaciones TEXT,
+          created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+          updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+      );
+
+      CREATE TABLE IF NOT EXISTS sucursales_promociones_conceptos (
+          id SERIAL PRIMARY KEY,
+          promocion_id INT NOT NULL REFERENCES sucursales_promociones(id) ON DELETE CASCADE,
+          precio_id INT REFERENCES sucursales_precios(id) ON DELETE SET NULL,
+          nombre_concepto VARCHAR(150) NOT NULL,
+          precio_base NUMERIC(12,2) NOT NULL DEFAULT 0,
+          bonificacion NUMERIC(12,2) NOT NULL DEFAULT 0,
+          precio_final NUMERIC(12,2) NOT NULL DEFAULT 0,
+          orden INT DEFAULT 0
+      );
+
+      CREATE INDEX IF NOT EXISTS idx_sucursales_precios_sucursal ON sucursales_precios(sucursal_id);
+      CREATE INDEX IF NOT EXISTS idx_sucursales_promos_sucursal ON sucursales_promociones(sucursal_id);
+      CREATE INDEX IF NOT EXISTS idx_sucursales_promo_conceptos_promo ON sucursales_promociones_conceptos(promocion_id);
     `);
     console.log('Migración de tablas de llamadas y jerarquías completada exitosamente.');
   } catch (err) {

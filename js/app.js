@@ -255,6 +255,9 @@ const App = {
       case 'canales':
         if (typeof CanalesModule !== 'undefined') CanalesModule.init();
         break;
+      case 'sucursales-info':
+        if (typeof SucursalesInfoModule !== 'undefined') SucursalesInfoModule.init();
+        break;
       case 'mensajes':
         if (typeof MensajesModule !== 'undefined') MensajesModule.init();
         break;

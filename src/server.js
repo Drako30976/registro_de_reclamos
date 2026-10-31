@@ -17,6 +17,7 @@ const llamadasRoutes = require('./routes/llamadas.routes');
 const canalesRoutes = require('./routes/canales.routes');
 const mensajesRoutes = require('./routes/mensajes.routes');
 const chatsRoutes = require('./routes/chats.routes');
+const sucursalesInfoRoutes = require('./routes/sucursales_info.routes');
 const { initCanalesTables } = require('./services/canalesSeed');
 const { migrateDatabase } = require('./services/dbMigrations');
 const { iniciarCronBackup, ejecutarBackupCompleto } = require('./services/backup.service');
@@ -61,6 +62,7 @@ app.use('/api/auditorias', auditoriasRoutes);
 app.use('/api/canales', canalesRoutes);
 app.use('/api/mensajes', mensajesRoutes);
 app.use('/api/chats', chatsRoutes);
+app.use('/api/sucursales-info', sucursalesInfoRoutes);
 
 // Endpoint administrativo para disparar backup manual y probar envío por correo
 app.post('/api/sistema/backup', verifyToken, checkRole('Admin'), async (req, res) => {

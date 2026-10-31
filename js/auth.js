@@ -159,6 +159,11 @@ const Auth = {
       tabCanales.style.display = 'inline-flex';
     }
 
+    const tabSucursalesInfo = document.querySelector('[data-tab="sucursales-info"]');
+    if (tabSucursalesInfo) {
+      tabSucursalesInfo.style.display = 'inline-flex';
+    }
+
     const tabMensajes = document.querySelector('[data-tab="mensajes"]');
     if (tabMensajes) {
       tabMensajes.style.display = 'inline-flex';

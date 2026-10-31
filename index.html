@@ -8,6 +8,7 @@
   <link rel="stylesheet" href="/css/style.css">
   <link rel="stylesheet" href="/css/mensajes.css">
   <link rel="stylesheet" href="/css/chats.css">
+  <link rel="stylesheet" href="/css/sucursales_info.css">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -113,6 +114,9 @@
               </button>
               <button class="nav-tab-btn zeus-nav-item" data-tab="canales" id="nav-btn-canales">
                 <span class="tab-icon">📺</span> Grilla de canales
+              </button>
+              <button class="nav-tab-btn zeus-nav-item" data-tab="sucursales-info" id="nav-btn-sucursales-info">
+                <span class="tab-icon">🏢</span> Info de sucursales
               </button>
               <button class="nav-tab-btn zeus-nav-item" data-tab="perfil">
                 <span class="tab-icon">👤</span> Perfil
@@ -956,6 +960,114 @@
             </div>
           </div>
         </section>
+      </section>
+
+      <section id="view-sucursales-info" class="tab-view hidden">
+        <div class="view-header flex-row justify-between align-center flex-wrap gap-2 mb-3">
+          <div>
+            <h2>Información de Sucursales</h2>
+            <p class="text-muted">Consulta integral de direcciones, horarios, precios oficiales por servicio y promociones activas.</p>
+          </div>
+          <div class="flex-row gap-2" id="sucursales-info-admin-actions">
+            <button type="button" class="btn btn-outline-primary" onclick="SucursalesInfoModule.abrirModalCrearSucursal()">
+              <span>🏢</span> + Nueva Sucursal
+            </button>
+            <button type="button" class="btn btn-outline-success" onclick="SucursalesInfoModule.abrirModalCrearPrecio()">
+              <span>💲</span> + Nuevo Precio
+            </button>
+            <button type="button" class="btn btn-primary" onclick="SucursalesInfoModule.abrirModalCrearPromocion()">
+              <span>🎁</span> + Nueva Promoción
+            </button>
+          </div>
+        </div>
+
+        <div id="sucursales-selector-bar" class="sucursales-selector-bar">
+          <div class="text-muted font-sm py-2">Cargando sucursales...</div>
+        </div>
+
+        <div id="sucursales-info-detalle" class="hidden">
+          <div class="sucursales-section-tabs">
+            <button type="button" class="sucursales-section-tab-btn active" data-subtab="precios" onclick="SucursalesInfoModule.cambiarSubtab('precios')">
+              💲 Precios y Servicios
+            </button>
+            <button type="button" class="sucursales-section-tab-btn" data-subtab="promociones" onclick="SucursalesInfoModule.cambiarSubtab('promociones')">
+              🎁 Promociones y Descuentos
+            </button>
+            <button type="button" class="sucursales-section-tab-btn" data-subtab="info" onclick="SucursalesInfoModule.cambiarSubtab('info')">
+              📍 Información y Ubicación
+            </button>
+          </div>
+
+          <div id="sucursal-sec-info" class="hidden">
+            <div class="sucursal-detalle-card">
+              <div class="sucursal-info-grid">
+                <div id="sucursal-info-logo-container" class="sucursal-logo-box">
+                  🏢
+                </div>
+                <div>
+                  <h3 id="sucursal-info-nombre" class="font-lg font-bold mb-1">Nombre Sucursal</h3>
+                  <div class="sucursal-meta-datos">
+                    <div class="sucursal-meta-item">
+                      <span class="sucursal-meta-label">Localidad</span>
+                      <span id="sucursal-info-localidad" class="sucursal-meta-valor">-</span>
+                    </div>
+                    <div class="sucursal-meta-item">
+                      <span class="sucursal-meta-label">Dirección</span>
+                      <span id="sucursal-info-direccion" class="sucursal-meta-valor">-</span>
+                    </div>
+                    <div class="sucursal-meta-item">
+                      <span class="sucursal-meta-label">Horario de Atención</span>
+                      <span id="sucursal-info-horario" class="sucursal-meta-valor">-</span>
+                    </div>
+                    <div class="sucursal-meta-item">
+                      <span class="sucursal-meta-label">Ubicación Georreferenciada</span>
+                      <div id="sucursal-info-mapa-box" class="mt-1">
+                        <span class="text-muted font-sm">-</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div id="sucursal-sec-precios">
+            <div class="precios-filtros-bar">
+              <div id="precios-servicios-chips" class="flex-row gap-2 flex-wrap"></div>
+              <div class="flex-row align-center gap-2">
+                <input type="text" id="sucursales-info-busqueda-precios" class="form-control" placeholder="Buscar servicio, código..." style="max-width: 280px; padding: 0.4rem 0.75rem; font-size: 0.85rem;">
+              </div>
+            </div>
+
+            <div class="card p-0" style="overflow: hidden;">
+              <div class="table-responsive">
+                <table class="table-custom">
+                  <thead>
+                    <tr>
+                      <th style="width: 25%;">Tipo de Servicio</th>
+                      <th style="width: 15%;">Código</th>
+                      <th>Concepto del Servicio</th>
+                      <th style="width: 180px; text-align: right;">Costo Oficial</th>
+                    </tr>
+                  </thead>
+                  <tbody id="tabla-sucursales-precios-body">
+                    <tr>
+                      <td colspan="4" class="text-center py-4 text-muted">Cargando precios...</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <div id="sucursal-sec-promociones" class="hidden">
+            <div id="sucursales-promociones-grid" class="promos-grid">
+              <div class="card p-4 text-center text-muted" style="grid-column: 1 / -1;">
+                Cargando promociones...
+              </div>
+            </div>
+          </div>
+        </div>
       </section>
 
       <section id="view-perfil" class="tab-view hidden">
@@ -2274,6 +2386,187 @@
     </div>
   </div>
 
+  <div id="modal-crear-sucursal-info" class="modal-overlay hidden">
+    <div class="modal-box modal-md" style="max-width: 650px;">
+      <div class="modal-header">
+        <h3 id="modal-sucursal-info-titulo">🏢 Nueva Sucursal</h3>
+        <button class="modal-close" onclick="SucursalesInfoModule.cerrarModal('modal-crear-sucursal-info')">&times;</button>
+      </div>
+      <form id="form-sucursal-info-completa" onsubmit="SucursalesInfoModule.guardarSucursal(event)">
+        <div class="modal-body" style="padding: 1.25rem 1.5rem;">
+          <input type="hidden" id="form-sucursal-id">
+          <div class="form-group mb-3">
+            <label for="form-sucursal-nombre">Nombre de la Sucursal <span class="req">*</span></label>
+            <input type="text" id="form-sucursal-nombre" class="form-control" placeholder="Ej: Providers, Yerba Buena" required maxlength="50">
+          </div>
+          <div class="form-grid-2 mb-3">
+            <div class="form-group">
+              <label for="form-sucursal-localidad">Localidad</label>
+              <input type="text" id="form-sucursal-localidad" class="form-control" placeholder="Ej: San Miguel de Tucumán" maxlength="100">
+            </div>
+            <div class="form-group">
+              <label for="form-sucursal-direccion">Dirección</label>
+              <input type="text" id="form-sucursal-direccion" class="form-control" placeholder="Ej: Próspero García 177" maxlength="200">
+            </div>
+          </div>
+          <div class="form-group mb-3">
+            <label for="form-sucursal-horario">Horario de Atención</label>
+            <input type="text" id="form-sucursal-horario" class="form-control" placeholder="Ej: Lunes a Viernes de 9 a 18hs" maxlength="150">
+          </div>
+          <div class="form-group mb-3">
+            <label for="form-sucursal-coordenadas">Link de Google Maps o Coordenadas</label>
+            <input type="url" id="form-sucursal-coordenadas" class="form-control" placeholder="https://maps.app.goo.gl/..." maxlength="500">
+          </div>
+          <div class="form-group mb-2">
+            <label for="form-sucursal-logo">Logo de la Sucursal (Imagen)</label>
+            <input type="file" id="form-sucursal-logo" class="form-control" accept="image/*">
+            <small class="text-muted mt-1 d-block">Formatos permitidos: PNG, JPG, WEBP, SVG (máx. 5 MB).</small>
+          </div>
+        </div>
+        <div class="modal-footer" style="padding: 0.85rem 1.5rem; background: var(--bg-card); border-top: 1px solid var(--border-color); display: flex; justify-content: flex-end; gap: 0.75rem;">
+          <button type="button" class="btn btn-outline-secondary" onclick="SucursalesInfoModule.cerrarModal('modal-crear-sucursal-info')">Cancelar</button>
+          <button type="submit" id="btn-guardar-sucursal-submit" class="btn btn-primary">Guardar Sucursal</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div id="modal-crear-precio-info" class="modal-overlay hidden">
+    <div class="modal-box modal-md" style="max-width: 580px;">
+      <div class="modal-header">
+        <h3>💲 Nuevo Precio de Servicio</h3>
+        <button class="modal-close" onclick="SucursalesInfoModule.cerrarModal('modal-crear-precio-info')">&times;</button>
+      </div>
+      <form id="form-precio-info" onsubmit="SucursalesInfoModule.guardarPrecio(event)">
+        <div class="modal-body" style="padding: 1.25rem 1.5rem;">
+          <div class="form-group mb-3">
+            <label for="form-precio-sucursal">Sucursal Destino <span class="req">*</span></label>
+            <select id="form-precio-sucursal" class="form-control" required></select>
+          </div>
+          <div class="form-grid-2 mb-3">
+            <div class="form-group">
+              <label for="form-precio-tipo">Tipo de Servicio <span class="req">*</span></label>
+              <select id="form-precio-tipo" class="form-control" required>
+                <option value="Internet + CATV">Internet + CATV</option>
+                <option value="Solo Internet">Solo Internet</option>
+                <option value="Solo CATV">Solo CATV</option>
+                <option value="Precios adicionales">Precios adicionales</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="form-precio-codigo">Código <span class="req">*</span> <small class="text-muted">(4 a 8 caracteres)</small></label>
+              <input type="text" id="form-precio-codigo" class="form-control font-mono" placeholder="Ej: A100" required minlength="2" maxlength="20" style="text-transform: uppercase;">
+            </div>
+          </div>
+          <div class="form-group mb-3">
+            <label for="form-precio-concepto">Nombre del Concepto <span class="req">*</span></label>
+            <input type="text" id="form-precio-concepto" class="form-control" placeholder="Ej: 100MB + CATV, Pack Fútbol, Grilla Digital" required maxlength="150">
+          </div>
+          <div class="form-group mb-2">
+            <label for="form-precio-costo">Costo Oficial ($) <span class="req">*</span></label>
+            <input type="number" id="form-precio-costo" class="form-control font-bold" placeholder="Ej: 29500" required min="0" step="1">
+          </div>
+        </div>
+        <div class="modal-footer" style="padding: 0.85rem 1.5rem; background: var(--bg-card); border-top: 1px solid var(--border-color); display: flex; justify-content: flex-end; gap: 0.75rem;">
+          <button type="button" class="btn btn-outline-secondary" onclick="SucursalesInfoModule.cerrarModal('modal-crear-precio-info')">Cancelar</button>
+          <button type="submit" id="btn-guardar-precio-submit" class="btn btn-success">Guardar Precio</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div id="modal-crear-promocion-info" class="modal-overlay hidden">
+    <div class="modal-box modal-lg" style="max-width: 860px; max-height: 92vh; display: flex; flex-direction: column;">
+      <div class="modal-header">
+        <h3>🎁 Configurar Nueva Promoción</h3>
+        <button class="modal-close" onclick="SucursalesInfoModule.cerrarModal('modal-crear-promocion-info')">&times;</button>
+      </div>
+      <form id="form-promocion-info" onsubmit="SucursalesInfoModule.guardarPromocion(event)" style="display: flex; flex-direction: column; overflow: hidden; flex: 1;">
+        <div class="modal-body" style="overflow-y: auto; padding: 1.25rem 1.5rem; flex: 1;">
+          <div class="form-grid-2 mb-3">
+            <div class="form-group">
+              <label for="form-promo-sucursal">Sucursal <span class="req">*</span></label>
+              <select id="form-promo-sucursal" class="form-control" required onchange="SucursalesInfoModule.onPromoSelectSucursal(this.value)"></select>
+            </div>
+            <div class="form-group">
+              <label for="form-promo-nombre">Nombre de la Promoción <span class="req">*</span></label>
+              <input type="text" id="form-promo-nombre" class="form-control" placeholder="Ej: Promo Barrio Los Fresnos, Deco HD Bonificado" required maxlength="150">
+            </div>
+          </div>
+          <div class="form-grid-3 mb-3">
+            <div class="form-group">
+              <label for="form-promo-zona">Zona o Barrio <span class="req">*</span></label>
+              <input type="text" id="form-promo-zona" class="form-control" placeholder="Ej: Barrio los Fresnos, Toda la zona" required maxlength="150">
+            </div>
+            <div class="form-group">
+              <label for="form-promo-duracion">Duración <span class="req">*</span></label>
+              <input type="text" id="form-promo-duracion" class="form-control" placeholder="Ej: 6 meses, 12 meses" required maxlength="100">
+            </div>
+            <div class="form-group">
+              <label for="form-promo-estado">Estado</label>
+              <select id="form-promo-estado" class="form-control">
+                <option value="Activo">Activo</option>
+                <option value="Vencida">Vencida</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-grid-3 mb-3">
+            <div class="form-group">
+              <label for="form-promo-inst-bonif">Instalación Bonificada</label>
+              <select id="form-promo-inst-bonif" class="form-control" onchange="SucursalesInfoModule.toggleCostoInstalacion(this.value)">
+                <option value="true">SÍ (100% Bonificada)</option>
+                <option value="false">NO (Con Costo)</option>
+              </select>
+            </div>
+            <div class="form-group" id="group-form-promo-costo-inst" style="display: none;">
+              <label for="form-promo-costo-inst">Costo de Instalación ($)</label>
+              <input type="number" id="form-promo-costo-inst" class="form-control" value="0" min="0">
+            </div>
+            <div class="form-group">
+              <label for="form-promo-vencimiento">Fecha de Vencimiento (Opcional)</label>
+              <input type="date" id="form-promo-vencimiento" class="form-control">
+            </div>
+          </div>
+          <div class="card p-3 mb-3" style="background: var(--bg-main); border: 1px solid var(--border-color);">
+            <div class="flex-row justify-between align-center mb-2">
+              <div>
+                <strong>Desglose de Conceptos y Bonificación</strong>
+                <small class="text-muted d-block font-xs">Agregue conceptos de servicio y un concepto de bonificación negativa para llegar al valor real promocional.</small>
+              </div>
+              <button type="button" class="btn btn-sm btn-outline-primary" onclick="SucursalesInfoModule.agregarFilaConceptoPromo()">+ Agregar Concepto</button>
+            </div>
+            <div class="table-responsive">
+              <table class="table-custom" id="tabla-form-promo-conceptos">
+                <thead>
+                  <tr>
+                    <th>Concepto</th>
+                    <th style="width: 140px;">Precio Base ($)</th>
+                    <th style="width: 150px;">Bonificación Descuento ($)</th>
+                    <th style="width: 140px; text-align: right;">Total Concepto ($)</th>
+                    <th style="width: 40px;"></th>
+                  </tr>
+                </thead>
+                <tbody id="tabla-form-promo-conceptos-body"></tbody>
+              </table>
+            </div>
+            <div class="promo-total-box mt-3">
+              <span class="promo-total-label">PRECIO TOTAL PROMOCIONAL:</span>
+              <span id="form-promo-total-calculado" class="promo-total-valor">$0</span>
+            </div>
+          </div>
+          <div class="form-group mb-2">
+            <label for="form-promo-obs">Observaciones / Detalles Legales</label>
+            <textarea id="form-promo-obs" class="form-control" rows="2" placeholder="Detalles comerciales, términos legales y condiciones de aplicación..."></textarea>
+          </div>
+        </div>
+        <div class="modal-footer" style="padding: 0.85rem 1.5rem; background: var(--bg-card); border-top: 1px solid var(--border-color); display: flex; justify-content: flex-end; gap: 0.75rem;">
+          <button type="button" class="btn btn-outline-secondary" onclick="SucursalesInfoModule.cerrarModal('modal-crear-promocion-info')">Cancelar</button>
+          <button type="submit" id="btn-guardar-promocion-submit" class="btn btn-primary">Guardar Promoción</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
   <div id="modal-feedback-auditoria" class="modal-overlay hidden">
     <div class="modal-box modal-lg" style="max-width: 780px; max-height: 90vh; display: flex; flex-direction: column;">
       <div class="modal-header">
@@ -3020,6 +3313,7 @@
   <script src="/js/perfil.js"></script>
   <script src="/js/mensajes.js"></script>
   <script src="/js/chats.js"></script>
+  <script src="/js/sucursales_info.js"></script>
   <script src="/js/app.js"></script>
 </body>
 </html>
