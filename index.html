@@ -989,6 +989,15 @@
         </div>
 
         <div id="sucursales-info-detalle" class="hidden">
+          <div class="sucursales-detalle-top-bar flex-row justify-between align-center flex-wrap gap-2">
+            <button type="button" class="btn btn-outline-secondary btn-volver-sucursales" onclick="SucursalesInfoModule.volverALaLista()" title="Volver a la selección de sucursales">
+              <span class="btn-icon">⬅️</span> Volver a Sucursales
+            </button>
+            <div class="flex-row align-center gap-2">
+              <span id="sucursales-detalle-badge-nombre" class="badge badge-primary" style="font-size: 0.95rem; padding: 0.45rem 1rem; border-radius: 9999px;"></span>
+            </div>
+          </div>
+
           <div class="sucursales-section-tabs">
             <button type="button" class="sucursales-section-tab-btn active" data-subtab="precios" onclick="SucursalesInfoModule.cambiarSubtab('precios')">
               💲 Precios y Servicios

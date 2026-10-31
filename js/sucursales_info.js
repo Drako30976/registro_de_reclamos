@@ -9,6 +9,7 @@ const SucursalesInfoModule = {
   async init() {
     this.bindEvents();
     this.aplicarPermisosRol();
+    this.volverALaLista();
     await this.cargarSucursales();
   },
 
@@ -28,29 +29,44 @@ const SucursalesInfoModule = {
     }
   },
 
+  volverALaLista() {
+    this.currentSucursalId = null;
+    this.currentSucursalData = null;
+
+    const selectorBar = document.getElementById('sucursales-selector-bar');
+    const contenedor = document.getElementById('sucursales-info-detalle');
+
+    if (selectorBar) {
+      selectorBar.classList.remove('hidden');
+    }
+    if (contenedor) {
+      contenedor.classList.add('hidden');
+    }
+
+    const badgeNombre = document.getElementById('sucursales-detalle-badge-nombre');
+    if (badgeNombre) {
+      badgeNombre.textContent = '';
+    }
+  },
+
   async cargarSucursales() {
     const selectorBar = document.getElementById('sucursales-selector-bar');
     if (selectorBar) {
-      selectorBar.innerHTML = '<div class="text-muted font-sm py-2">Cargando sucursales...</div>';
+      selectorBar.innerHTML = '<div class="text-muted font-sm py-3 text-center" style="grid-column: 1 / -1;">Cargando sucursales...</div>';
     }
 
     try {
       this.sucursales = await API.get('/sucursales-info');
       this.renderSelectorBar();
 
-      if (this.sucursales.length > 0) {
-        const idASeleccionar = this.currentSucursalId && this.sucursales.some(s => s.id === this.currentSucursalId)
-          ? this.currentSucursalId
-          : this.sucursales[0].id;
-        await this.seleccionarSucursal(idASeleccionar);
+      if (this.currentSucursalId && this.sucursales.some(s => s.id === this.currentSucursalId)) {
+        await this.seleccionarSucursal(this.currentSucursalId);
       } else {
-        if (selectorBar) selectorBar.innerHTML = '<div class="text-muted font-sm py-2">No hay sucursales registradas.</div>';
-        const contenedor = document.getElementById('sucursales-info-detalle');
-        if (contenedor) contenedor.classList.add('hidden');
+        this.volverALaLista();
       }
     } catch (err) {
       console.error(err);
-      if (selectorBar) selectorBar.innerHTML = '<div class="text-danger font-sm py-2">Error al cargar sucursales.</div>';
+      if (selectorBar) selectorBar.innerHTML = '<div class="text-danger font-sm py-3 text-center" style="grid-column: 1 / -1;">Error al cargar sucursales.</div>';
     }
   },
 
@@ -58,12 +74,24 @@ const SucursalesInfoModule = {
     const selectorBar = document.getElementById('sucursales-selector-bar');
     if (!selectorBar) return;
 
+    if (!this.sucursales || this.sucursales.length === 0) {
+      selectorBar.innerHTML = '<div class="text-muted font-sm py-4 text-center" style="grid-column: 1 / -1;">No hay sucursales registradas.</div>';
+      return;
+    }
+
     let html = '';
     this.sucursales.forEach(s => {
-      const isActive = this.currentSucursalId === s.id;
+      const logoHtml = s.logo
+        ? `<img src="${s.logo}" alt="Logo ${this.escapeHtml(s.nombre)}" class="sucursal-card-logo-img">`
+        : `<span class="sucursal-card-icon-fallback">🏢</span>`;
+
       html += `
-        <button type="button" class="sucursales-selector-btn ${isActive ? 'active' : ''}" onclick="SucursalesInfoModule.seleccionarSucursal(${s.id})">
-          <span>🏢</span> ${this.escapeHtml(s.nombre)}
+        <button type="button" class="sucursal-card-btn" onclick="SucursalesInfoModule.seleccionarSucursal(${s.id})" title="Ver información de ${this.escapeHtml(s.nombre)}">
+          <div class="sucursal-card-logo-wrap">
+            ${logoHtml}
+          </div>
+          <span class="sucursal-card-title">${this.escapeHtml(s.nombre)}</span>
+          ${s.localidad ? `<span class="sucursal-card-subtitle">${this.escapeHtml(s.localidad)}</span>` : ''}
         </button>
       `;
     });
@@ -72,9 +100,12 @@ const SucursalesInfoModule = {
 
   async seleccionarSucursal(id) {
     this.currentSucursalId = id;
-    this.renderSelectorBar();
 
+    const selectorBar = document.getElementById('sucursales-selector-bar');
     const contenedor = document.getElementById('sucursales-info-detalle');
+
+    // Desaparece sucursales-selector-bar y se muestra sucursales-info-detalle
+    if (selectorBar) selectorBar.classList.add('hidden');
     if (contenedor) contenedor.classList.remove('hidden');
 
     try {
@@ -82,7 +113,12 @@ const SucursalesInfoModule = {
       this.renderInfoGeneral();
       this.renderPrecios();
       this.renderPromociones();
-      this.cambiarSubtab(this.currentSubtab);
+      this.cambiarSubtab(this.currentSubtab || 'precios');
+
+      const badgeNombre = document.getElementById('sucursales-detalle-badge-nombre');
+      if (badgeNombre && this.currentSucursalData && this.currentSucursalData.sucursal) {
+        badgeNombre.textContent = this.currentSucursalData.sucursal.nombre;
+      }
     } catch (err) {
       alert('Error al cargar detalle de la sucursal: ' + err.message);
     }
