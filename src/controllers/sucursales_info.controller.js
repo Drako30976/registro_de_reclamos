@@ -64,10 +64,23 @@ const getSucursalDetalle = async (req, res) => {
     }
 
     const preciosRes = await pool.query(`
-      SELECT * 
-      FROM sucursales_precios 
-      WHERE sucursal_id = $1 AND activo = true 
-      ORDER BY tipo_servicio ASC, codigo ASC
+      SELECT 
+        sp.*,
+        COALESCE(
+          json_agg(
+            json_build_object(
+              'id', pi.id,
+              'nombre_concepto', pi.nombre_concepto,
+              'monto', pi.monto,
+              'orden', pi.orden
+            ) ORDER BY pi.orden ASC
+          ) FILTER (WHERE pi.id IS NOT NULL), '[]'
+        ) AS items
+      FROM sucursales_precios sp
+      LEFT JOIN sucursales_precios_items pi ON sp.id = pi.precio_id
+      WHERE sp.sucursal_id = $1 AND sp.activo = true 
+      GROUP BY sp.id
+      ORDER BY sp.tipo_servicio ASC, sp.codigo ASC
     `, [id]);
 
     const promosRes = await pool.query(`
@@ -242,64 +255,138 @@ const eliminarSucursal = async (req, res) => {
 };
 
 const crearPrecio = async (req, res) => {
+  const client = await pool.connect();
   try {
-    const { sucursal_id, tipo_servicio, codigo, nombre_concepto, costo } = req.body;
+    const { sucursal_id, tipo_servicio, codigo, nombre_concepto, costo, es_paquete, items } = req.body;
 
-    if (!sucursal_id || !tipo_servicio || !codigo || !nombre_concepto || costo === undefined) {
+    if (!sucursal_id || !tipo_servicio || !codigo || !nombre_concepto) {
       return res.status(400).json({ error: 'Todos los campos de precio son obligatorios.' });
     }
 
-    const result = await pool.query(`
-      INSERT INTO sucursales_precios (sucursal_id, tipo_servicio, codigo, nombre_concepto, costo, activo)
-      VALUES ($1, $2, $3, $4, $5, true)
+    const esPaq = Boolean(es_paquete);
+    let costoFinal = parseFloat(costo) || 0;
+
+    if (esPaq && Array.isArray(items) && items.length > 0) {
+      costoFinal = items.reduce((acc, curr) => acc + (parseFloat(curr.monto) || 0), 0);
+    }
+
+    await client.query('BEGIN');
+
+    const result = await client.query(`
+      INSERT INTO sucursales_precios (sucursal_id, tipo_servicio, codigo, nombre_concepto, costo, es_paquete, activo)
+      VALUES ($1, $2, $3, $4, $5, $6, true)
       RETURNING *
     `, [
       parseInt(sucursal_id, 10),
       tipo_servicio.trim(),
       codigo.trim().toUpperCase(),
       nombre_concepto.trim(),
-      parseFloat(costo)
+      costoFinal,
+      esPaq
     ]);
 
-    res.status(201).json(result.rows[0]);
+    const nuevoPrecio = result.rows[0];
+    const itemsGuardados = [];
+
+    if (esPaq && Array.isArray(items) && items.length > 0) {
+      for (let i = 0; i < items.length; i++) {
+        const item = items[i];
+        const monto = parseFloat(item.monto) || 0;
+        const iRes = await client.query(`
+          INSERT INTO sucursales_precios_items (precio_id, nombre_concepto, monto, orden)
+          VALUES ($1, $2, $3, $4)
+          RETURNING *
+        `, [
+          nuevoPrecio.id,
+          item.nombre_concepto.trim(),
+          monto,
+          i + 1
+        ]);
+        itemsGuardados.push(iRes.rows[0]);
+      }
+    }
+
+    await client.query('COMMIT');
+    res.status(201).json({ ...nuevoPrecio, items: itemsGuardados });
   } catch (error) {
+    await client.query('ROLLBACK');
     console.error('Error al crear precio:', error);
     res.status(500).json({ error: 'Error al registrar precio.' });
+  } finally {
+    client.release();
   }
 };
 
 const actualizarPrecio = async (req, res) => {
+  const client = await pool.connect();
   try {
     const { id } = req.params;
-    const { tipo_servicio, codigo, nombre_concepto, costo, activo } = req.body;
+    const { tipo_servicio, codigo, nombre_concepto, costo, es_paquete, items, activo } = req.body;
 
-    const result = await pool.query(`
+    const actual = await client.query('SELECT * FROM sucursales_precios WHERE id = $1', [id]);
+    if (actual.rows.length === 0) {
+      return res.status(404).json({ error: 'Precio no encontrado.' });
+    }
+
+    const esPaq = es_paquete !== undefined ? Boolean(es_paquete) : actual.rows[0].es_paquete;
+    let costoFinal = costo !== undefined ? parseFloat(costo) : actual.rows[0].costo;
+
+    if (esPaq && Array.isArray(items)) {
+      costoFinal = items.reduce((acc, curr) => acc + (parseFloat(curr.monto) || 0), 0);
+    }
+
+    await client.query('BEGIN');
+
+    const result = await client.query(`
       UPDATE sucursales_precios
       SET tipo_servicio = COALESCE($1, tipo_servicio),
           codigo = COALESCE($2, codigo),
           nombre_concepto = COALESCE($3, nombre_concepto),
-          costo = COALESCE($4, costo),
-          activo = COALESCE($5, activo),
+          costo = $4,
+          es_paquete = $5,
+          activo = COALESCE($6, activo),
           updated_at = CURRENT_TIMESTAMP
-      WHERE id = $6
+      WHERE id = $7
       RETURNING *
     `, [
       tipo_servicio ? tipo_servicio.trim() : null,
       codigo ? codigo.trim().toUpperCase() : null,
       nombre_concepto ? nombre_concepto.trim() : null,
-      costo !== undefined ? parseFloat(costo) : null,
+      costoFinal,
+      esPaq,
       activo !== undefined ? activo : null,
       id
     ]);
 
-    if (result.rows.length === 0) {
-      return res.status(404).json({ error: 'Precio no encontrado.' });
+    await client.query('DELETE FROM sucursales_precios_items WHERE precio_id = $1', [id]);
+
+    const itemsGuardados = [];
+    if (esPaq && Array.isArray(items) && items.length > 0) {
+      for (let i = 0; i < items.length; i++) {
+        const item = items[i];
+        const monto = parseFloat(item.monto) || 0;
+        const iRes = await client.query(`
+          INSERT INTO sucursales_precios_items (precio_id, nombre_concepto, monto, orden)
+          VALUES ($1, $2, $3, $4)
+          RETURNING *
+        `, [
+          id,
+          item.nombre_concepto.trim(),
+          monto,
+          i + 1
+        ]);
+        itemsGuardados.push(iRes.rows[0]);
+      }
     }
 
-    res.json(result.rows[0]);
+    await client.query('COMMIT');
+    res.json({ ...result.rows[0], items: itemsGuardados });
   } catch (error) {
+    await client.query('ROLLBACK');
     console.error('Error al actualizar precio:', error);
     res.status(500).json({ error: 'Error al actualizar precio.' });
+  } finally {
+    client.release();
   }
 };
 

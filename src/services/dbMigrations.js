@@ -223,6 +223,18 @@ async function migrateDatabase() {
       CREATE INDEX IF NOT EXISTS idx_sucursales_precios_sucursal ON sucursales_precios(sucursal_id);
       CREATE INDEX IF NOT EXISTS idx_sucursales_promos_sucursal ON sucursales_promociones(sucursal_id);
       CREATE INDEX IF NOT EXISTS idx_sucursales_promo_conceptos_promo ON sucursales_promociones_conceptos(promocion_id);
+
+      ALTER TABLE sucursales_precios ADD COLUMN IF NOT EXISTS es_paquete BOOLEAN DEFAULT FALSE;
+
+      CREATE TABLE IF NOT EXISTS sucursales_precios_items (
+          id SERIAL PRIMARY KEY,
+          precio_id INT NOT NULL REFERENCES sucursales_precios(id) ON DELETE CASCADE,
+          nombre_concepto VARCHAR(150) NOT NULL,
+          monto NUMERIC(12,2) NOT NULL DEFAULT 0,
+          orden INT DEFAULT 0
+      );
+
+      CREATE INDEX IF NOT EXISTS idx_sucursales_precios_items_precio ON sucursales_precios_items(precio_id);
     `);
     console.log('Migración de tablas de llamadas y jerarquías completada exitosamente.');
   } catch (err) {

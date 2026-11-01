@@ -4,6 +4,8 @@ const SucursalesInfoModule = {
   currentSucursalData: null,
   currentSubtab: 'info',
   preciosFiltroServicio: 'todos',
+  itemsPrecioForm: [],
+  precioEsPaquete: false,
   conceptosPromoForm: [],
 
   async init() {
@@ -232,6 +234,18 @@ const SucursalesInfoModule = {
     this.filtrarPrecios();
   },
 
+  toggleDesglosePrecio(id, btnEl) {
+    const row = document.getElementById(`precio-desglose-${id}`);
+    if (!row) return;
+    const isHidden = row.classList.contains('hidden');
+    row.classList.toggle('hidden', !isHidden);
+    if (btnEl) {
+      const countMatch = btnEl.textContent.match(/\((\d+)\)/);
+      const countStr = countMatch ? ` (${countMatch[1]})` : '';
+      btnEl.textContent = isHidden ? `🔼 Ocultar desglose${countStr}` : `🔍 Ver desglose${countStr}`;
+    }
+  },
+
   filtrarPrecios() {
     if (!this.currentSucursalData) return;
     const precios = this.currentSucursalData.precios || [];
@@ -251,9 +265,9 @@ const SucursalesInfoModule = {
 
     const user = API.getUser();
     const esAdminOSup = user && (user.rol === 'Admin' || user.rol === 'Supervisor');
+    const cols = esAdminOSup ? 5 : 4;
 
     if (filtrados.length === 0) {
-      const cols = esAdminOSup ? 5 : 4;
       tbody.innerHTML = `<tr><td colspan="${cols}" class="text-center py-4 text-muted">No se encontraron precios para los filtros seleccionados.</td></tr>`;
       return;
     }
@@ -261,11 +275,38 @@ const SucursalesInfoModule = {
     let html = '';
     filtrados.forEach(p => {
       const costoFmt = new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'ARS', maximumFractionDigits: 0 }).format(p.costo);
+      const esPaq = Boolean(p.es_paquete) && Array.isArray(p.items) && p.items.length > 0;
+
+      let desgloseRows = '';
+      if (esPaq) {
+        p.items.forEach(it => {
+          const m = parseFloat(it.monto) || 0;
+          const isNeg = m < 0;
+          const mFmt = isNeg ? `-$${Math.abs(m).toLocaleString('es-AR')}` : `+$${m.toLocaleString('es-AR')}`;
+          desgloseRows += `
+            <tr>
+              <td style="padding: 0.35rem 0.6rem;">${this.escapeHtml(it.nombre_concepto)}</td>
+              <td style="text-align: right; padding: 0.35rem 0.6rem;">
+                <span class="${isNeg ? 'text-danger font-bold' : 'text-success font-bold'}">${mFmt}</span>
+              </td>
+            </tr>
+          `;
+        });
+      }
+
       html += `
         <tr>
           <td><span class="badge badge-info font-bold">${this.escapeHtml(p.tipo_servicio)}</span></td>
           <td><span class="font-mono font-bold" style="letter-spacing: 0.05em;">${this.escapeHtml(p.codigo)}</span></td>
-          <td><strong>${this.escapeHtml(p.nombre_concepto)}</strong></td>
+          <td>
+            <strong>${this.escapeHtml(p.nombre_concepto)}</strong>
+            ${esPaq ? `
+              <span class="badge badge-warning font-xs" style="margin-left: 0.35rem; vertical-align: middle;">📦 Paquete</span>
+              <button type="button" class="btn btn-xs btn-outline-info" style="margin-left: 0.4rem; padding: 0.15rem 0.5rem; font-size: 0.75rem; vertical-align: middle;" onclick="SucursalesInfoModule.toggleDesglosePrecio(${p.id}, this)">
+                🔍 Ver desglose (${p.items.length})
+              </button>
+            ` : ''}
+          </td>
           <td style="text-align: right;"><strong class="font-md text-success">${costoFmt}</strong></td>
           ${esAdminOSup ? `
             <td style="text-align: center;">
@@ -276,8 +317,32 @@ const SucursalesInfoModule = {
             </td>
           ` : ''}
         </tr>
+        ${esPaq ? `
+          <tr id="precio-desglose-${p.id}" class="hidden">
+            <td colspan="${cols}" style="background: var(--bg-main); padding: 0.75rem 1.25rem;">
+              <div class="card p-3" style="background: var(--bg-card); border: 1px solid var(--border-color); max-width: 540px; box-shadow: var(--shadow-sm);">
+                <div class="flex-row justify-between align-center mb-2 pb-1" style="border-bottom: 1px solid var(--border-color);">
+                  <strong class="font-xs text-muted" style="letter-spacing: 0.04em;">DESGLOSE DEL PAQUETE:</strong>
+                  <span class="font-xs text-muted font-mono">${this.escapeHtml(p.codigo)}</span>
+                </div>
+                <table class="table-custom font-sm mb-2">
+                  <tbody>
+                    ${desgloseRows}
+                  </tbody>
+                  <tfoot>
+                    <tr style="border-top: 2px solid var(--border-color); font-weight: 700;">
+                      <td style="padding: 0.4rem 0.6rem;">Costo Total del Paquete:</td>
+                      <td style="text-align: right; padding: 0.4rem 0.6rem;" class="text-success font-md">${costoFmt}</td>
+                    </tr>
+                  </tfoot>
+                </table>
+              </div>
+            </td>
+          </tr>
+        ` : ''}
       `;
     });
+
     tbody.innerHTML = html;
   },
 
@@ -497,6 +562,100 @@ const SucursalesInfoModule = {
     }
   },
 
+  cambiarEstructuraPrecio(esPaquete) {
+    this.precioEsPaquete = Boolean(esPaquete);
+    const groupSimple = document.getElementById('group-precio-costo-simple');
+    const groupPaq = document.getElementById('group-precio-paquete');
+    const inputCostoSimple = document.getElementById('form-precio-costo');
+
+    if (groupSimple) groupSimple.style.display = this.precioEsPaquete ? 'none' : 'block';
+    if (groupPaq) groupPaq.style.display = this.precioEsPaquete ? 'block' : 'none';
+    if (inputCostoSimple) inputCostoSimple.required = !this.precioEsPaquete;
+
+    if (this.precioEsPaquete && (!this.itemsPrecioForm || this.itemsPrecioForm.length === 0)) {
+      this.itemsPrecioForm = [];
+      this.agregarFilaItemPrecio();
+    }
+    if (this.precioEsPaquete) {
+      this.renderFilasItemsPrecio();
+    }
+  },
+
+  agregarFilaItemPrecio() {
+    this.itemsPrecioForm.push({
+      nombre_concepto: '',
+      signo: 'positivo',
+      monto: 0
+    });
+    this.renderFilasItemsPrecio();
+  },
+
+  eliminarFilaItemPrecio(idx) {
+    this.itemsPrecioForm.splice(idx, 1);
+    this.renderFilasItemsPrecio();
+  },
+
+  actualizarItemPrecio(idx, campo, valor) {
+    const it = this.itemsPrecioForm[idx];
+    if (!it) return;
+
+    if (campo === 'nombre_concepto') {
+      it.nombre_concepto = valor;
+    } else if (campo === 'signo') {
+      it.signo = valor;
+    } else if (campo === 'monto') {
+      it.monto = Math.abs(parseFloat(valor)) || 0;
+    }
+
+    this.renderFilasItemsPrecio();
+  },
+
+  renderFilasItemsPrecio() {
+    const tbody = document.getElementById('tabla-form-precio-items-body');
+    const totalCalc = document.getElementById('form-precio-total-calculado');
+    if (!tbody) return;
+
+    let html = '';
+    let total = 0;
+
+    this.itemsPrecioForm.forEach((it, idx) => {
+      const isNeg = it.signo === 'negativo';
+      const m = Math.abs(parseFloat(it.monto)) || 0;
+      const signedVal = isNeg ? -m : m;
+      total += signedVal;
+      const displayMonto = isNeg ? `-$${m.toLocaleString('es-AR')}` : `+$${m.toLocaleString('es-AR')}`;
+
+      html += `
+        <tr>
+          <td>
+            <input type="text" class="form-control" value="${this.escapeHtml(it.nombre_concepto)}" placeholder="Ej: Grilla Digital, Bonificación deco HD" onchange="SucursalesInfoModule.actualizarItemPrecio(${idx}, 'nombre_concepto', this.value)" required>
+          </td>
+          <td>
+            <select class="form-control" onchange="SucursalesInfoModule.actualizarItemPrecio(${idx}, 'signo', this.value)">
+              <option value="positivo" ${!isNeg ? 'selected' : ''}>(+) Costo positivo</option>
+              <option value="negativo" ${isNeg ? 'selected' : ''}>(-) Bonificación / Descuento</option>
+            </select>
+          </td>
+          <td>
+            <input type="number" class="form-control" value="${m}" min="0" step="1" onchange="SucursalesInfoModule.actualizarItemPrecio(${idx}, 'monto', this.value)">
+          </td>
+          <td style="text-align: right; vertical-align: middle;">
+            <strong class="${isNeg ? 'text-danger' : 'text-success'}">${displayMonto}</strong>
+          </td>
+          <td style="text-align: center; vertical-align: middle;">
+            ${this.itemsPrecioForm.length > 1 ? `<button type="button" class="btn btn-xs btn-outline-danger" onclick="SucursalesInfoModule.eliminarFilaItemPrecio(${idx})">✕</button>` : ''}
+          </td>
+        </tr>
+      `;
+    });
+
+    tbody.innerHTML = html;
+    if (totalCalc) {
+      const totalFmt = total < 0 ? `-$${Math.abs(total).toLocaleString('es-AR')}` : `$${total.toLocaleString('es-AR')}`;
+      totalCalc.textContent = totalFmt;
+    }
+  },
+
   abrirModalCrearPrecio() {
     const modal = document.getElementById('modal-crear-precio-info');
     if (!modal) return;
@@ -517,6 +676,11 @@ const SucursalesInfoModule = {
       selectSuc.innerHTML = optHtml;
     }
 
+    const radioSimple = document.getElementById('radio-precio-simple');
+    if (radioSimple) radioSimple.checked = true;
+    this.itemsPrecioForm = [];
+    this.cambiarEstructuraPrecio(false);
+
     modal.classList.remove('hidden');
   },
 
@@ -532,7 +696,33 @@ const SucursalesInfoModule = {
     document.getElementById('form-precio-tipo').value = p.tipo_servicio;
     document.getElementById('form-precio-codigo').value = p.codigo;
     document.getElementById('form-precio-concepto').value = p.nombre_concepto;
-    document.getElementById('form-precio-costo').value = p.costo;
+
+    const esPaq = Boolean(p.es_paquete);
+    const radioPaq = document.getElementById('radio-precio-paquete');
+    const radioSimple = document.getElementById('radio-precio-simple');
+
+    if (esPaq) {
+      if (radioPaq) radioPaq.checked = true;
+      if (Array.isArray(p.items) && p.items.length > 0) {
+        this.itemsPrecioForm = p.items.map(it => {
+          const m = parseFloat(it.monto) || 0;
+          return {
+            nombre_concepto: it.nombre_concepto || '',
+            signo: m < 0 ? 'negativo' : 'positivo',
+            monto: Math.abs(m)
+          };
+        });
+      } else {
+        this.itemsPrecioForm = [];
+        this.agregarFilaItemPrecio();
+      }
+      this.cambiarEstructuraPrecio(true);
+    } else {
+      if (radioSimple) radioSimple.checked = true;
+      document.getElementById('form-precio-costo').value = p.costo;
+      this.itemsPrecioForm = [];
+      this.cambiarEstructuraPrecio(false);
+    }
 
     const btnSubmit = document.getElementById('btn-guardar-precio-submit');
     if (btnSubmit) btnSubmit.textContent = 'Actualizar Precio';
@@ -548,9 +738,40 @@ const SucursalesInfoModule = {
     const nombre_concepto = document.getElementById('form-precio-concepto').value.trim();
     const costo = document.getElementById('form-precio-costo').value;
 
-    if (!sucursal_id || !codigo || !nombre_concepto || costo === '') {
-      alert('Todos los campos son obligatorios.');
+    if (!sucursal_id || !codigo || !nombre_concepto) {
+      alert('Todos los campos obligatorios deben completarse.');
       return;
+    }
+
+    let payload = {
+      sucursal_id,
+      tipo_servicio,
+      codigo,
+      nombre_concepto,
+      es_paquete: this.precioEsPaquete
+    };
+
+    if (this.precioEsPaquete) {
+      const itemsValidos = this.itemsPrecioForm.filter(it => it.nombre_concepto.trim());
+      if (itemsValidos.length === 0) {
+        alert('Debe agregar al menos un concepto en el paquete.');
+        return;
+      }
+      payload.items = itemsValidos.map(it => {
+        const m = Math.abs(parseFloat(it.monto)) || 0;
+        return {
+          nombre_concepto: it.nombre_concepto.trim(),
+          monto: it.signo === 'negativo' ? -m : m
+        };
+      });
+      payload.costo = payload.items.reduce((acc, curr) => acc + curr.monto, 0);
+    } else {
+      if (costo === '') {
+        alert('Ingrese el costo oficial del servicio.');
+        return;
+      }
+      payload.costo = parseFloat(costo) || 0;
+      payload.items = [];
     }
 
     try {
@@ -560,20 +781,9 @@ const SucursalesInfoModule = {
       }
 
       if (id) {
-        await API.put(`/sucursales-info/precios/${id}`, {
-          tipo_servicio,
-          codigo,
-          nombre_concepto,
-          costo
-        });
+        await API.put(`/sucursales-info/precios/${id}`, payload);
       } else {
-        await API.post('/sucursales-info/precios', {
-          sucursal_id,
-          tipo_servicio,
-          codigo,
-          nombre_concepto,
-          costo
-        });
+        await API.post('/sucursales-info/precios', payload);
       }
 
       this.cerrarModal('modal-crear-precio-info');
