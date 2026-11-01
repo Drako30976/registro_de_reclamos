@@ -995,6 +995,9 @@
             </button>
             <div class="flex-row align-center gap-2">
               <span id="sucursales-detalle-badge-nombre" class="badge badge-primary" style="font-size: 0.95rem; padding: 0.45rem 1rem; border-radius: 9999px;"></span>
+              <button type="button" id="btn-eliminar-sucursal-actual" class="btn btn-outline-danger btn-sm" onclick="SucursalesInfoModule.eliminarSucursalActual()" title="Borrar Sucursal" style="display: none;">
+                <span>🗑️</span> Borrar Sucursal
+              </button>
             </div>
           </div>
 
@@ -1012,6 +1015,12 @@
 
           <div id="sucursal-sec-info" class="hidden">
             <div class="sucursal-detalle-card">
+              <div class="flex-row justify-between align-center mb-3 pb-2" style="border-bottom: 1px solid var(--border-color);">
+                <span class="font-md font-bold text-muted">Ficha Institucional</span>
+                <button type="button" id="btn-editar-sucursal-info" class="btn btn-outline-primary btn-sm" onclick="SucursalesInfoModule.abrirModalEditarSucursal()" style="display: none;">
+                  <span>✏️</span> Editar Información
+                </button>
+              </div>
               <div class="sucursal-info-grid">
                 <div id="sucursal-info-logo-container" class="sucursal-logo-box">
                   🏢
@@ -1060,6 +1069,7 @@
                       <th style="width: 15%;">Código</th>
                       <th>Concepto del Servicio</th>
                       <th style="width: 180px; text-align: right;">Costo Oficial</th>
+                      <th id="th-precios-acciones" style="width: 100px; text-align: center; display: none;">Acciones</th>
                     </tr>
                   </thead>
                   <tbody id="tabla-sucursales-precios-body">
@@ -2446,11 +2456,12 @@
   <div id="modal-crear-precio-info" class="modal-overlay hidden">
     <div class="modal-box modal-md" style="max-width: 580px;">
       <div class="modal-header">
-        <h3>💲 Nuevo Precio de Servicio</h3>
+        <h3 id="modal-precio-info-titulo">💲 Nuevo Precio de Servicio</h3>
         <button class="modal-close" onclick="SucursalesInfoModule.cerrarModal('modal-crear-precio-info')">&times;</button>
       </div>
       <form id="form-precio-info" onsubmit="SucursalesInfoModule.guardarPrecio(event)">
         <div class="modal-body" style="padding: 1.25rem 1.5rem;">
+          <input type="hidden" id="form-precio-id">
           <div class="form-group mb-3">
             <label for="form-precio-sucursal">Sucursal Destino <span class="req">*</span></label>
             <select id="form-precio-sucursal" class="form-control" required></select>
@@ -2490,11 +2501,12 @@
   <div id="modal-crear-promocion-info" class="modal-overlay hidden">
     <div class="modal-box modal-lg" style="max-width: 860px; max-height: 92vh; display: flex; flex-direction: column;">
       <div class="modal-header">
-        <h3>🎁 Configurar Nueva Promoción</h3>
+        <h3 id="modal-promocion-info-titulo">🎁 Configurar Nueva Promoción</h3>
         <button class="modal-close" onclick="SucursalesInfoModule.cerrarModal('modal-crear-promocion-info')">&times;</button>
       </div>
       <form id="form-promocion-info" onsubmit="SucursalesInfoModule.guardarPromocion(event)" style="display: flex; flex-direction: column; overflow: hidden; flex: 1;">
         <div class="modal-body" style="overflow-y: auto; padding: 1.25rem 1.5rem; flex: 1;">
+          <input type="hidden" id="form-promo-id">
           <div class="form-grid-2 mb-3">
             <div class="form-group">
               <label for="form-promo-sucursal">Sucursal <span class="req">*</span></label>

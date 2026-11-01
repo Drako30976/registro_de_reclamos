@@ -16,9 +16,25 @@ const SucursalesInfoModule = {
   aplicarPermisosRol() {
     const user = API.getUser();
     const esAdminOSup = user && (user.rol === 'Admin' || user.rol === 'Supervisor');
+
     const actionsBox = document.getElementById('sucursales-info-admin-actions');
     if (actionsBox) {
       actionsBox.style.display = esAdminOSup ? 'flex' : 'none';
+    }
+
+    const btnBorrarSuc = document.getElementById('btn-eliminar-sucursal-actual');
+    if (btnBorrarSuc) {
+      btnBorrarSuc.style.display = esAdminOSup ? 'inline-flex' : 'none';
+    }
+
+    const btnEditarInfo = document.getElementById('btn-editar-sucursal-info');
+    if (btnEditarInfo) {
+      btnEditarInfo.style.display = esAdminOSup ? 'inline-flex' : 'none';
+    }
+
+    const thAcciones = document.getElementById('th-precios-acciones');
+    if (thAcciones) {
+      thAcciones.style.display = esAdminOSup ? 'table-cell' : 'none';
     }
   },
 
@@ -104,7 +120,6 @@ const SucursalesInfoModule = {
     const selectorBar = document.getElementById('sucursales-selector-bar');
     const contenedor = document.getElementById('sucursales-info-detalle');
 
-    // Desaparece sucursales-selector-bar y se muestra sucursales-info-detalle
     if (selectorBar) selectorBar.classList.add('hidden');
     if (contenedor) contenedor.classList.remove('hidden');
 
@@ -114,6 +129,7 @@ const SucursalesInfoModule = {
       this.renderPrecios();
       this.renderPromociones();
       this.cambiarSubtab(this.currentSubtab || 'precios');
+      this.aplicarPermisosRol();
 
       const badgeNombre = document.getElementById('sucursales-detalle-badge-nombre');
       if (badgeNombre && this.currentSucursalData && this.currentSucursalData.sucursal) {
@@ -233,8 +249,12 @@ const SucursalesInfoModule = {
     const tbody = document.getElementById('tabla-sucursales-precios-body');
     if (!tbody) return;
 
+    const user = API.getUser();
+    const esAdminOSup = user && (user.rol === 'Admin' || user.rol === 'Supervisor');
+
     if (filtrados.length === 0) {
-      tbody.innerHTML = '<tr><td colspan="4" class="text-center py-4 text-muted">No se encontraron precios para los filtros seleccionados.</td></tr>';
+      const cols = esAdminOSup ? 5 : 4;
+      tbody.innerHTML = `<tr><td colspan="${cols}" class="text-center py-4 text-muted">No se encontraron precios para los filtros seleccionados.</td></tr>`;
       return;
     }
 
@@ -247,6 +267,14 @@ const SucursalesInfoModule = {
           <td><span class="font-mono font-bold" style="letter-spacing: 0.05em;">${this.escapeHtml(p.codigo)}</span></td>
           <td><strong>${this.escapeHtml(p.nombre_concepto)}</strong></td>
           <td style="text-align: right;"><strong class="font-md text-success">${costoFmt}</strong></td>
+          ${esAdminOSup ? `
+            <td style="text-align: center;">
+              <div class="flex-row justify-center gap-1">
+                <button type="button" class="btn btn-xs btn-outline-primary" onclick="SucursalesInfoModule.abrirModalEditarPrecio(${p.id})" title="Editar Precio">✏️</button>
+                <button type="button" class="btn btn-xs btn-outline-danger" onclick="SucursalesInfoModule.eliminarPrecio(${p.id})" title="Borrar Precio">🗑️</button>
+              </div>
+            </td>
+          ` : ''}
         </tr>
       `;
     });
@@ -267,6 +295,9 @@ const SucursalesInfoModule = {
       `;
       return;
     }
+
+    const user = API.getUser();
+    const esAdminOSup = user && (user.rol === 'Admin' || user.rol === 'Supervisor');
 
     let html = '';
     promos.forEach(pr => {
@@ -311,7 +342,13 @@ const SucursalesInfoModule = {
               <h4 class="promo-card-title">${this.escapeHtml(pr.nombre)}</h4>
               <small class="text-muted">📍 Zona / Barrio: <strong>${this.escapeHtml(pr.zona_barrio)}</strong></small>
             </div>
-            ${badgeEstado}
+            <div class="flex-row gap-1 align-center">
+              ${badgeEstado}
+              ${esAdminOSup ? `
+                <button type="button" class="btn btn-xs btn-outline-primary" onclick="SucursalesInfoModule.abrirModalEditarPromocion(${pr.id})" title="Editar Promoción">✏️</button>
+                <button type="button" class="btn btn-xs btn-outline-danger" onclick="SucursalesInfoModule.eliminarPromocion(${pr.id})" title="Borrar Promoción">🗑️</button>
+              ` : ''}
+            </div>
           </div>
 
           <div class="promo-tags-row">
@@ -345,6 +382,25 @@ const SucursalesInfoModule = {
     container.innerHTML = html;
   },
 
+  async eliminarSucursalActual() {
+    if (!this.currentSucursalId || !this.currentSucursalData) return;
+    const s = this.currentSucursalData.sucursal;
+    const nombre = s ? s.nombre : 'esta sucursal';
+
+    if (!confirm(`¿Estás seguro de que deseas eliminar la sucursal "${nombre}"? Esta acción borrará la sucursal o la desactivará si posee registros históricos asociados.`)) {
+      return;
+    }
+
+    try {
+      await API.delete(`/sucursales-info/${this.currentSucursalId}`);
+      alert(`Sucursal "${nombre}" eliminada exitosamente.`);
+      this.volverALaLista();
+      await this.cargarSucursales();
+    } catch (err) {
+      alert(err.message || 'Error al eliminar sucursal.');
+    }
+  },
+
   abrirModalCrearSucursal() {
     const modal = document.getElementById('modal-crear-sucursal-info');
     if (!modal) return;
@@ -352,6 +408,30 @@ const SucursalesInfoModule = {
     if (form) form.reset();
     document.getElementById('form-sucursal-id').value = '';
     document.getElementById('modal-sucursal-info-titulo').textContent = '🏢 Nueva Sucursal';
+    const btnSubmit = document.getElementById('btn-guardar-sucursal-submit');
+    if (btnSubmit) btnSubmit.textContent = 'Guardar Sucursal';
+    modal.classList.remove('hidden');
+  },
+
+  abrirModalEditarSucursal() {
+    if (!this.currentSucursalData || !this.currentSucursalData.sucursal) return;
+    const s = this.currentSucursalData.sucursal;
+    const modal = document.getElementById('modal-crear-sucursal-info');
+    if (!modal) return;
+    const form = document.getElementById('form-sucursal-info-completa');
+    if (form) form.reset();
+
+    document.getElementById('form-sucursal-id').value = s.id;
+    document.getElementById('modal-sucursal-info-titulo').textContent = '🏢 Editar Sucursal';
+    document.getElementById('form-sucursal-nombre').value = s.nombre || '';
+    document.getElementById('form-sucursal-localidad').value = s.localidad || '';
+    document.getElementById('form-sucursal-direccion').value = s.direccion || '';
+    document.getElementById('form-sucursal-horario').value = s.horario_atencion || '';
+    document.getElementById('form-sucursal-coordenadas').value = s.coordenadas_link || '';
+
+    const btnSubmit = document.getElementById('btn-guardar-sucursal-submit');
+    if (btnSubmit) btnSubmit.textContent = 'Actualizar Sucursal';
+
     modal.classList.remove('hidden');
   },
 
@@ -404,14 +484,15 @@ const SucursalesInfoModule = {
 
       this.cerrarModal('modal-crear-sucursal-info');
       await this.cargarSucursales();
-      if (data.id) await this.seleccionarSucursal(data.id);
-      alert('Sucursal guardada exitosamente.');
+      const idSeleccionar = id ? parseInt(id, 10) : data.id;
+      if (idSeleccionar) await this.seleccionarSucursal(idSeleccionar);
+      alert(id ? 'Sucursal actualizada exitosamente.' : 'Sucursal guardada exitosamente.');
     } catch (err) {
       alert(err.message || 'Error al guardar sucursal.');
     } finally {
       if (btnSubmit) {
         btnSubmit.disabled = false;
-        btnSubmit.textContent = 'Guardar Sucursal';
+        btnSubmit.textContent = id ? 'Actualizar Sucursal' : 'Guardar Sucursal';
       }
     }
   },
@@ -421,6 +502,10 @@ const SucursalesInfoModule = {
     if (!modal) return;
     const form = document.getElementById('form-precio-info');
     if (form) form.reset();
+    document.getElementById('form-precio-id').value = '';
+    document.getElementById('modal-precio-info-titulo').textContent = '💲 Nuevo Precio de Servicio';
+    const btnSubmit = document.getElementById('btn-guardar-precio-submit');
+    if (btnSubmit) btnSubmit.textContent = 'Guardar Precio';
 
     const selectSuc = document.getElementById('form-precio-sucursal');
     if (selectSuc) {
@@ -435,9 +520,28 @@ const SucursalesInfoModule = {
     modal.classList.remove('hidden');
   },
 
+  abrirModalEditarPrecio(id) {
+    if (!this.currentSucursalData || !this.currentSucursalData.precios) return;
+    const p = this.currentSucursalData.precios.find(item => item.id === id);
+    if (!p) return;
+
+    this.abrirModalCrearPrecio();
+    document.getElementById('modal-precio-info-titulo').textContent = '💲 Editar Precio de Servicio';
+    document.getElementById('form-precio-id').value = p.id;
+    document.getElementById('form-precio-sucursal').value = p.sucursal_id;
+    document.getElementById('form-precio-tipo').value = p.tipo_servicio;
+    document.getElementById('form-precio-codigo').value = p.codigo;
+    document.getElementById('form-precio-concepto').value = p.nombre_concepto;
+    document.getElementById('form-precio-costo').value = p.costo;
+
+    const btnSubmit = document.getElementById('btn-guardar-precio-submit');
+    if (btnSubmit) btnSubmit.textContent = 'Actualizar Precio';
+  },
+
   async guardarPrecio(e) {
     if (e) e.preventDefault();
     const btnSubmit = document.getElementById('btn-guardar-precio-submit');
+    const id = document.getElementById('form-precio-id').value;
     const sucursal_id = document.getElementById('form-precio-sucursal').value;
     const tipo_servicio = document.getElementById('form-precio-tipo').value;
     const codigo = document.getElementById('form-precio-codigo').value.trim().toUpperCase();
@@ -455,26 +559,48 @@ const SucursalesInfoModule = {
         btnSubmit.textContent = 'Guardando...';
       }
 
-      await API.post('/sucursales-info/precios', {
-        sucursal_id,
-        tipo_servicio,
-        codigo,
-        nombre_concepto,
-        costo
-      });
+      if (id) {
+        await API.put(`/sucursales-info/precios/${id}`, {
+          tipo_servicio,
+          codigo,
+          nombre_concepto,
+          costo
+        });
+      } else {
+        await API.post('/sucursales-info/precios', {
+          sucursal_id,
+          tipo_servicio,
+          codigo,
+          nombre_concepto,
+          costo
+        });
+      }
 
       this.cerrarModal('modal-crear-precio-info');
       if (parseInt(sucursal_id, 10) === this.currentSucursalId) {
         await this.seleccionarSucursal(this.currentSucursalId);
       }
-      alert('Precio guardado exitosamente.');
+      alert(id ? 'Precio actualizado exitosamente.' : 'Precio guardado exitosamente.');
     } catch (err) {
       alert(err.message || 'Error al guardar precio.');
     } finally {
       if (btnSubmit) {
         btnSubmit.disabled = false;
-        btnSubmit.textContent = 'Guardar Precio';
+        btnSubmit.textContent = id ? 'Actualizar Precio' : 'Guardar Precio';
       }
+    }
+  },
+
+  async eliminarPrecio(id) {
+    if (!confirm('¿Estás seguro de que deseas eliminar este precio de servicio?')) return;
+    try {
+      await API.delete(`/sucursales-info/precios/${id}`);
+      if (this.currentSucursalId) {
+        await this.seleccionarSucursal(this.currentSucursalId);
+      }
+      alert('Precio eliminado exitosamente.');
+    } catch (err) {
+      alert(err.message || 'Error al eliminar precio.');
     }
   },
 
@@ -483,6 +609,11 @@ const SucursalesInfoModule = {
     if (!modal) return;
     const form = document.getElementById('form-promocion-info');
     if (form) form.reset();
+
+    document.getElementById('form-promo-id').value = '';
+    document.getElementById('modal-promocion-info-titulo').textContent = '🎁 Configurar Nueva Promoción';
+    const btnSubmit = document.getElementById('btn-guardar-promocion-submit');
+    if (btnSubmit) btnSubmit.textContent = 'Guardar Promoción';
 
     const selectSuc = document.getElementById('form-promo-sucursal');
     if (selectSuc) {
@@ -494,11 +625,57 @@ const SucursalesInfoModule = {
       selectSuc.innerHTML = optHtml;
     }
 
+    this.toggleCostoInstalacion('true');
     this.conceptosPromoForm = [];
     this.agregarFilaConceptoPromo();
     this.renderFilasConceptosPromo();
 
     modal.classList.remove('hidden');
+  },
+
+  abrirModalEditarPromocion(id) {
+    if (!this.currentSucursalData || !this.currentSucursalData.promociones) return;
+    const pr = this.currentSucursalData.promociones.find(item => item.id === id);
+    if (!pr) return;
+
+    this.abrirModalCrearPromocion();
+    document.getElementById('modal-promocion-info-titulo').textContent = '🎁 Editar Promoción';
+    document.getElementById('form-promo-id').value = pr.id;
+    document.getElementById('form-promo-sucursal').value = pr.sucursal_id;
+    document.getElementById('form-promo-nombre').value = pr.nombre || '';
+    document.getElementById('form-promo-zona').value = pr.zona_barrio || '';
+    document.getElementById('form-promo-duracion').value = pr.duracion || '';
+    document.getElementById('form-promo-estado').value = pr.estado || 'Activo';
+
+    const isBonif = pr.instalacion_bonificada !== false;
+    document.getElementById('form-promo-inst-bonif').value = isBonif ? 'true' : 'false';
+    document.getElementById('form-promo-costo-inst').value = pr.costo_instalacion || 0;
+    this.toggleCostoInstalacion(isBonif ? 'true' : 'false');
+
+    if (pr.fecha_vencimiento) {
+      document.getElementById('form-promo-vencimiento').value = pr.fecha_vencimiento.split('T')[0];
+    } else {
+      document.getElementById('form-promo-vencimiento').value = '';
+    }
+
+    document.getElementById('form-promo-obs').value = pr.observaciones || '';
+
+    if (Array.isArray(pr.conceptos) && pr.conceptos.length > 0) {
+      this.conceptosPromoForm = pr.conceptos.map(c => ({
+        precio_id: c.precio_id || null,
+        nombre_concepto: c.nombre_concepto || '',
+        precio_base: parseFloat(c.precio_base) || 0,
+        bonificacion: parseFloat(c.bonificacion) || 0,
+        precio_final: parseFloat(c.precio_final) || 0
+      }));
+    } else {
+      this.conceptosPromoForm = [];
+      this.agregarFilaConceptoPromo();
+    }
+    this.renderFilasConceptosPromo();
+
+    const btnSubmit = document.getElementById('btn-guardar-promocion-submit');
+    if (btnSubmit) btnSubmit.textContent = 'Actualizar Promoción';
   },
 
   toggleCostoInstalacion(valor) {
@@ -593,6 +770,7 @@ const SucursalesInfoModule = {
   async guardarPromocion(e) {
     if (e) e.preventDefault();
     const btnSubmit = document.getElementById('btn-guardar-promocion-submit');
+    const id = document.getElementById('form-promo-id').value;
     const sucursal_id = document.getElementById('form-promo-sucursal').value;
     const nombre = document.getElementById('form-promo-nombre').value.trim();
     const zona_barrio = document.getElementById('form-promo-zona').value.trim();
@@ -620,31 +798,58 @@ const SucursalesInfoModule = {
         btnSubmit.textContent = 'Guardando...';
       }
 
-      await API.post('/sucursales-info/promociones', {
-        sucursal_id,
-        nombre,
-        zona_barrio,
-        duracion,
-        estado,
-        instalacion_bonificada: instBonif,
-        costo_instalacion: instBonif ? 0 : costoInst,
-        fecha_vencimiento: vencimiento,
-        observaciones,
-        conceptos: conceptosValidos
-      });
+      if (id) {
+        await API.put(`/sucursales-info/promociones/${id}`, {
+          nombre,
+          zona_barrio,
+          duracion,
+          estado,
+          instalacion_bonificada: instBonif,
+          costo_instalacion: instBonif ? 0 : costoInst,
+          fecha_vencimiento: vencimiento,
+          observaciones,
+          conceptos: conceptosValidos
+        });
+      } else {
+        await API.post('/sucursales-info/promociones', {
+          sucursal_id,
+          nombre,
+          zona_barrio,
+          duracion,
+          estado,
+          instalacion_bonificada: instBonif,
+          costo_instalacion: instBonif ? 0 : costoInst,
+          fecha_vencimiento: vencimiento,
+          observaciones,
+          conceptos: conceptosValidos
+        });
+      }
 
       this.cerrarModal('modal-crear-promocion-info');
       if (parseInt(sucursal_id, 10) === this.currentSucursalId) {
         await this.seleccionarSucursal(this.currentSucursalId);
       }
-      alert('Promoción registrada exitosamente.');
+      alert(id ? 'Promoción actualizada exitosamente.' : 'Promoción registrada exitosamente.');
     } catch (err) {
       alert(err.message || 'Error al guardar promoción.');
     } finally {
       if (btnSubmit) {
         btnSubmit.disabled = false;
-        btnSubmit.textContent = 'Guardar Promoción';
+        btnSubmit.textContent = id ? 'Actualizar Promoción' : 'Guardar Promoción';
       }
+    }
+  },
+
+  async eliminarPromocion(id) {
+    if (!confirm('¿Estás seguro de que deseas eliminar esta promoción?')) return;
+    try {
+      await API.delete(`/sucursales-info/promociones/${id}`);
+      if (this.currentSucursalId) {
+        await this.seleccionarSucursal(this.currentSucursalId);
+      }
+      alert('Promoción eliminada exitosamente.');
+    } catch (err) {
+      alert(err.message || 'Error al eliminar promoción.');
     }
   },
 

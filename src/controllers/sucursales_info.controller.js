@@ -200,6 +200,47 @@ const actualizarSucursal = async (req, res) => {
   }
 };
 
+const eliminarSucursal = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const actual = await pool.query('SELECT * FROM sucursales WHERE id = $1', [id]);
+    if (actual.rows.length === 0) {
+      return res.status(404).json({ error: 'Sucursal no encontrada.' });
+    }
+
+    const checkAsoc = await pool.query(`
+      SELECT 
+        (SELECT COUNT(*) FROM reclamos WHERE sucursal_id = $1) AS total_reclamos,
+        (SELECT COUNT(*) FROM llamadas WHERE sucursal_id = $1) AS total_llamadas
+    `, [id]);
+
+    const totalR = parseInt(checkAsoc.rows[0].total_reclamos || 0, 10);
+    const totalLl = parseInt(checkAsoc.rows[0].total_llamadas || 0, 10);
+
+    if (totalR > 0 || totalLl > 0) {
+      await pool.query('UPDATE sucursales SET activo = false WHERE id = $1', [id]);
+      await pool.query('UPDATE sucursales_precios SET activo = false WHERE sucursal_id = $1', [id]);
+      await pool.query("UPDATE sucursales_promociones SET estado = 'Vencida' WHERE sucursal_id = $1", [id]);
+    } else {
+      await pool.query('DELETE FROM sucursales WHERE id = $1', [id]);
+    }
+
+    await registrarAuditoria({
+      accion: `Se eliminó la sucursal "${actual.rows[0].nombre}"`,
+      usuario_id: req.user.id,
+      usuario_nombre: req.user.usuario,
+      entidad: 'sucursales',
+      registro_id: id,
+      datos_anteriores: actual.rows[0]
+    });
+
+    res.json({ message: 'Sucursal eliminada exitosamente.' });
+  } catch (error) {
+    console.error('Error al eliminar sucursal info:', error);
+    res.status(500).json({ error: 'Error al eliminar la sucursal.' });
+  }
+};
+
 const crearPrecio = async (req, res) => {
   try {
     const { sucursal_id, tipo_servicio, codigo, nombre_concepto, costo } = req.body;
@@ -459,6 +500,7 @@ module.exports = {
   getSucursalDetalle,
   crearSucursal,
   actualizarSucursal,
+  eliminarSucursal,
   crearPrecio,
   actualizarPrecio,
   eliminarPrecio,

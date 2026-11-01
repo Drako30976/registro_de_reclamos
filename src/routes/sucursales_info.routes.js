@@ -10,6 +10,7 @@ router.get('/:id', sucursalesInfoController.getSucursalDetalle);
 
 router.post('/', checkRole('Admin', 'Supervisor'), sucursalesInfoController.upload.single('logo'), sucursalesInfoController.crearSucursal);
 router.put('/:id', checkRole('Admin', 'Supervisor'), sucursalesInfoController.upload.single('logo'), sucursalesInfoController.actualizarSucursal);
+router.delete('/:id', checkRole('Admin', 'Supervisor'), sucursalesInfoController.eliminarSucursal);
 
 router.post('/precios', checkRole('Admin', 'Supervisor'), sucursalesInfoController.crearPrecio);
 router.put('/precios/:id', checkRole('Admin', 'Supervisor'), sucursalesInfoController.actualizarPrecio);
