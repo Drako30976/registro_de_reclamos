@@ -109,7 +109,7 @@ const SucursalesInfoModule = {
             ${logoHtml}
           </div>
           <span class="sucursal-card-title">${this.escapeHtml(s.nombre)}</span>
-          ${s.localidad ? `<span class="sucursal-card-subtitle">${this.escapeHtml(s.localidad)}</span>` : ''}
+          ${s.localidad ? `<span class="sucursal-card-subtitle">📍 ${this.escapeHtml(s.localidad)}</span>` : ''}
         </button>
       `;
     });
@@ -189,8 +189,8 @@ const SucursalesInfoModule = {
     if (mapBox) {
       if (s.coordenadas_link) {
         mapBox.innerHTML = `
-          <a href="${s.coordenadas_link}" target="_blank" rel="noopener noreferrer" class="btn btn-outline-primary btn-sm flex-row align-center gap-1">
-            <span>📍</span> Ver ubicación en Google Maps
+          <a href="${s.coordenadas_link}" target="_blank" rel="noopener noreferrer" class="btn btn-outline-primary btn-sm flex-row align-center gap-1" style="border-radius: 9999px; padding: 0.4rem 0.95rem; width: fit-content; font-weight: 600;">
+            <span>📍</span> Abrir en Google Maps ↗
           </a>
         `;
       } else {
