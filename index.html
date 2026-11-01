@@ -989,12 +989,16 @@
         </div>
 
         <div id="sucursales-info-detalle" class="hidden">
-          <div class="sucursales-detalle-top-bar flex-row justify-between align-center flex-wrap gap-2">
-            <button type="button" class="btn btn-outline-secondary btn-volver-sucursales" onclick="SucursalesInfoModule.volverALaLista()" title="Volver a la selección de sucursales">
-              <span class="btn-icon">⬅️</span> Volver a Sucursales
-            </button>
-            <div class="flex-row align-center gap-2">
-              <span id="sucursales-detalle-badge-nombre" class="badge badge-primary" style="font-size: 0.95rem; padding: 0.45rem 1rem; border-radius: 9999px;"></span>
+          <div class="sucursales-detalle-top-bar">
+            <div class="sucursales-detalle-header-side left">
+              <button type="button" class="btn btn-outline-secondary btn-volver-sucursales" onclick="SucursalesInfoModule.volverALaLista()" title="Volver a la selección de sucursales">
+                <span class="btn-icon">⬅️</span> Volver a Sucursales
+              </button>
+            </div>
+            <div class="sucursales-detalle-header-center">
+              <h2 id="sucursales-detalle-badge-nombre" class="sucursales-detalle-titulo"></h2>
+            </div>
+            <div class="sucursales-detalle-header-side right">
               <button type="button" id="btn-eliminar-sucursal-actual" class="btn btn-outline-danger btn-sm" onclick="SucursalesInfoModule.eliminarSucursalActual()" title="Borrar Sucursal" style="display: none;">
                 <span>🗑️</span> Borrar Sucursal
               </button>
@@ -1002,18 +1006,18 @@
           </div>
 
           <div class="sucursales-section-tabs">
-            <button type="button" class="sucursales-section-tab-btn active" data-subtab="precios" onclick="SucursalesInfoModule.cambiarSubtab('precios')">
+            <button type="button" class="sucursales-section-tab-btn active" data-subtab="info" onclick="SucursalesInfoModule.cambiarSubtab('info')">
+              📍 Información y Ubicación
+            </button>
+            <button type="button" class="sucursales-section-tab-btn" data-subtab="precios" onclick="SucursalesInfoModule.cambiarSubtab('precios')">
               💲 Precios y Servicios
             </button>
             <button type="button" class="sucursales-section-tab-btn" data-subtab="promociones" onclick="SucursalesInfoModule.cambiarSubtab('promociones')">
               🎁 Promociones y Descuentos
             </button>
-            <button type="button" class="sucursales-section-tab-btn" data-subtab="info" onclick="SucursalesInfoModule.cambiarSubtab('info')">
-              📍 Información y Ubicación
-            </button>
           </div>
 
-          <div id="sucursal-sec-info" class="hidden">
+          <div id="sucursal-sec-info">
             <div class="sucursal-detalle-card">
               <div class="flex-row justify-between align-center mb-3 pb-2" style="border-bottom: 1px solid var(--border-color);">
                 <span class="font-md font-bold text-muted">Ficha Institucional</span>
@@ -1052,7 +1056,7 @@
             </div>
           </div>
 
-          <div id="sucursal-sec-precios">
+          <div id="sucursal-sec-precios" class="hidden">
             <div class="precios-filtros-bar">
               <div id="precios-servicios-chips" class="flex-row gap-2 flex-wrap"></div>
               <div class="flex-row align-center gap-2">

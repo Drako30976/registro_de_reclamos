@@ -2,7 +2,7 @@ const SucursalesInfoModule = {
   sucursales: [],
   currentSucursalId: null,
   currentSucursalData: null,
-  currentSubtab: 'precios',
+  currentSubtab: 'info',
   preciosFiltroServicio: 'todos',
   conceptosPromoForm: [],
 
@@ -128,12 +128,12 @@ const SucursalesInfoModule = {
       this.renderInfoGeneral();
       this.renderPrecios();
       this.renderPromociones();
-      this.cambiarSubtab(this.currentSubtab || 'precios');
+      this.cambiarSubtab(this.currentSubtab || 'info');
       this.aplicarPermisosRol();
 
       const badgeNombre = document.getElementById('sucursales-detalle-badge-nombre');
       if (badgeNombre && this.currentSucursalData && this.currentSucursalData.sucursal) {
-        badgeNombre.textContent = this.currentSucursalData.sucursal.nombre;
+        badgeNombre.textContent = '🏢 ' + this.currentSucursalData.sucursal.nombre;
       }
     } catch (err) {
       alert('Error al cargar detalle de la sucursal: ' + err.message);
