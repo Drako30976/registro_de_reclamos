@@ -26,6 +26,7 @@ jobs:
             "C:\Users\msoto\AppData\Local\Programs\Git\cmd",
             "C:\Program Files\Docker\Docker\resources\bin",
             "C:\Program Files\Docker\Docker\resources",
+            "C:\Users\msoto\AppData\Local\Programs\DockerDesktop\resources\bin",
             "C:\ProgramData\DockerDesktop\version-bin"
           )
           foreach ($p in $ExtraPaths) {
@@ -40,6 +41,17 @@ jobs:
               $dockerDir = $dockerCandidate.DirectoryName
               $env:PATH = "$dockerDir;$env:PATH"
             }
+          }
+
+          $composeCandidate = Get-ChildItem -Path "C:\Program Files", "C:\ProgramData", "C:\Users\msoto\AppData\Local" -Filter "docker-compose.exe" -Recurse -Depth 5 -ErrorAction SilentlyContinue | Select-Object -First 1
+          if ($composeCandidate) {
+            $composeDir = $composeCandidate.DirectoryName
+            $env:PATH = "$composeDir;$env:PATH"
+          }
+
+          $cliPlugins = Get-ChildItem -Path "C:\Program Files", "C:\ProgramData", "C:\Users\msoto\AppData\Local" -Filter "cli-plugins" -Recurse -Depth 5 -ErrorAction SilentlyContinue | Select-Object -First 1
+          if ($cliPlugins) {
+            $env:DOCKER_CLI_PLUGIN_PATH = $cliPlugins.FullName
           }
 
           $dockerCmd = Get-Command docker -ErrorAction SilentlyContinue
@@ -82,7 +94,13 @@ jobs:
           git reset --hard origin/main
 
           Write-Host "Reconstruyendo contenedor de la aplicación..."
-          docker compose up -d --build app
+          if (Get-Command docker-compose -ErrorAction SilentlyContinue) {
+            Write-Host "Usando docker-compose..."
+            docker-compose up -d --build app
+          } else {
+            Write-Host "Usando docker compose..."
+            docker compose up -d --build app
+          }
 
           Write-Host "=========================================="
           Write-Host "¡Despliegue completado con éxito!"
