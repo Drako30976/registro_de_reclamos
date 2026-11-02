@@ -46,6 +46,8 @@ jobs:
           Write-Host "Directorio del proyecto detectado: $ProjectDir"
           Set-Location -Path $ProjectDir
 
+          git config --global --add safe.directory "*"
+
           Write-Host "Descargando últimos cambios de GitHub..."
           git fetch origin main
           git reset --hard origin/main
