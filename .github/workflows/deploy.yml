@@ -19,15 +19,31 @@ jobs:
           Write-Host "Iniciando despliegue en PC Laboral..."
           Write-Host "=========================================="
           
-          $ProjectDir = "$HOME\Desktop\Proyecto\registro_de_reclamos"
-          if (-not (Test-Path $ProjectDir)) {
-            $ProjectDir = "C:\Users\Mauro\Desktop\Proyecto\registro_de_reclamos"
+          $PathsToTest = @(
+            "$HOME\Desktop\Proyecto\registro_de_reclamos",
+            "C:\Users\Mauro\Desktop\Proyecto\registro_de_reclamos",
+            "C:\Proyecto\registro_de_reclamos",
+            "D:\Proyecto\registro_de_reclamos",
+            "C:\registro_de_reclamos"
+          )
+          $ProjectDir = $null
+          foreach ($p in $PathsToTest) {
+            if (Test-Path $p) {
+              $ProjectDir = $p
+              break
+            }
           }
-          if (-not (Test-Path $ProjectDir)) {
-            $ProjectDir = (Get-Location).Path
+          if (-not $ProjectDir) {
+            $found = Get-ChildItem -Path "C:\Users" -Filter "registro_de_reclamos" -Recurse -Depth 4 -ErrorAction SilentlyContinue | Select-Object -First 1
+            if ($found) {
+              $ProjectDir = $found.FullName
+            }
+          }
+          if (-not $ProjectDir) {
+            throw "No se encontro la carpeta del proyecto registro_de_reclamos en el equipo."
           }
           
-          Write-Host "Directorio del proyecto: $ProjectDir"
+          Write-Host "Directorio del proyecto detectado: $ProjectDir"
           Set-Location -Path $ProjectDir
 
           Write-Host "Descargando últimos cambios de GitHub..."
