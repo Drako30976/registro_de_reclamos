@@ -19,12 +19,25 @@ jobs:
           Write-Host "Iniciando despliegue en PC Laboral..."
           Write-Host "=========================================="
           
+          $ExtraPaths = @(
+            "C:\Program Files\Git\cmd",
+            "C:\Program Files\Git\bin",
+            "C:\Program Files (x86)\Git\cmd",
+            "C:\Users\msoto\AppData\Local\Programs\Git\cmd",
+            "C:\Program Files\Docker\Docker\resources\bin",
+            "C:\ProgramData\DockerDesktop\version-bin"
+          )
+          foreach ($p in $ExtraPaths) {
+            if (Test-Path $p) {
+              $env:PATH = "$p;$env:PATH"
+            }
+          }
+
           $PathsToTest = @(
+            "C:\Users\msoto\Desktop\Programacion\gestion de reclamo\registro_de_reclamos",
             "$HOME\Desktop\Proyecto\registro_de_reclamos",
             "C:\Users\Mauro\Desktop\Proyecto\registro_de_reclamos",
-            "C:\Proyecto\registro_de_reclamos",
-            "D:\Proyecto\registro_de_reclamos",
-            "C:\registro_de_reclamos"
+            "C:\Proyecto\registro_de_reclamos"
           )
           $ProjectDir = $null
           foreach ($p in $PathsToTest) {
@@ -34,7 +47,7 @@ jobs:
             }
           }
           if (-not $ProjectDir) {
-            $found = Get-ChildItem -Path "C:\Users" -Filter "registro_de_reclamos" -Recurse -Depth 4 -ErrorAction SilentlyContinue | Select-Object -First 1
+            $found = Get-ChildItem -Path "C:\Users" -Filter "registro_de_reclamos" -Recurse -Depth 5 -ErrorAction SilentlyContinue | Select-Object -First 1
             if ($found) {
               $ProjectDir = $found.FullName
             }
