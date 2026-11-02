@@ -25,12 +25,28 @@ jobs:
             "C:\Program Files (x86)\Git\cmd",
             "C:\Users\msoto\AppData\Local\Programs\Git\cmd",
             "C:\Program Files\Docker\Docker\resources\bin",
+            "C:\Program Files\Docker\Docker\resources",
             "C:\ProgramData\DockerDesktop\version-bin"
           )
           foreach ($p in $ExtraPaths) {
             if (Test-Path $p) {
               $env:PATH = "$p;$env:PATH"
             }
+          }
+
+          if (-not (Get-Command docker -ErrorAction SilentlyContinue)) {
+            $dockerCandidate = Get-ChildItem -Path "C:\Program Files", "C:\ProgramData", "C:\Users\msoto\AppData\Local" -Filter "docker.exe" -Recurse -Depth 5 -ErrorAction SilentlyContinue | Select-Object -First 1
+            if ($dockerCandidate) {
+              $dockerDir = $dockerCandidate.DirectoryName
+              $env:PATH = "$dockerDir;$env:PATH"
+            }
+          }
+
+          $dockerCmd = Get-Command docker -ErrorAction SilentlyContinue
+          if ($dockerCmd) {
+            Write-Host "Docker detectado en: $($dockerCmd.Source)"
+          } else {
+            throw "No se encontro el ejecutable docker.exe en el sistema."
           }
 
           $PathsToTest = @(
