@@ -34,6 +34,7 @@ const getSucursalesInfo = async (req, res) => {
       SELECT 
         s.id,
         s.nombre,
+        s.zona,
         s.localidad,
         s.direccion,
         s.horario_atencion,
@@ -42,7 +43,7 @@ const getSucursalesInfo = async (req, res) => {
         s.activo,
         (SELECT COUNT(*) FROM sucursales_precios sp WHERE sp.sucursal_id = s.id AND sp.activo = true) AS total_precios,
         (SELECT COUNT(*) FROM sucursales_promociones spr WHERE spr.sucursal_id = s.id AND spr.estado = 'Activo') AS total_promos
-      FROM sucursales s
+      FROM sucursales_info s
       ${whereClause}
       ORDER BY s.nombre ASC
     `);
@@ -58,7 +59,7 @@ const getSucursalDetalle = async (req, res) => {
   try {
     const { id } = req.params;
 
-    const sucRes = await pool.query('SELECT * FROM sucursales WHERE id = $1', [id]);
+    const sucRes = await pool.query('SELECT * FROM sucursales_info WHERE id = $1', [id]);
     if (sucRes.rows.length === 0) {
       return res.status(404).json({ error: 'Sucursal no encontrada.' });
     }
@@ -119,7 +120,7 @@ const getSucursalDetalle = async (req, res) => {
 
 const crearSucursal = async (req, res) => {
   try {
-    const { nombre, localidad, direccion, horario_atencion, coordenadas_link } = req.body;
+    const { nombre, zona, localidad, direccion, horario_atencion, coordenadas_link } = req.body;
 
     if (!nombre || !nombre.trim()) {
       return res.status(400).json({ error: 'El nombre de la sucursal es obligatorio.' });
@@ -131,11 +132,12 @@ const crearSucursal = async (req, res) => {
     }
 
     const result = await pool.query(`
-      INSERT INTO sucursales (nombre, localidad, direccion, horario_atencion, logo, coordenadas_link, activo)
-      VALUES ($1, $2, $3, $4, $5, $6, true)
+      INSERT INTO sucursales_info (nombre, zona, localidad, direccion, horario_atencion, logo, coordenadas_link, activo)
+      VALUES ($1, $2, $3, $4, $5, $6, $7, true)
       RETURNING *
     `, [
       nombre.trim(),
+      zona ? zona.trim() : null,
       localidad ? localidad.trim() : null,
       direccion ? direccion.trim() : null,
       horario_atencion ? horario_atencion.trim() : null,
@@ -147,7 +149,7 @@ const crearSucursal = async (req, res) => {
       accion: `Se creó la sucursal "${nombre.trim()}" con ficha completa`,
       usuario_id: req.user.id,
       usuario_nombre: req.user.usuario,
-      entidad: 'sucursales',
+      entidad: 'sucursales_info',
       registro_id: result.rows[0].id,
       datos_nuevos: result.rows[0]
     });
@@ -162,9 +164,9 @@ const crearSucursal = async (req, res) => {
 const actualizarSucursal = async (req, res) => {
   try {
     const { id } = req.params;
-    const { nombre, localidad, direccion, horario_atencion, coordenadas_link, activo } = req.body;
+    const { nombre, zona, localidad, direccion, horario_atencion, coordenadas_link, activo } = req.body;
 
-    const actual = await pool.query('SELECT * FROM sucursales WHERE id = $1', [id]);
+    const actual = await pool.query('SELECT * FROM sucursales_info WHERE id = $1', [id]);
     if (actual.rows.length === 0) {
       return res.status(404).json({ error: 'Sucursal no encontrada.' });
     }
@@ -175,18 +177,21 @@ const actualizarSucursal = async (req, res) => {
     }
 
     const result = await pool.query(`
-      UPDATE sucursales 
+      UPDATE sucursales_info 
       SET nombre = COALESCE($1, nombre),
-          localidad = COALESCE($2, localidad),
-          direccion = COALESCE($3, direccion),
-          horario_atencion = COALESCE($4, horario_atencion),
-          logo = COALESCE($5, logo),
-          coordenadas_link = COALESCE($6, coordenadas_link),
-          activo = COALESCE($7, activo)
-      WHERE id = $8
+          zona = COALESCE($2, zona),
+          localidad = COALESCE($3, localidad),
+          direccion = COALESCE($4, direccion),
+          horario_atencion = COALESCE($5, horario_atencion),
+          logo = COALESCE($6, logo),
+          coordenadas_link = COALESCE($7, coordenadas_link),
+          activo = COALESCE($8, activo),
+          updated_at = CURRENT_TIMESTAMP
+      WHERE id = $9
       RETURNING *
     `, [
       nombre ? nombre.trim() : null,
+      zona !== undefined ? (zona ? zona.trim() : null) : null,
       localidad !== undefined ? (localidad ? localidad.trim() : null) : null,
       direccion !== undefined ? (direccion ? direccion.trim() : null) : null,
       horario_atencion !== undefined ? (horario_atencion ? horario_atencion.trim() : null) : null,
@@ -200,7 +205,7 @@ const actualizarSucursal = async (req, res) => {
       accion: `Se actualizó la información de la sucursal "${actual.rows[0].nombre}"`,
       usuario_id: req.user.id,
       usuario_nombre: req.user.usuario,
-      entidad: 'sucursales',
+      entidad: 'sucursales_info',
       registro_id: id,
       datos_anteriores: actual.rows[0],
       datos_nuevos: result.rows[0]
@@ -216,33 +221,18 @@ const actualizarSucursal = async (req, res) => {
 const eliminarSucursal = async (req, res) => {
   try {
     const { id } = req.params;
-    const actual = await pool.query('SELECT * FROM sucursales WHERE id = $1', [id]);
+    const actual = await pool.query('SELECT * FROM sucursales_info WHERE id = $1', [id]);
     if (actual.rows.length === 0) {
       return res.status(404).json({ error: 'Sucursal no encontrada.' });
     }
 
-    const checkAsoc = await pool.query(`
-      SELECT 
-        (SELECT COUNT(*) FROM reclamos WHERE sucursal_id = $1) AS total_reclamos,
-        (SELECT COUNT(*) FROM llamadas WHERE sucursal_id = $1) AS total_llamadas
-    `, [id]);
-
-    const totalR = parseInt(checkAsoc.rows[0].total_reclamos || 0, 10);
-    const totalLl = parseInt(checkAsoc.rows[0].total_llamadas || 0, 10);
-
-    if (totalR > 0 || totalLl > 0) {
-      await pool.query('UPDATE sucursales SET activo = false WHERE id = $1', [id]);
-      await pool.query('UPDATE sucursales_precios SET activo = false WHERE sucursal_id = $1', [id]);
-      await pool.query("UPDATE sucursales_promociones SET estado = 'Vencida' WHERE sucursal_id = $1", [id]);
-    } else {
-      await pool.query('DELETE FROM sucursales WHERE id = $1', [id]);
-    }
+    await pool.query('DELETE FROM sucursales_info WHERE id = $1', [id]);
 
     await registrarAuditoria({
       accion: `Se eliminó la sucursal "${actual.rows[0].nombre}"`,
       usuario_id: req.user.id,
       usuario_nombre: req.user.usuario,
-      entidad: 'sucursales',
+      entidad: 'sucursales_info',
       registro_id: id,
       datos_anteriores: actual.rows[0]
     });

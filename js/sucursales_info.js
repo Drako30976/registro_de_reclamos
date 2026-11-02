@@ -109,6 +109,7 @@ const SucursalesInfoModule = {
             ${logoHtml}
           </div>
           <span class="sucursal-card-title">${this.escapeHtml(s.nombre)}</span>
+          ${s.zona ? `<span class="badge bg-secondary font-xs mb-1" style="border-radius: 9999px; padding: 0.15rem 0.55rem; font-weight: 600; font-size: 0.72rem;">🏷️ ${this.escapeHtml(s.zona)}</span>` : ''}
           ${s.localidad ? `<span class="sucursal-card-subtitle">📍 ${this.escapeHtml(s.localidad)}</span>` : ''}
         </button>
       `;
@@ -135,7 +136,8 @@ const SucursalesInfoModule = {
 
       const badgeNombre = document.getElementById('sucursales-detalle-badge-nombre');
       if (badgeNombre && this.currentSucursalData && this.currentSucursalData.sucursal) {
-        badgeNombre.textContent = '🏢 ' + this.currentSucursalData.sucursal.nombre;
+        const suc = this.currentSucursalData.sucursal;
+        badgeNombre.textContent = '🏢 ' + suc.nombre + (suc.zona ? ' (' + suc.zona + ')' : '');
       }
     } catch (err) {
       alert('Error al cargar detalle de la sucursal: ' + err.message);
@@ -174,6 +176,16 @@ const SucursalesInfoModule = {
     const logoBox = document.getElementById('sucursal-info-logo-container');
 
     if (nombreEl) nombreEl.textContent = s.nombre;
+    const zonaEl = document.getElementById('sucursal-info-zona');
+    const metaItemZona = document.getElementById('sucursal-meta-item-zona');
+    if (zonaEl && metaItemZona) {
+      if (s.zona) {
+        zonaEl.textContent = s.zona;
+        metaItemZona.style.display = 'flex';
+      } else {
+        metaItemZona.style.display = 'none';
+      }
+    }
     if (locEl) locEl.textContent = s.localidad || 'No especificada';
     if (dirEl) dirEl.textContent = s.direccion || 'No especificada';
     if (horEl) horEl.textContent = s.horario_atencion || 'No especificado';
@@ -472,6 +484,8 @@ const SucursalesInfoModule = {
     const form = document.getElementById('form-sucursal-info-completa');
     if (form) form.reset();
     document.getElementById('form-sucursal-id').value = '';
+    const inputZona = document.getElementById('form-sucursal-zona');
+    if (inputZona) inputZona.value = '';
     document.getElementById('modal-sucursal-info-titulo').textContent = '🏢 Nueva Sucursal';
     const btnSubmit = document.getElementById('btn-guardar-sucursal-submit');
     if (btnSubmit) btnSubmit.textContent = 'Guardar Sucursal';
@@ -489,6 +503,8 @@ const SucursalesInfoModule = {
     document.getElementById('form-sucursal-id').value = s.id;
     document.getElementById('modal-sucursal-info-titulo').textContent = '🏢 Editar Sucursal';
     document.getElementById('form-sucursal-nombre').value = s.nombre || '';
+    const inputZonaEdit = document.getElementById('form-sucursal-zona');
+    if (inputZonaEdit) inputZonaEdit.value = s.zona || '';
     document.getElementById('form-sucursal-localidad').value = s.localidad || '';
     document.getElementById('form-sucursal-direccion').value = s.direccion || '';
     document.getElementById('form-sucursal-horario').value = s.horario_atencion || '';
@@ -505,6 +521,8 @@ const SucursalesInfoModule = {
     const btnSubmit = document.getElementById('btn-guardar-sucursal-submit');
     const id = document.getElementById('form-sucursal-id').value;
     const nombre = document.getElementById('form-sucursal-nombre').value.trim();
+    const zonaInput = document.getElementById('form-sucursal-zona');
+    const zona = zonaInput ? zonaInput.value.trim() : '';
     const localidad = document.getElementById('form-sucursal-localidad').value.trim();
     const direccion = document.getElementById('form-sucursal-direccion').value.trim();
     const horario = document.getElementById('form-sucursal-horario').value.trim();
@@ -518,6 +536,7 @@ const SucursalesInfoModule = {
 
     const formData = new FormData();
     formData.append('nombre', nombre);
+    formData.append('zona', zona);
     formData.append('localidad', localidad);
     formData.append('direccion', direccion);
     formData.append('horario_atencion', horario);

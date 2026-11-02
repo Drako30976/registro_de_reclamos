@@ -648,3 +648,72 @@ CREATE TABLE IF NOT EXISTS canales_items (
 
 CREATE INDEX IF NOT EXISTS idx_canales_items_grilla ON canales_items(grilla_id);
 
+
+CREATE TABLE IF NOT EXISTS sucursales_info (
+    id SERIAL PRIMARY KEY,
+    nombre VARCHAR(100) NOT NULL,
+    zona VARCHAR(100),
+    localidad VARCHAR(100),
+    direccion VARCHAR(200),
+    horario_atencion VARCHAR(150),
+    logo VARCHAR(255),
+    coordenadas_link VARCHAR(500),
+    activo BOOLEAN DEFAULT true,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS sucursales_precios (
+    id SERIAL PRIMARY KEY,
+    sucursal_id INTEGER NOT NULL REFERENCES sucursales_info(id) ON DELETE CASCADE,
+    tipo_servicio VARCHAR(50) NOT NULL,
+    codigo VARCHAR(20) NOT NULL,
+    nombre_concepto VARCHAR(150) NOT NULL,
+    costo NUMERIC(12,2) NOT NULL DEFAULT 0,
+    activo BOOLEAN DEFAULT true,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    es_paquete BOOLEAN DEFAULT false
+);
+
+CREATE INDEX IF NOT EXISTS idx_sucursales_precios_sucursal ON sucursales_precios(sucursal_id);
+
+CREATE TABLE IF NOT EXISTS sucursales_precios_items (
+    id SERIAL PRIMARY KEY,
+    precio_id INTEGER NOT NULL REFERENCES sucursales_precios(id) ON DELETE CASCADE,
+    nombre_concepto VARCHAR(150) NOT NULL,
+    monto NUMERIC(12,2) NOT NULL DEFAULT 0,
+    orden INTEGER NOT NULL DEFAULT 1
+);
+
+CREATE INDEX IF NOT EXISTS idx_sucursales_precios_items_precio ON sucursales_precios_items(precio_id);
+
+CREATE TABLE IF NOT EXISTS sucursales_promociones (
+    id SERIAL PRIMARY KEY,
+    sucursal_id INTEGER NOT NULL REFERENCES sucursales_info(id) ON DELETE CASCADE,
+    nombre VARCHAR(150) NOT NULL,
+    estado VARCHAR(20) NOT NULL DEFAULT 'Activo',
+    zona_barrio VARCHAR(150) NOT NULL,
+    duracion VARCHAR(100) NOT NULL,
+    instalacion_bonificada BOOLEAN DEFAULT true,
+    costo_instalacion NUMERIC(12,2) DEFAULT 0,
+    fecha_vencimiento DATE,
+    observaciones TEXT,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE INDEX IF NOT EXISTS idx_sucursales_promos_sucursal ON sucursales_promociones(sucursal_id);
+
+CREATE TABLE IF NOT EXISTS sucursales_promociones_conceptos (
+    id SERIAL PRIMARY KEY,
+    promocion_id INTEGER NOT NULL REFERENCES sucursales_promociones(id) ON DELETE CASCADE,
+    precio_id INTEGER REFERENCES sucursales_precios(id) ON DELETE SET NULL,
+    nombre_concepto VARCHAR(150) NOT NULL,
+    precio_base NUMERIC(12,2) NOT NULL DEFAULT 0,
+    bonificacion NUMERIC(12,2) NOT NULL DEFAULT 0,
+    precio_final NUMERIC(12,2) NOT NULL DEFAULT 0,
+    orden INTEGER NOT NULL DEFAULT 1
+);
+
+CREATE INDEX IF NOT EXISTS idx_sucursales_promos_conceptos_promo ON sucursales_promociones_conceptos(promocion_id);

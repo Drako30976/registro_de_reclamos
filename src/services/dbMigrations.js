@@ -235,6 +235,51 @@ async function migrateDatabase() {
       );
 
       CREATE INDEX IF NOT EXISTS idx_sucursales_precios_items_precio ON sucursales_precios_items(precio_id);
+
+      CREATE TABLE IF NOT EXISTS sucursales_info (
+          id SERIAL PRIMARY KEY,
+          nombre VARCHAR(100) NOT NULL,
+          zona VARCHAR(100),
+          localidad VARCHAR(100),
+          direccion VARCHAR(200),
+          horario_atencion VARCHAR(150),
+          logo VARCHAR(255),
+          coordenadas_link VARCHAR(500),
+          activo BOOLEAN DEFAULT TRUE,
+          created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+          updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+      );
+
+      ALTER TABLE sucursales_info ADD COLUMN IF NOT EXISTS zona VARCHAR(100);
+
+      DO $$
+      BEGIN
+        IF (SELECT COUNT(*) FROM sucursales_info) = 0 THEN
+          INSERT INTO sucursales_info (id, nombre, localidad, direccion, horario_atencion, logo, coordenadas_link, activo, created_at)
+          SELECT id, nombre, localidad, direccion, horario_atencion, logo, coordenadas_link, activo, created_at
+          FROM sucursales
+          WHERE id IN (
+            SELECT sucursal_id FROM sucursales_precios
+            UNION
+            SELECT sucursal_id FROM sucursales_promociones
+          )
+          ON CONFLICT (id) DO NOTHING;
+          PERFORM setval(pg_get_serial_sequence('sucursales_info', 'id'), COALESCE((SELECT MAX(id) FROM sucursales_info), 1));
+        END IF;
+      END $$;
+
+      DO $$
+      BEGIN
+        ALTER TABLE sucursales_precios DROP CONSTRAINT IF EXISTS sucursales_precios_sucursal_id_fkey;
+        ALTER TABLE sucursales_precios ADD CONSTRAINT sucursales_precios_sucursal_id_fkey 
+          FOREIGN KEY (sucursal_id) REFERENCES sucursales_info(id) ON DELETE CASCADE;
+
+        ALTER TABLE sucursales_promociones DROP CONSTRAINT IF EXISTS sucursales_promociones_sucursal_id_fkey;
+        ALTER TABLE sucursales_promociones ADD CONSTRAINT sucursales_promociones_sucursal_id_fkey 
+          FOREIGN KEY (sucursal_id) REFERENCES sucursales_info(id) ON DELETE CASCADE;
+      EXCEPTION WHEN OTHERS THEN
+        NULL;
+      END $$;
     `);
     console.log('Migración de tablas de llamadas y jerarquías completada exitosamente.');
   } catch (err) {

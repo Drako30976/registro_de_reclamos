@@ -1032,6 +1032,10 @@
                 <div>
                   <h3 id="sucursal-info-nombre" class="font-lg font-bold mb-1">Nombre Sucursal</h3>
                   <div class="sucursal-meta-datos">
+                    <div class="sucursal-meta-item" id="sucursal-meta-item-zona" style="display: none;">
+                      <span class="sucursal-meta-label">Zona / Cobertura</span>
+                      <span id="sucursal-info-zona" class="sucursal-meta-valor font-semibold">-</span>
+                    </div>
                     <div class="sucursal-meta-item">
                       <span class="sucursal-meta-label">Localidad</span>
                       <span id="sucursal-info-localidad" class="sucursal-meta-valor">-</span>
@@ -2421,9 +2425,15 @@
       <form id="form-sucursal-info-completa" onsubmit="SucursalesInfoModule.guardarSucursal(event)">
         <div class="modal-body" style="padding: 1.25rem 1.5rem;">
           <input type="hidden" id="form-sucursal-id">
-          <div class="form-group mb-3">
-            <label for="form-sucursal-nombre">Nombre de la Sucursal <span class="req">*</span></label>
-            <input type="text" id="form-sucursal-nombre" class="form-control" placeholder="Ej: Providers, Yerba Buena" required maxlength="50">
+          <div class="form-grid-2 mb-3">
+            <div class="form-group">
+              <label for="form-sucursal-nombre">Nombre de la Sucursal <span class="req">*</span></label>
+              <input type="text" id="form-sucursal-nombre" class="form-control" placeholder="Ej: Providers, Banda del Río Salí" required maxlength="100">
+            </div>
+            <div class="form-group">
+              <label for="form-sucursal-zona">Zona / Barrio / Tarifa <span class="text-muted">(Opcional)</span></label>
+              <input type="text" id="form-sucursal-zona" class="form-control" placeholder="Ej: Zona Centro, Banda Norte" maxlength="100">
+            </div>
           </div>
           <div class="form-grid-2 mb-3">
             <div class="form-group">
