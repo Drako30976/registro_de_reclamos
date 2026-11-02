@@ -1,0 +1,42 @@
+name: Despliegue Automático en PC Laboral
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    name: Actualizar y Reconstruir App
+    runs-on: self-hosted
+
+    steps:
+      - name: Actualizar repositorio y reiniciar contenedor
+        shell: powershell
+        run: |
+          Write-Host "=========================================="
+          Write-Host "Iniciando despliegue en PC Laboral..."
+          Write-Host "=========================================="
+          
+          $ProjectDir = "$HOME\Desktop\Proyecto\registro_de_reclamos"
+          if (-not (Test-Path $ProjectDir)) {
+            $ProjectDir = "C:\Users\Mauro\Desktop\Proyecto\registro_de_reclamos"
+          }
+          if (-not (Test-Path $ProjectDir)) {
+            $ProjectDir = (Get-Location).Path
+          }
+          
+          Write-Host "Directorio del proyecto: $ProjectDir"
+          Set-Location -Path $ProjectDir
+
+          Write-Host "Descargando últimos cambios de GitHub..."
+          git fetch origin main
+          git reset --hard origin/main
+
+          Write-Host "Reconstruyendo contenedor de la aplicación..."
+          docker compose up -d --build app
+
+          Write-Host "=========================================="
+          Write-Host "¡Despliegue completado con éxito!"
+          Write-Host "=========================================="
